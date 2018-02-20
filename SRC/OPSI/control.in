@@ -1,0 +1,73 @@
+[Package]
+version: {{O_PKG_VER}}
+depends: 
+incremental: False
+
+[Product]
+type: localboot
+id: {{TESTPREFIX}}{{ORGPREFIX}}anaconda{{PY_VER}}
+name: Anaconda{{PY_VER}}
+description: The Most Popular Python Data Science Platform
+ ___
+ Homepage: https://www.anaconda.com
+ Changelog: https://www.anaconda.com/blog/company-blog/
+advice: Maintainer: Jens Boettge <boettge@mpi-halle.mpg.de>
+ Organization: {{ORGNAME}}
+ Release date: {{O_RELEASE_DATE}}
+version: {{O_SOFTWARE_VER}}
+priority: 0
+licenseRequired: False
+productClasses: programming
+setupScript: setup.opsiscript
+uninstallScript: uninstall.opsiscript
+updateScript: 
+alwaysScript: 
+onceScript: 
+customScript: 
+userLoginScript: 
+
+[ProductProperty]
+type: bool
+name: kill_running
+description: kill running instance (for software on_demand)
+default: False
+
+{{^ifdef_64bit_only}}
+[ProductProperty]
+type: unicode
+name: install_architecture
+multivalue: False
+editable: False
+description: which architecture (32/64 bit) should be installed (64 bit currently experimental)
+values: ["32 bit", "64 bit", "sysnative"]
+default: ["sysnative"]
+{{/ifdef_64bit_only}}
+
+[ProductProperty]
+type: bool
+name: link_desktop
+description: generate or delete Desktop link
+default: False
+
+[ProductProperty]
+type: unicode
+name: custom_post_install
+multivalue: False
+editable: True
+description: Define filename for include script in custom directory after installation
+values: ["custom_test.opsiinc", "none", "post-install.opsiinc"]
+default: ["none"]
+
+[ProductProperty]
+type: unicode
+name: custom_post_uninstall
+multivalue: False
+editable: True
+description: Define filename for include script in custom directory after deinstallation
+values: ["custom_test.opsiinc", "none", "post-uninstall.opsiinc"]
+default: ["none"]
+
+[Changelog]
+anaconda 5.1.0-1:
+	* initial
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-19 18:10:40 +0100

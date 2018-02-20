@@ -1,0 +1,109 @@
+;======================================================================
+; setup.ins ANACONDA
+; Installer-Typ: NSIS
+; 
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-20 11:20:33 +0100
+;======================================================================
+
+;======================================================================
+[Initial]
+;======================================================================
+setLogLevel=5
+; Log Errors in Logfile and abort:
+ExitOnError=true
+; Show syntax errors in the script:
+ScriptErrorMessages=off
+; Dont trace step by step through the script:
+TraceMode=off 
+; Let started programs run in front of the winst window
+StayOnTop=false 
+
+;======================================================================
+[Actions]
+;======================================================================
+include_insert "%ScriptPath%\product_variables.opsiinc"
+
+
+;=== Check free space
+if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
+	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
+	isFatalError
+	; Stop process and set installation status to failed
+else
+	;=== remove previous installation
+	if FileExists("%ScriptPath%\delsub.opsiinc")
+		comment  "Starting uninstall sub section"
+		; sub "%ScriptPath%\delsub.opsiinc"	
+		include_append "%ScriptPath%\delsub.opsiinc"
+		sub_delsub_main
+	else
+		logError "Can't find uninstaller script"
+		isFatalError "delsub.opsiinc not found"
+	endif	
+	
+	; Start the installation
+	ShowBitmap $Img_Install$ $ProductName$
+	Message "Installing " + $ProductName$ + " " + $Version$+ " (" + $sw_arch$ + " bit)"
+	
+	marktime	
+	
+	if not (FileExists($Installer$))
+		logError "Installer not found: [" + $Installer$ + "]"
+		isFatalError
+	endif
+	
+	comment "Start setup program"
+	Winbatch_install
+	Sub_check_exitcode_nsis
+	
+	set $MainBin$ = $InstallDir$+$CheckBin$
+	
+	if not (FileExists($MainBin$))
+		logError "Main binary not found! [" + $InstallDir$+$MainBin$ + "]"
+		isFatalError
+	endif
+	
+	;=== create desktop link if requested
+	if ($pr_DesktopLink$ = "true")
+		LinkFolder_CreateDesktopLink
+	endif
+	
+	;=== custom post install
+	comment "include custom post install file"
+	if not ($CustomPostInstall$ = "none")
+		if FileExists("%ScriptPath%\custom\" + $CustomPostInstall$)
+			ShowBitmap $Img_Install_Custom$ $ProductName$
+			include_insert "%ScriptPath%\custom\" + $CustomPostInstall$
+			ShowBitmap $Img_Install$ $ProductName$
+		endif
+	endif
+	
+	;=== measure installation time
+	set $TimeDiff$ = getDiffTimeSec
+	Message  "Setup time: " + $TimeDiff$ + " seconds"	
+	
+endif
+
+ 
+;======================================================================
+[Winbatch_install]
+;======================================================================
+"$Installer$" $Inst_Opts$ 
+ 
+ 
+;=====================================================================
+[LinkFolder_CreateDesktopLink]
+;=====================================================================
+set_basefolder common_desktopdirectory
+set_subfolder ""
+set_link
+       name: $AppName$
+       target: $AppTarget$
+       parameters: $AppParameters$	
+       working_dir: %CommonProfileDir%\Documents
+       icon_file: $AppIcon$
+       icon_index:
+end_link
+
+
+

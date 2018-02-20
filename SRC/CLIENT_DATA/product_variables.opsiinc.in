@@ -1,0 +1,185 @@
+;=====================================================================
+; product specific variables ANACONDA
+;
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-20 13:01:00 +0100
+;=====================================================================
+
+include_insert "%ScriptPath%\variables.opsiinc"
+
+Set $MAP$ 				= getProductMap
+Set $FullProductId$   	= getValue("id", $MAP$)
+Set $ProductName$     	= getValue("name", $MAP$)
+Set $Version$         	= getValue("ProductVersion", $MAP$)
+Set $SystemType$      	= GetSystemType
+Set $NTVersion$   		= GetMsVersionInfo
+
+;-----------------------------------------------------------
+;*** basic requirements
+;-----------------------------------------------------------
+requiredWinstVersion >= "4.11.6"
+
+if not ($NTVersion$ >= "6.1")
+	LogError "OS is not Windows 7 or above"
+	isFatalError
+endif
+
+if not ($SystemType$ = "64 Bit System")
+	; LogError "OS is not a 64 Bit System"
+	; isFatalError
+
+	LogWarning "OS is not a 64 Bit System; 32 Bit is not explicitly supported"
+endif
+
+;-----------------------------------------------------------
+;*** detect testing package:
+;-----------------------------------------------------------
+if strPos($FullProductId$, "0_") = "0"
+	; no a testing package
+	set $ProductId$  	= $FullProductId$ 
+	set $Testing$ 		= "false"
+	set $LogLvl$  		= "5"
+else
+	; this is a testing package
+	comment "Prefix for testing package detected"
+	set $ProductId$  	= strPart($FullProductId$,"3",strLength($FullProductId$))
+	set $Testing$ 		= "true"
+	set $LogLvl$  		= "7"
+endif
+
+;-----------------------------------------------------------
+;*** detect DFN package:
+;-----------------------------------------------------------
+if strPos($FullProductId$, "dfn_") = "0"
+	set $isDFN$ = "false"
+	set $StrippedProductId$ = $ProductId$
+else
+	set $isDFN$ = "true"
+	set $StrippedProductId$ = strPart($ProductId$,"5",strLength($ProductId$))
+endif
+
+;-----------------------------------------------------------
+;*** Images
+;-----------------------------------------------------------
+Set $Img_Base$ = "anaconda"
+if ($isDFN$ = "true")
+	set $Img_Install$		= "%ScriptPath%\images\" + $Img_Base$ + "_install_dfn.png"
+else
+	set $Img_Install$		= "%ScriptPath%\images\" + $Img_Base$ + "_install.png"
+endif
+set $Img_Install_Custom$	= "%ScriptPath%\images\" + $Img_Base$ + "_install_custom.png"
+Set $Img_Uninstall$			= "%ScriptPath%\images\" + $Img_Base$ + "_uninstall.png"
+Set $Img_Uninstall_Custom$	= "%ScriptPath%\images\" + $Img_Base$ + "_uninstall_custom.png"
+Set $Img_Prepare$			= "%ScriptPath%\images\" + $Img_Base$ + "_prepare.png"
+Set $Img_Plugins$			= "%ScriptPath%\images\" + $Img_Base$ + "_plugins.png"
+Set $Img_Update$			= "%ScriptPath%\images\" + $Img_Base$ + "_update.png"
+
+comment "preparing..."
+ShowBitmap $Img_Prepare$ $ProductName$
+
+;-----------------------------------------------------------
+;*** software architecture; valid values: "32 bit", "64 bit", "sysnative"
+;-----------------------------------------------------------
+; make the systemtype shorter:
+if ($SystemType$ = "64 Bit System")
+	set $SystemType$ ="x64"
+else
+	set $SystemType$ ="x32"
+endif
+
+{{#ifdef_64bit_only}}
+Set $sw_arch$ = "64 bit"
+{{/ifdef_64bit_only}}
+{{^ifdef_64bit_only}}
+Set $sw_arch$ = GetProductProperty("install_architecture","sysnative")
+{{/ifdef_64bit_only}}
+
+Set $sw_arch$ = takeString(0, splitString($sw_arch$, " "))
+
+if ( $sw_arch$ = "sysnative" )
+	if ($SystemType$ = "x64")
+		Set $sw_arch$ = "64"
+	else
+		Set $sw_arch$ = "32"
+	endif
+endif
+
+if ($sw_arch$ = "64")
+	; 64 bit software
+	set $InstallBase$ = "%ProgramFiles64Dir%"
+	set $sArch$ = "_64"
+else
+	; 32 bit software
+	set $InstallBase$ = EnvVar("ProgramFiles(x86)")
+	set $sArch$ = ""
+endif
+
+if ($SystemType$="x86 System") and ($sw_arch$="64")
+	LogError "Cannot install 64 bit version of " + $ProductName$ + " on a 32 bit operating system!"
+	isFatalError
+endif
+
+;-----------------------------------------------------------
+;*** property: language - "de_DE, "en_US"
+; application language defined via environment variable LANG
+;-----------------------------------------------------------
+; Set $sw_lang$ 				= GetProductProperty("default_language","en_US")
+set $sw_lang$ = "default"
+
+;-----------------------------------------------------------
+;*** property: create desktop/startmenu/quickstart link?
+;-----------------------------------------------------------
+Set $pr_DesktopLink$ 		= GetProductProperty("link_desktop","False")
+
+;-----------------------------------------------------------
+;*** properties: post install/uninstall
+;-----------------------------------------------------------
+set $CustomPostInstall$ 	= getProductProperty("custom_post_install","none")
+set $CustomPostUninstall$ 	= getProductProperty("custom_post_uninstall","none")
+
+;-----------------------------------------------------------
+;*** misc settings
+;-----------------------------------------------------------
+setlogLevel 				= $LogLvl$
+set $PSDETAIL$ 				= "%ScriptPath%\bin\psdetail.exe"
+set $PSDETAIL_mod$			= ""
+set $Kill_Running$ 			= GetProductProperty("kill_running", "False")
+
+Set $RegPathUninstall64$ 	= "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
+Set $RegPathUninstall32$ 	= "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
+
+;-----------------------------------------------------------
+;*** specific settings
+;-----------------------------------------------------------
+Set $InstallerType$   	= "NSIS"
+include_append "%ScriptPath%\exitcode_nsis.opsiinc"
+
+
+; packages (for example):
+; 		Anaconda3-5.1.0-Windows-x86_64.exe
+; 		Anaconda2-5.1.0-Windows-x86.exe
+;Set $Installer$		  	= "%ScriptPath%\files\" + $StrippedProductId$ + "-" + $Version$ + "-Windows-x86" + $sArch$ + ".exe"
+Set $Installer$		  	= "%ScriptPath%\files\" + $ProductName$ + "-" + $Version$ + "-Windows-x86" + $sArch$ + ".exe"
+
+Set $InstallDir$      	= $InstallBase$ + "\" + stringReplace($ProductName$," ", "") + "\"
+;Set $InstallDir$      	= $InstallBase$ + "\" + $ProductName$ + "\"
+
+Set $MinimumSpace$    	= "4600 MB"
+
+;Set $MainBin$       	= $StrippedProductId$ + ".exe"
+Set $MainBin$       	= "pythonw.exe"
+;Set $EXE$				= CreateStringList('python.exe', 'pythonw.exe', 'Scripts\Spyder.exe', 'Scripts\pandoc.exe', 'Scripts\anaconda.exe', 'Scripts\anaconda-navigator.exe', 'Scripts\jupyter-notebook.exe', 'Scripts\jupyter-qtkonsole.exe')
+Set $EXE$				= CreateStringList('python.exe', 'pythonw.exe', 'Scripts\%.exe')
+
+Set $AppName$			= $ProductName$ + " Navigator"
+Set $AppIcon$			= $InstallDir$ + "\Menu\Anaconda-navigator.ico"
+Set $AppTarget$			= $InstallDir$ + "pythonw.exe"
+Set $AppParameters$		= $InstallDir$ + "cwp.py " + $InstallDir$ + " " +  $InstallDir$ + "pythonw.exe " + $InstallDir$ + "Scripts\anaconda-navigator-script.py"
+
+Set $SearchPattern$ 	= "("+$ProductName$
+Set $Uninst_ID_std$	   	= $ProductName$
+Set $Uninst_Prg$       	= "Uninstall-"+ $StrippedProductId$ + ".exe"
+Set $Uninstaller$	   	= $InstallDir$ + $Uninst_Prg$
+; ...oder UninstallString aus Registry
+
+Set $Inst_Opts$        	= "/S  /D=" + $InstallDir$
+Set $Uninst_Opts$      	= "/S"

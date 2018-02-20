@@ -1,0 +1,28 @@
+{  
+	"_": "=== OPSI package variables ===",
+	"O_PKG_VER"         : "1",
+	"O_SOFTWARE_VER"    : "5.1.0",
+	"O_SOFTWARE"        : "Anaconda",
+	"O_RELEASE_DATE"    : "{{M_TODAY}}",
+	"O_INST_LOG"        : "/tmp/anaconda__opsi_package_install.log",
+	
+	"STAGE"             : "{{M_STAGE}}",
+	"TESTPREFIX"	    : "{{M_TESTPREFIX}}",
+	"ORGPREFIX"         : "{{M_ORGPREFIX}}",
+	"ORGNAME"           : "{{M_ORGNAME}}",
+	
+	"PY_VER"            : "{{M_PY_VER}}",
+
+	"_":"=== conditions ===",
+	"ifdef_64bit_only"              :false,
+	"ifdef_auto_download"           :true,
+	
+	"ifdef_testing"                 :{{M_TESTING}},	
+	"ifdef_allinc"                  :{{M_ALLINC}},	
+	
+	"_":"=== some tuning ===",
+	"DEFAULT_TESTING_LOGLEVEL" : "7",
+	"DEFAULT_RELEASE_LOGLEVEL" : "5",
+	
+	"_":""
+}
