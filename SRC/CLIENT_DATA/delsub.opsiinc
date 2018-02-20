@@ -1,7 +1,7 @@
 ;=====================================================================
 ; delsub.opsiinc ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-20 16:31:21 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-20 18:17:58 +0100
 ;=====================================================================
 
 
@@ -171,7 +171,7 @@ endif
 ;======================================================================
 if ($Inst_Loc$ = "")
 	;===get install location from $UninstallString$
-	set $Uninst_RegDir$ = lower(ExtractFilePath($UninstallString$))
+	set $Uninst_RegDir$ = stringReplace(lower(ExtractFilePath($UninstallString$)),'"','')
 else 
 	set $Uninst_RegDir$ = stringReplace(lower($Inst_Loc$) + "\", "\\", "\")
 endif

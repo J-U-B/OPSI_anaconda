@@ -2,7 +2,7 @@
 ; setup.ins ANACONDA
 ; Installer-Typ: NSIS
 ; 
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-20 11:20:33 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-20 18:01:39 +0100
 ;======================================================================
 
 ;======================================================================
@@ -56,10 +56,9 @@ else
 	Winbatch_install
 	Sub_check_exitcode_nsis
 	
-	set $MainBin$ = $InstallDir$+$CheckBin$
-	
-	if not (FileExists($MainBin$))
-		logError "Main binary not found! [" + $InstallDir$+$MainBin$ + "]"
+	set $CheckBin$ = $InstallDir$+$MainBin$
+	if not (FileExists($CheckBin$))
+		logError "Main binary not found! [" + $CheckBin$ + "]"
 		isFatalError
 	endif
 	

@@ -1,7 +1,7 @@
 ;=====================================================================
 ; product specific variables ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-20 13:01:00 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-20 18:18:06 +0100
 ;=====================================================================
 
 include_insert "%ScriptPath%\variables.opsiinc"
@@ -166,7 +166,7 @@ Set $InstallDir$      	= $InstallBase$ + "\" + stringReplace($ProductName$," ", 
 Set $MinimumSpace$    	= "4600 MB"
 
 ;Set $MainBin$       	= $StrippedProductId$ + ".exe"
-Set $MainBin$       	= "pythonw.exe"
+Set $MainBin$       	= "Scripts\anaconda-navigator.exe"
 ;Set $EXE$				= CreateStringList('python.exe', 'pythonw.exe', 'Scripts\Spyder.exe', 'Scripts\pandoc.exe', 'Scripts\anaconda.exe', 'Scripts\anaconda-navigator.exe', 'Scripts\jupyter-notebook.exe', 'Scripts\jupyter-qtkonsole.exe')
 Set $EXE$				= CreateStringList('python.exe', 'pythonw.exe', 'Scripts\%.exe')
 
