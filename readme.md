@@ -1,4 +1,4 @@
-# ![](./SRC/IMAGES/AnacondaLogo.png "Anaconda") Anaconda 2/3 #
+# ![](./SRC/IMAGES/AnacondaLogo.png "Anaconda")   Anaconda 2/3 #
 
 ## ToC ##
 
@@ -212,7 +212,7 @@ Hilfsprogramme. Diese unterliegen ihren jeweiligen Lizenzen.
 ### Anaconda ###
 Anaconda steht unter **BSD-Lizenz**:
 
-> ===================================
+>===================================
 >Anaconda End User License Agreement
 >===================================
 >
@@ -299,4 +299,4 @@ Fuer die Nutzung wird das *.NET Framework ab v3.5*  benoetigt.
 * Überarbeitung readme.md
 
 -----
-Jens Boettge <<boettge@mpi-halle.mpg.de>>, 2018-02-20 11:12:33 +0100
+Jens Boettge <<boettge@mpi-halle.mpg.de>>, 2018-02-20 17:53:30 +0100
