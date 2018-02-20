@@ -1,4 +1,4 @@
-# ![](./SRC/CLIENT_DATA/images/AnacondaLogo.png "Anaconda") Anaconda 2/3 #
+# ![](./SRC/IMAGES/AnacondaLogo.png "Anaconda") Anaconda 2/3 #
 
 ## ToC ##
 
