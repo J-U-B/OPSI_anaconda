@@ -212,7 +212,6 @@ Hilfsprogramme. Diese unterliegen ihren jeweiligen Lizenzen.
 ### Anaconda ###
 Anaconda steht unter **BSD-Lizenz**:
 
->===================================
 >Anaconda End User License Agreement
 >===================================
 >
