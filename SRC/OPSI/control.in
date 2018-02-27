@@ -68,6 +68,10 @@ values: ["custom_test.opsiinc", "none", "post-uninstall.opsiinc"]
 default: ["none"]
 
 [Changelog]
+anaconda 5.1.0-2:
+	* fix OS detection for Windows 10
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-27 13:07:31 +0100
+	
 anaconda 5.1.0-1:
 	* initial
 	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-19 18:10:40 +0100

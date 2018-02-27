@@ -1,6 +1,6 @@
 {  
 	"_": "=== OPSI package variables ===",
-	"O_PKG_VER"         : "1",
+	"O_PKG_VER"         : "2",
 	"O_SOFTWARE_VER"    : "5.1.0",
 	"O_SOFTWARE"        : "Anaconda",
 	"O_RELEASE_DATE"    : "{{M_TODAY}}",
