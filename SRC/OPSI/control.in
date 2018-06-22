@@ -11,7 +11,7 @@ description: The Most Popular Python Data Science Platform
  ___
  Homepage: https://www.anaconda.com
  Changelog: https://www.anaconda.com/blog/company-blog/
-advice: Maintainer: Jens Boettge <boettge@mpi-halle.mpg.de>
+advice: Maintainer: {{O_MAINTAINER}}
  Organization: {{ORGNAME}}
  Release date: {{O_RELEASE_DATE}}
 version: {{O_SOFTWARE_VER}}
@@ -20,7 +20,7 @@ licenseRequired: False
 productClasses: programming
 setupScript: setup.opsiscript
 uninstallScript: uninstall.opsiscript
-updateScript: 
+updateScript: update.opsiscript
 alwaysScript: 
 onceScript: 
 customScript: 
@@ -50,6 +50,24 @@ description: generate or delete Desktop link
 default: False
 
 [ProductProperty]
+type: bool
+name: update_dry_run
+description: just pretend to updating anaconda
+default: False
+
+[ProductProperty]
+type: bool
+name: update_verbose
+description: be more verbose on update
+default: False
+
+[ProductProperty]
+type: bool
+name: update_skip
+description: skip update on installation
+default: False
+
+[ProductProperty]
 type: unicode
 name: custom_post_install
 multivalue: False
@@ -67,11 +85,20 @@ description: Define filename for include script in custom directory after deinst
 values: ["custom_test.opsiinc", "none", "post-uninstall.opsiinc"]
 default: ["none"]
 
+[ProductProperty]
+type: unicode
+name: log_level
+multivalue: False
+editable: False
+{{#ifdef_testing}}
+description: Loglevel for this package ({{DEFAULT_TESTING_LOGLEVEL}})
+{{/ifdef_testing}}
+{{^ifdef_testing}}
+description: Loglevel for this package ({{DEFAULT_RELEASE_LOGLEVEL}})
+{{/ifdef_testing}}
+values: ["default", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+default: ["default"]
+
 [Changelog]
-anaconda 5.1.0-2:
-	* fix OS detection for Windows 10
-	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-27 13:07:31 +0100
-	
-anaconda 5.1.0-1:
-	* initial
-	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-19 18:10:40 +0100
+{{! The changelog is outsourced  to a separate file in the root of this project. }}
+{{! It will be included on building the OPSI package. }}

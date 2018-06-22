@@ -1,7 +1,7 @@
 ;=====================================================================
 ; delsub.opsiinc ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-20 18:17:58 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-22 13:24:27 +0200
 ;=====================================================================
 
 
@@ -124,7 +124,7 @@ sub_checkinstance
 
 ;=== run uninstaller
 LinkFolder_RemoveDesktopLink
-Winbatch_Uninstall
+Winbatch_Uninstall /WaitForProcessEnding $Uninst_Prg_Hidden$
 sub_check_exitcode_nsis
 if ($ExitCode$ = "0") and not ($Uninst_RegDir$ = "")
 	;=== does the installation directory still exist?

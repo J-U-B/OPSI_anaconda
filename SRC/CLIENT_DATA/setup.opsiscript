@@ -1,5 +1,5 @@
 ;======================================================================
-; setup.ins ANACONDA
+; setup.opsiscript ANACONDA
 ; Installer-Typ: NSIS
 ; 
 ; J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-20 18:01:39 +0100
@@ -98,7 +98,7 @@ set_subfolder ""
 set_link
        name: $AppName$
        target: $AppTarget$
-       parameters: $AppParameters$	
+       parameters: $AppParameters$
        working_dir: %CommonProfileDir%\Documents
        icon_file: $AppIcon$
        icon_index:

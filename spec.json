@@ -1,10 +1,11 @@
 {  
 	"_": "=== OPSI package variables ===",
-	"O_PKG_VER"         : "2",
-	"O_SOFTWARE_VER"    : "5.1.0",
+	"O_PKG_VER"         : "3",
+	"O_SOFTWARE_VER"    : "5.2.0",
 	"O_SOFTWARE"        : "Anaconda",
 	"O_RELEASE_DATE"    : "{{M_TODAY}}",
 	"O_INST_LOG"        : "/tmp/anaconda__opsi_package_install.log",
+	"O_MAINTAINER"      : "Jens Boettge <boettge@mpi-halle.mpg.de>",
 	
 	"STAGE"             : "{{M_STAGE}}",
 	"TESTPREFIX"	    : "{{M_TESTPREFIX}}",

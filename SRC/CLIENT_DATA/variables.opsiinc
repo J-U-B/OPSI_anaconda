@@ -4,7 +4,7 @@
 ; This file contains all possible variables, excluding the opsi-system
 ; variables, for the opsi-winst scripts in use.
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-20 17:17:40 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-22 13:23:19 +0200
 ;=====================================================================
 
 DefStringList $EXE$
@@ -12,6 +12,8 @@ DefStringList $MAP$
 DefStringList $ResultList$
 DefStringList $TempList$
 
+DefVar $ActionRequest$
+DefVar $ActivateBat$
 DefVar $AppName$
 DefVar $AppIcon$
 DefVar $AppParameters$
@@ -39,7 +41,7 @@ DefVar $Inst_Loc$
 DefVar $Inst_Opts$
 DefVar $Inst_Ver$
 DefVar $isDFN$
-DefVar $LogLvl$
+DefVar $LogLevelDefault$
 DefVar $MainBin$
 DefVar $MinimumSpace$
 DefVar $NTVersion$
@@ -59,6 +61,8 @@ DefVar $sw_arch$
 DefVar $SystemType$
 DefVar $Testing$
 DefVar $TimeDiff$
+DefVar $UpdateCmd$
+DefVar $UpdateOpts$
 DefVar $Uninstaller$
 DefVar $UninstallString$
 DefVar $Uninst_Arch$
@@ -66,11 +70,15 @@ DefVar $Uninst_ID$
 DefVar $Uninst_ID_std$
 DefVar $Uninst_Opts$
 DefVar $Uninst_Prg$
+DefVar $Uninst_Prg_Hidden$
 DefVar $Uninst_RegDir$
 DefVar $Version$
 
 ; Properties:
 DefVar $pr_DesktopLink$
+DefVar $pr_DryUpdate$
+DefVar $pr_VerboseUpdate$
+DefVar $pr_SkipUpdate$
 
 ; Variables for checkinstance:
 DefVar $Proc_Cnt$

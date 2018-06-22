@@ -1,0 +1,29 @@
+anaconda 5.2.0-3:
+	* new: update script for Anaconda
+	* new propeties:
+		* update_dry_run - update in 'dry-run' mode
+		* update_verbose - make update verbose
+		* update_skip - skip update (only on setup)
+		* log_level
+	* changelog outsourced from control.in (combined again in final control file)
+	* use dotNet4 version of psDetail for Windows 10
+	* new parameter for Makefile: KEEPFILES
+	* modified preinst/postinst for KEEPFILES
+	* fix restore custom directories in postinst (improved)
+	* adjusted postinst for changed $SRC directory (only valid for MPIMSP)
+	* make target "download" creates md5sums for archives
+	* check md5sums of archives in self download packages
+	* maintainer defined in spec
+	* fixed download section in makefile
+	* fixed creation of desktop link (for paths with withespace)
+	* fixed checkinstance.opsiinc: $PSDETAIL$ is already set
+	* wait for hidden uninstaller Un_A.exe
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-22 13:25:13 +0200
+	
+anaconda 5.1.0-2:
+	* fix OS detection for Windows 10
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-27 13:07:31 +0100
+	
+anaconda 5.1.0-1:
+	* initial
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-19 18:10:40 +0100

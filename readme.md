@@ -161,6 +161,7 @@ verwendet werden, werden diese (bis auf wenige Ausnahmen) zusammengefasst hier d
 * **<code>product_variables.opsiinc</code>** - die producktspezifischen Variablen werden
 hier definiert
 * **<code>setup.opsiscript </code>** - Das Script fuer die Installation.
+* **<code>update.opsiscript </code>** - Das Script fuer das Update bzw. Upgrade von Anaconda.
 * **<code>uninstall.opsiscript</code>** - Das Uninstall-Script
 * **<code>delsub.opsiinc</code>**- Wird von Setup und Uninstall gemeinsam verwendet.
 Vor jeder Installation/jedem Update wird eine alte Version entfernt. (Ein explizites
@@ -298,4 +299,4 @@ Fuer die Nutzung wird das *.NET Framework ab v3.5*  benoetigt.
 * Überarbeitung readme.md
 
 -----
-Jens Boettge <<boettge@mpi-halle.mpg.de>>, 2018-02-20 17:53:30 +0100
+Jens Boettge <<boettge@mpi-halle.mpg.de>>, 2018-06-21 13:41:36 +0200

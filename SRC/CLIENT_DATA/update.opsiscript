@@ -1,0 +1,62 @@
+;======================================================================
+; update.opsiscript ANACONDA
+; 
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-22 13:17:17 +0200
+;======================================================================
+
+;======================================================================
+[Initial]
+;======================================================================
+setLogLevel=5
+; Log Errors in Logfile and abort:
+ExitOnError=true
+; Show syntax errors in the script:
+ScriptErrorMessages=off
+; Dont trace step by step through the script:
+TraceMode=off 
+; Let started programs run in front of the winst window
+StayOnTop=false 
+
+;======================================================================
+[Actions]
+;======================================================================
+include_insert "%ScriptPath%\product_variables.opsiinc"
+
+if ($pr_SkipUpdate$ = "true") AND ($ActionRequest$ = 'setup')
+	Message "Update skipped by property"
+else
+	if not (FileExists($ActivateBat$))
+		logError "Can't find " + $ActivateBat$
+		isFatalError "activate.bat not found"
+	endif	
+
+	;=== let's go
+	marktime
+
+	ShowBitmap $Img_Update$ $ProductName$
+	Message "Updating " + $ProductName$ + " " + $Version$+ " (" + $sw_arch$ + " bit)"
+
+	set $UpdateOpts$ = ""
+	if ($pr_DryUpdate$ = "true")
+		set $UpdateOpts$ = $UpdateOpts$ + " --dry-run"
+	endif
+	if ($pr_VerboseUpdate$ = "true")
+		set $UpdateOpts$ = $UpdateOpts$ + " -v"
+	endif
+
+	setLogLevel = 7
+	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_update')
+	setlogLevel = $LogLevelDefault$
+	set $ExitCode$ = getLastExitCode
+	comment "Update returned exit code " + $ExitCode$
+
+	;=== measure installation time
+	set $TimeDiff$ = getDiffTimeSec
+	Message  "Update time: " + $TimeDiff$ + " seconds"	
+endif
+
+;=====================================================================
+[ShellInAnIcon_update]
+;=====================================================================
+"$ActivateBat$" "$InstallDir$." && $UpdateCmd$ $UpdateOpts$
+exit %ERRORLEVEL%

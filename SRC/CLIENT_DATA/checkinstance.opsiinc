@@ -1,6 +1,6 @@
 ;===============================================================================
 ; checkinstance.opsiinc
-; J. Boettge <boettge@mpi-halle.mpg.de> 2018-02-20 16:23:52 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de> 2018-06-21 17:23:55 +0200
 ;===============================================================================
 
 ;===============================================================================
@@ -8,7 +8,6 @@
 ;===============================================================================
 comment "Checking for running instances and kill it (if allowed)."
 
-set $PSDETAIL$ 		= "%ScriptPath%\bin\psdetail.exe"
 set $PSDETAIL_mod$ 	= "-c"
 
 if FileExists($PSDETAIL$)
