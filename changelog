@@ -1,6 +1,6 @@
 anaconda 5.2.0-3:
 	* new: update script for Anaconda
-	* new propeties:
+	* new properties:
 		* update_dry_run - update in 'dry-run' mode
 		* update_verbose - make update verbose
 		* update_skip - skip update (only on setup)
