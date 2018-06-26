@@ -4,7 +4,7 @@
 ; This file contains all possible variables, excluding the opsi-system
 ; variables, for the opsi-winst scripts in use.
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-26 11:54:40 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-26 13:11:20 +0200
 ;=====================================================================
 
 DefStringList $EXE$
@@ -38,6 +38,7 @@ DefVar $Img_Plugins$
 DefVar $Img_Update$	
 DefVar $InstallBase$
 DefVar $InstallDir$
+DefVar $InstDir$
 DefVar $Installer$
 DefVar $InstallerType$
 DefVar $Inst_Loc$
@@ -76,7 +77,10 @@ DefVar $Uninst_RegDir$
 DefVar $Version$
 
 ; Properties:
-DefVar $pr_DesktopLink$
+DefVar $pr_DesktopLink_Navigator$
+DefVar $pr_DesktopLink_Spyder$
+DefVar $pr_DesktopLink_Jupyter$
+DefVar $pr_DesktopLink_AnacondaPrompt$
 DefVar $pr_DryUpdate$
 DefVar $pr_VerboseUpdate$
 DefVar $pr_SkipUpdate$

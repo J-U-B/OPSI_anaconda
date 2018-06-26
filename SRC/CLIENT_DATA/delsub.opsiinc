@@ -1,7 +1,7 @@
 ;=====================================================================
 ; delsub.opsiinc ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-22 13:24:27 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-26 13:32:33 +0200
 ;=====================================================================
 
 
@@ -155,7 +155,9 @@ delete -sfc "$Uninst_RegDir$"
 set_basefolder common_desktopdirectory
 set_subfolder ""
 delete_element $AppName$
-
+delete_element $ProductName$ Prompt
+delete_element Jupyter Notebook
+delete_element Spyder
 
 ;======================================================================
 [sub_check_Exitcode]

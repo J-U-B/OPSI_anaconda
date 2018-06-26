@@ -2,7 +2,7 @@
 ; setup.opsiscript ANACONDA
 ; Installer-Typ: NSIS
 ; 
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-20 18:01:39 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-26 13:30:53 +0200
 ;======================================================================
 
 ;======================================================================
@@ -62,9 +62,18 @@ else
 		isFatalError
 	endif
 	
-	;=== create desktop link if requested
-	if ($pr_DesktopLink$ = "true")
-		LinkFolder_CreateDesktopLink
+	;=== create desktop link(s) if requested
+	if ($pr_DesktopLink_AnacondaPrompt$ = "true")
+		LinkFolder_CreateDesktopLink_AnacondaPrompt
+	endif
+	if ($pr_DesktopLink_Jupyter$ = "true")
+		LinkFolder_CreateDesktopLink_Jupyter
+	endif
+	if ($pr_DesktopLink_Spyder$ = "true")
+		LinkFolder_CreateDesktopLink_Spyder
+	endif
+	if ($pr_DesktopLink_Navigator$ = "true")
+		LinkFolder_CreateDesktopLink_Navigator
 	endif
 	
 	;=== custom post install
@@ -91,7 +100,49 @@ endif
  
  
 ;=====================================================================
-[LinkFolder_CreateDesktopLink]
+[LinkFolder_CreateDesktopLink_AnacondaPrompt]
+;=====================================================================
+set_basefolder common_desktopdirectory
+set_subfolder ""
+set_link
+       name: $ProductName$ Prompt
+       target: "%windir%\System32\cmd.exe"
+       parameters: /K ""$InstDir$\Scripts\activate.bat" "$InstDir$""
+       working_dir: %HOMEPATH%
+       icon_file: $InstDir$\Menu\Iconleak-Atrous-Console.ico
+       icon_index:
+end_link 
+ 
+;=====================================================================
+[LinkFolder_CreateDesktopLink_Jupyter]
+;=====================================================================
+set_basefolder common_desktopdirectory
+set_subfolder ""
+set_link
+       name: Jupyter Notebook
+       target: $AppTarget$
+       parameters: -q "$InstDir$\cwp.py" "$InstDir$" "$InstDir$\python.exe" "$InstDir$\Scripts\jupyter-notebook-script.py" %USERPROFILE%
+       working_dir: %HOMEPATH%
+       icon_file: $InstDir$\Menu\jupyter.ico
+       icon_index:
+end_link 
+ 
+;=====================================================================
+[LinkFolder_CreateDesktopLink_Spyder]
+;=====================================================================
+set_basefolder common_desktopdirectory
+set_subfolder ""
+set_link
+       name: Spyder
+       target: $AppTarget$
+       parameters: -q "$InstDir$\cwp.py" "$InstDir$" "$InstDir$\pythonw.exe" "$InstDir$\Scripts\spyder-script.py"
+       working_dir: %HOMEPATH%
+       icon_file: $InstDir$\Menu\spyder.ico
+       icon_index:
+end_link 
+ 
+;=====================================================================
+[LinkFolder_CreateDesktopLink_Navigator]
 ;=====================================================================
 set_basefolder common_desktopdirectory
 set_subfolder ""

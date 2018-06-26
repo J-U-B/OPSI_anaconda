@@ -5,6 +5,10 @@ anaconda 5.2.0-3:
 		* update_verbose - make update verbose
 		* update_skip - skip update (only on setup)
 		* log_level
+		* link_desktop_Anaconda_Navigator  (replaces link_desktop)
+		* link_desktop_Anaconda_Prompt
+		* link_desktop_Jupyter_Notebook
+		* link_desktop_Spyder
 	* changelog outsourced from control.in (combined again in final control file)
 	* use dotNet4 version of psDetail for Windows 10
 	* new parameter for Makefile: KEEPFILES
@@ -21,7 +25,7 @@ anaconda 5.2.0-3:
 	* conda cleanup after update
 	* fix for update problem (rights inheritance)
 	* space requirements adjusted
-	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-26 12:22:11 +0200
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-26 13:34:32 +0200
 	
 anaconda 5.1.0-2:
 	* fix OS detection for Windows 10

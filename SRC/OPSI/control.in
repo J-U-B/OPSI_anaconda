@@ -45,8 +45,26 @@ default: ["sysnative"]
 
 [ProductProperty]
 type: bool
-name: link_desktop
-description: generate or delete Desktop link
+name: link_desktop_Anaconda_Navigator
+description: generate or delete Desktop link for Anaconda Navigator
+default: False
+
+[ProductProperty]
+type: bool
+name: link_desktop_Spyder
+description: generate or delete Desktop link for Spyder
+default: False
+
+[ProductProperty]
+type: bool
+name: link_desktop_Jupyter_Notebook
+description: generate or delete Desktop link for Jupyter Notebook
+default: False
+
+[ProductProperty]
+type: bool
+name: link_desktop_Anaconda_Prompt
+description: generate or delete Desktop link for Anaconda Prompt
 default: False
 
 [ProductProperty]
