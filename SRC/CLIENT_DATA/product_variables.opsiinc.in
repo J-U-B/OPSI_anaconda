@@ -1,7 +1,7 @@
 ;=====================================================================
 ; product specific variables ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-22 13:24:09 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-26 11:55:18 +0200
 ;=====================================================================
 
 include_insert "%ScriptPath%\variables.opsiinc"
@@ -184,7 +184,7 @@ Set $Installer$		  	= "%ScriptPath%\files\" + $ProductName$ + "-" + $Version$ + 
 Set $InstallDir$      	= $InstallBase$ + "\" + stringReplace($ProductName$," ", "") + "\"
 ;Set $InstallDir$      	= $InstallBase$ + "\" + $ProductName$ + "\"
 
-Set $MinimumSpace$    	= "4600 MB"
+Set $MinimumSpace$    	= "9000 MB"
 
 ;Set $MainBin$       	= $StrippedProductId$ + ".exe"
 Set $MainBin$       	= "Scripts\anaconda-navigator.exe"
@@ -204,9 +204,11 @@ Set $Uninst_Prg_Hidden$ = "Un_A.exe"
 Set $Uninstaller$	   	= $InstallDir$ + $Uninst_Prg$
 ; ...oder UninstallString aus Registry
 
-Set $Inst_Opts$        	= "/S  /D=" + $InstallDir$
+; https://conda.io/docs/user-guide/install/windows.html
+Set $Inst_Opts$        	= "/InstallationType=AllUsers  /S  /D=" + $InstallDir$
 Set $Uninst_Opts$      	= "/S"
 
 
 Set $ActivateBat$		= $InstallDir$ + "Scripts\activate.bat"
-Set $UpdateCmd$			= "conda update -y -v -q --all"
+Set $CondaUpdateCmd$	= "conda update -y -q --all"
+Set $CondaCleanCmd$		= "conda clean -y --all"

@@ -1,7 +1,7 @@
 ;======================================================================
 ; update.opsiscript ANACONDA
 ; 
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-22 14:34:29 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-26 12:24:16 +0200
 ;======================================================================
 
 ;======================================================================
@@ -34,29 +34,62 @@ else
 	marktime
 
 	ShowBitmap $Img_Update$ $ProductName$
-	Message "Updating " + $ProductName$ + " " + $Version$+ " (" + $sw_arch$ + " bit)"
 
-	set $UpdateOpts$ = ""
-	if ($pr_DryUpdate$ = "true")
-		set $UpdateOpts$ = $UpdateOpts$ + " --dry-run"
-	endif
+	set $CondaOpts$ = ""
 	if ($pr_VerboseUpdate$ = "true")
-		set $UpdateOpts$ = $UpdateOpts$ + " -v"
+		set $CondaOpts$ = $CondaOpts$ + " -v"
+	endif
+	if ($pr_DryUpdate$ = "true")
+		set $CondaOpts$ = $CondaOpts$ + " --dry-run"
 	endif
 
+	;=== run update
+	Message "Updating " + $ProductName$ + " " + $Version$+ " (" + $sw_arch$ + " bit)"
 	setLogLevel = 7
-	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_update')
+	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_conda_update')
 	setlogLevel = $LogLevelDefault$
 	set $ExitCode$ = getLastExitCode
 	comment "Update returned exit code " + $ExitCode$
-
-	;=== measure installation time
 	set $TimeDiff$ = getDiffTimeSec
-	Message  "Update time: " + $TimeDiff$ + " seconds"	
+	comment  "Elapsed update time: " + $TimeDiff$ + " seconds"
+
+	;=== run cleanup
+	Message "Running conda cleanup for " + $ProductName$ + " " + $Version$+ " (" + $sw_arch$ + " bit)"
+	setLogLevel = 7
+	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_conda_clean')
+	setlogLevel = $LogLevelDefault$
+	set $ExitCode$ = getLastExitCode
+	comment "Conda clean returned exit code " + $ExitCode$
+	set $TimeDiff$ = getDiffTimeSec
+	comment  "Elapsed time after cleanup: " + $TimeDiff$ + " seconds"
+
+	;=== fix for update (rights inheritance):
+	Message "Updating access rights for " + $ProductName$
+	setLogLevel = 7
+	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_fix_rights')
+	setlogLevel = $LogLevelDefault$
+	set $ExitCode$ = getLastExitCode
+	comment "Fix rights returned exit code " + $ExitCode$
+
+	;=== finally measure installation time
+	set $TimeDiff$ = getDiffTimeSec
+	Message  "Total update time: " + $TimeDiff$ + " seconds"
 endif
 
 ;=====================================================================
-[ShellInAnIcon_update]
+[ShellInAnIcon_conda_update]
 ;=====================================================================
-"$ActivateBat$" "$InstallDir$." && $UpdateCmd$ $UpdateOpts$
+"$ActivateBat$" "$InstallDir$." && $CondaUpdateCmd$ $CondaOpts$
+exit %ERRORLEVEL%
+
+;=====================================================================
+[ShellInAnIcon_conda_clean]
+;=====================================================================
+"$ActivateBat$" "$InstallDir$." && $CondaCleanCmd$ $CondaOpts$
+exit %ERRORLEVEL%
+
+;=====================================================================
+[ShellInAnIcon_fix_rights]
+;=====================================================================
+icacls "$InstallDir$\*" /inheritance:e /T /C /L /Q
 exit %ERRORLEVEL%

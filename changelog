@@ -18,7 +18,10 @@ anaconda 5.2.0-3:
 	* fixed creation of desktop link (for paths with withespace)
 	* fixed checkinstance.opsiinc: $PSDETAIL$ is already set
 	* wait for hidden uninstaller Un_A.exe
-	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-22 13:25:13 +0200
+	* conda cleanup after update
+	* fix for update problem (rights inheritance)
+	* space requirements adjusted
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-26 12:22:11 +0200
 	
 anaconda 5.1.0-2:
 	* fix OS detection for Windows 10

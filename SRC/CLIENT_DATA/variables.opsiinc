@@ -4,7 +4,7 @@
 ; This file contains all possible variables, excluding the opsi-system
 ; variables, for the opsi-winst scripts in use.
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-22 13:23:19 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-26 11:54:40 +0200
 ;=====================================================================
 
 DefStringList $EXE$
@@ -19,6 +19,9 @@ DefVar $AppIcon$
 DefVar $AppParameters$
 DefVar $AppTarget$
 DefVar $CheckBin$
+DefVar $CondaUpdateCmd$
+DefVar $CondaCleanCmd$
+DefVar $CondaOpts$
 DefVar $currentLogLevel$
 DefVar $CustomPostInstall$
 DefVar $CustomPostUninstall$
@@ -61,8 +64,6 @@ DefVar $sw_arch$
 DefVar $SystemType$
 DefVar $Testing$
 DefVar $TimeDiff$
-DefVar $UpdateCmd$
-DefVar $UpdateOpts$
 DefVar $Uninstaller$
 DefVar $UninstallString$
 DefVar $Uninst_Arch$
