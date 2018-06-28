@@ -1,3 +1,7 @@
+{{! ========================================================================== }}
+{{!  Anaconda 2/3 CONTROL                                                      }}
+{{!  J. Boettge <boettge@mpi-halle.mpg.de> 2018-06-28 13:55:53 +0200           }}
+{{! ========================================================================== }}
 [Package]
 version: {{O_PKG_VER}}
 depends: 
@@ -46,43 +50,67 @@ default: ["sysnative"]
 [ProductProperty]
 type: bool
 name: link_desktop_Anaconda_Navigator
-description: generate or delete Desktop link for Anaconda Navigator
+description: Generate or delete Desktop link for Anaconda Navigator
 default: False
 
 [ProductProperty]
 type: bool
 name: link_desktop_Spyder
-description: generate or delete Desktop link for Spyder
+description: Generate or delete Desktop link for Spyder
 default: False
 
 [ProductProperty]
 type: bool
 name: link_desktop_Jupyter_Notebook
-description: generate or delete Desktop link for Jupyter Notebook
+description: Generate or delete Desktop link for Jupyter Notebook
 default: False
 
 [ProductProperty]
 type: bool
 name: link_desktop_Anaconda_Prompt
-description: generate or delete Desktop link for Anaconda Prompt
+description: Generate or delete Desktop link for Anaconda Prompt
 default: False
+
+[ProductProperty]
+type: unicode
+name: additional_packages
+multivalue: True
+editable: True
+description: Define liste of packages (separated by spaces) to install
+values: ["", "tensorflow", "django"]
+default: [""] 
+
+[ProductProperty]
+type: unicode
+name: additional_packages_install_mode
+description: When should the additional packages be installed?
+multivalue: False
+editable: False
+values: ["setup", "update", "none"]
+default: ["setup"]
 
 [ProductProperty]
 type: bool
 name: update_dry_run
-description: just pretend to updating anaconda
+description: Just pretend to updating anaconda and install additional packages.
 default: False
 
 [ProductProperty]
 type: bool
 name: update_verbose
-description: be more verbose on update
+description: Be more verbose on update
 default: False
 
 [ProductProperty]
 type: bool
 name: update_skip
-description: skip update on installation
+description: Skip update on installation
+default: False
+
+[ProductProperty]
+type: bool
+name: update_rights_skip
+description: Skip repair of access rights during update to save time. (Not reccommended.)
 default: False
 
 [ProductProperty]
@@ -116,6 +144,16 @@ description: Loglevel for this package ({{DEFAULT_RELEASE_LOGLEVEL}})
 {{/ifdef_testing}}
 values: ["default", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 default: ["default"]
+
+[ProductProperty]
+type: unicode
+name: required_mimimum_space
+multivalue: False
+editable: True
+description: Expert setting(!): Minimum space required for installation in megabytes. At least 9000 MB are needed. Increase this value for additional packages. You may decrease it only, if this package was installed previously. Use +/- prefix to add to / subtract from default value.
+values: ["default", "9000"]
+default: ["default"]
+
 
 [Changelog]
 {{! The changelog is outsourced  to a separate file in the root of this project. }}

@@ -1,0 +1,38 @@
+;======================================================================
+; Install additional Conda packages
+; 
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-28 14:55:30 +0200
+;======================================================================
+
+;======================================================================
+[Sub_Add_Packages]
+;======================================================================
+if (count($pr_AddPackList$) = "0")
+	comment "No additional packages to install"
+else
+	ShowBitmap $Img_Plugins$ $ProductName$
+	Message "Installing additional packages"
+	
+	set $AddPacks$ = composeString($pr_AddPackList$, " ")
+	set $AddPacks$ = stringReplace($AddPacks$, "," , " ")
+	
+	set $CondaOpts$ = ""
+	if ($pr_VerboseUpdate$ = "true")
+		set $CondaOpts$ = $CondaOpts$ + " -v"
+	endif
+	if ($pr_DryUpdate$ = "true")
+		set $CondaOpts$ = $CondaOpts$ + " --dry-run"
+	endif
+	setLogLevel = 7
+	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_conda_install')
+	setlogLevel = $LogLevelDefault$
+	set $ExitCode$ = getLastExitCode
+	comment "Conda install returned exit code " + $ExitCode$
+endif
+
+
+;=====================================================================
+[ShellInAnIcon_conda_install]
+;=====================================================================
+"$ActivateBat$" "$InstallDir$." && $CondaInstallCmd$ $CondaOpts$ $AddPacks$
+exit %ERRORLEVEL%

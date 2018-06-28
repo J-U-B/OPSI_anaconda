@@ -2,7 +2,7 @@
 ; setup.opsiscript ANACONDA
 ; Installer-Typ: NSIS
 ; 
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-26 13:30:53 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-28 13:43:50 +0200
 ;======================================================================
 
 ;======================================================================
@@ -23,10 +23,40 @@ StayOnTop=false
 ;======================================================================
 include_insert "%ScriptPath%\product_variables.opsiinc"
 
+if FileExists("%ScriptPath%\add_packages.opsiinc")
+	include_append "%ScriptPath%\add_packages.opsiinc"
+	set $Has_AddPackages$ = "true"
+else
+	logError "File not found: add_packages.opsiinc"
+	set $Has_AddPackages$ = "false"
+endif
+
 
 ;=== Check free space
-if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$))
-	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " on drive %SystemDrive% needed for " + $ProductId$
+
+Set $MinimumSpace$  = $MinimumSpaceDefault$
+if ( not ($pr_MinimumSpace$ = "default"))
+	; strip "." and ",":
+	set $pr_MinimumSpace$ = stringReplace($pr_MinimumSpace$, ".", "")
+	set $pr_MinimumSpace$ = stringReplace($pr_MinimumSpace$, ",", "")
+	if (isNumber($pr_MinimumSpace$))
+		if ((strPos($pr_MinimumSpace$,"+") = "1") OR (strPos($pr_MinimumSpace$ ,"-") = "1"))
+			set $MinimumSpace$  = calculate($MinimumSpace$+$pr_MinimumSpace$)
+		else
+			set $MinimumSpace$  = $pr_MinimumSpace$
+		endif
+		if ($MinimumSpace$ INT<= "0")
+			logError "A negative value for required space or no space needed? Sure? - Using default value"
+		endif
+	else
+		logError "Given value for [required_mimimum_space] is not an interger! Check the property setting. - Using default value."
+		Set $MinimumSpace$  = $MinimumSpaceDefault$
+	endif
+endif
+comment "Minimum space required: " + $MinimumSpace$ + " MB"
+
+if not(HasMinimumSpace ("%SystemDrive%", $MinimumSpace$ + " MB"))
+	LogError "Not enough space on %SystemDrive%, " + $MinimumSpace$ + " MB" + " on drive %SystemDrive% needed for " + $ProductId$
 	isFatalError
 	; Stop process and set installation status to failed
 else
@@ -60,6 +90,14 @@ else
 	if not (FileExists($CheckBin$))
 		logError "Main binary not found! [" + $CheckBin$ + "]"
 		isFatalError
+	endif
+	
+	if (($pr_AddPack_InstallMode$ = "setup") AND ($Has_AddPackages$ = "true"))
+		set $TimeDiff$ = getDiffTimeSec
+		comment  "Elapsed time after basic setup: " + $TimeDiff$ + " seconds"
+		Sub_Add_Packages
+		; restore install image
+		ShowBitmap $Img_Install$ $ProductName$
 	endif
 	
 	;=== create desktop link(s) if requested

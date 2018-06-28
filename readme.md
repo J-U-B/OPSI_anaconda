@@ -53,6 +53,12 @@ die Erstellung der Pakete.
 Im Idealfall ist beim Erscheinen einer neuen Release von Anaconda lediglich die
 **<code>spec.json</code>** anzupassen.
 
+Zur Vorbereitung der eigentlichen Paketerstellung sind zuvor die Softwarepakete
+mit
+><code>make download</code>
+
+herunterzuladen. Hierbei werden die spaeter benoetigten MD5sums erstellt.
+
 
 <div id="pystache"></div>
 
@@ -299,4 +305,4 @@ Fuer die Nutzung wird das *.NET Framework ab v3.5*  benoetigt.
 * Überarbeitung readme.md
 
 -----
-Jens Boettge <<boettge@mpi-halle.mpg.de>>, 2018-06-21 13:41:36 +0200
+Jens Boettge <<boettge@mpi-halle.mpg.de>>, 2018-06-28 08:51:52 +0200

@@ -1,3 +1,13 @@
+anaconda 5.2.0-4:
+	* new properties:
+		* required_mimimum_space - variable value for required disk space; see tooltip
+		* update_rights_skip - skip repair of access rights during update to save time.
+		* install_additional_packages
+		* install_mode_for_additional_packages - install additional packages during setup or update
+	* new: add_packages.opsiinc - function: Sub_Add_Packages
+	* amendment to the readme.md (make download)
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-28 15:24:05 +0200
+
 anaconda 5.2.0-3:
 	* new: update script for Anaconda
 	* new properties:
@@ -26,11 +36,11 @@ anaconda 5.2.0-3:
 	* fix for update problem (rights inheritance)
 	* space requirements adjusted
 	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-26 13:34:32 +0200
-	
+
 anaconda 5.1.0-2:
 	* fix OS detection for Windows 10
 	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-27 13:07:31 +0100
-	
+
 anaconda 5.1.0-1:
 	* initial
 	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-19 18:10:40 +0100

@@ -22,6 +22,16 @@ StayOnTop=false
 ;======================================================================
 include_insert "%ScriptPath%\product_variables.opsiinc"
 
+if FileExists("%ScriptPath%\add_packages.opsiinc")
+	include_append "%ScriptPath%\add_packages.opsiinc"
+	set $Has_AddPackages$ = "true"
+else
+	logError "File not found: add_packages.opsiinc"
+	set $Has_AddPackages$ = "false"
+endif
+
+
+
 if ($pr_SkipUpdate$ = "true")
 	Message "Update skipped by property"
 else
@@ -32,6 +42,12 @@ else
 
 	;=== let's go
 	marktime
+	
+	if (($pr_AddPack_InstallMode$ = "update") AND ($Has_AddPackages$ = "true"))
+		Sub_Add_Packages
+		set $TimeDiff$ = getDiffTimeSec
+		comment  "Elapsed time after adding packages: " + $TimeDiff$ + " seconds"
+	endif
 
 	ShowBitmap $Img_Update$ $ProductName$
 
@@ -64,12 +80,16 @@ else
 	comment  "Elapsed time after cleanup: " + $TimeDiff$ + " seconds"
 
 	;=== fix for update (rights inheritance):
-	Message "Updating access rights for " + $ProductName$
-	setLogLevel = 7
-	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_fix_rights')
-	setlogLevel = $LogLevelDefault$
-	set $ExitCode$ = getLastExitCode
-	comment "Fix rights returned exit code " + $ExitCode$
+	if ($pr_SkipFixRights$ = "false")
+		Message "Updating access rights for " + $ProductName$
+		setLogLevel = 7
+		set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_fix_rights')
+		setlogLevel = $LogLevelDefault$
+		set $ExitCode$ = getLastExitCode
+		comment "Fix rights returned exit code " + $ExitCode$
+	else
+		logWarning "Skipping repair of access rights by property."
+	endif
 
 	;=== finally measure installation time
 	set $TimeDiff$ = getDiffTimeSec
