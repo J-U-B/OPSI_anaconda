@@ -1,10 +1,10 @@
 {  
 	"_": "=== OPSI package variables ===",
-	"O_PKG_VER"         : "4",
-	"O_SOFTWARE_VER"    : "5.2.0",
+	"O_PKG_VER"         : "6",
+	"O_SOFTWARE_VER"    : "5.3.0",
 	"O_SOFTWARE"        : "Anaconda",
 	"O_RELEASE_DATE"    : "{{M_TODAY}}",
-	"O_INST_LOG"        : "/tmp/anaconda__opsi_package_install.log",
+	"O_INST_LOG"        : "/tmp/{{M_ORGPREFIX}}anaconda__opsi_package_install.log",
 	"O_MAINTAINER"      : "Jens Boettge <boettge@mpi-halle.mpg.de>",
 	
 	"STAGE"             : "{{M_STAGE}}",
@@ -20,6 +20,7 @@
 	
 	"ifdef_testing"                 :{{M_TESTING}},	
 	"ifdef_allinc"                  :{{M_ALLINC}},	
+	"ifdef_keepfiles"				:{{M_KEEPFILES}},
 	
 	"_":"=== some tuning ===",
 	"DEFAULT_TESTING_LOGLEVEL" : "7",

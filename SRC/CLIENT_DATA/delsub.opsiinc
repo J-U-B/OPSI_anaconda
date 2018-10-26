@@ -101,7 +101,7 @@ endif
 [Sub_Uninstall]
 ;======================================================================
 ShowBitmap $Img_Uninstall$ $ProductName$
-Message "Uninstalling previous setup of " + $ProductName$ + " " + $Version$
+Message "Uninstalling previous setup of " + $ProductName$ + " " + $Inst_Ver$
 
 ;=== get uninstall directory
 sub_check_PathVar

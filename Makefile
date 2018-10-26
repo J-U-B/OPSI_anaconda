@@ -1,19 +1,28 @@
 ############################################################
 # OPSI package Makefile (ANACONDA)
-# Version: 2.3.0
+# Version: 2.4.1
 # Jens Boettge <boettge@mpi-halle.mpg.de>
-# 2018-06-20 16:56:43 +0200
+# 2018-10-25 14:02:34 +0200
 ############################################################
 
-.PHONY: header clean mpimsp dfn mpimsp_test dfn_test all_test all_prod all help download dummy_build
+.PHONY: header clean mpimsp mpimsp_test o4i o4i_test dfn dfn_test all_test all_prod all help download dummy_build
 .DEFAULT_GOAL := help
 
 PWD = ${CURDIR}
-OPSI_BUILDER = opsi-makeproductfile
 BUILD_DIR = BUILD
 DL_DIR = $(PWD)/DOWNLOAD
 PACKAGE_DIR = PACKAGES
 SRC_DIR = SRC
+
+OPSI_BUILDER := $(shell which opsi-makepackage)
+ifeq ($(OPSI_BUILDER),)
+	override OPSI_BUILDER := $(shell which opsi-makeproductfile)
+	ifeq ($(OPSI_BUILDER),)
+		$(error Error: opsi-make(package|productfile) not found!)
+	endif
+endif
+$(info * OPSI_BUILDER = $(OPSI_BUILDER))
+
 
 ### spec file:
 SPEC ?= spec.json
@@ -93,7 +102,6 @@ SW_VER := $(shell grep '"O_SOFTWARE_VER"' $(SPEC)     | sed -e 's/^.*\s*:\s*\"\(
 SW_BUILD := $(shell grep '"O_PKG_VER"' $(SPEC)        | sed -e 's/^.*\s*:\s*\"\(.*\)\".*$$/\1/' )
 SW_NAME := $(shell grep '"O_SOFTWARE"' $(SPEC)        | sed -e 's/^.*\s*:\s*\"\(.*\)\".*$$/\1/' )
 
-
 FILES_MASK := *.$(SW_VER).*exe
 FILES_EXPECTED = 2
 
@@ -162,7 +170,7 @@ var_test:
 	@echo "		* BUILD_PY_VER = $(BUILD_PY_VER)"
 	@echo "		* PVS = $(PVS)"
 	@echo "* 64 bit only?          : [$(SW_ONLY64)]"
-	@echo "* Download Prefix       : [$(CUSTOMNAME)]"
+	@echo "* Custom Name           : [$(CUSTOMNAME)]"
 	@#echo "* OPSI Archive Types    : [$(ARCHIVE_TYPES)]"
 	@echo "* OPSI Archive Format   : [default: $(ARCHIVE_FORMAT)] --> $(BUILD_FORMAT)"
 	@echo "* Templates OPSI        : [$(FILES_OPSI_IN)]"
@@ -214,6 +222,59 @@ mpimsp: header
 			STAGE="release"  			\
 	build; done
 
+mpimsp_test: header
+	@echo "---------- building MPIMSP testing package(s) -----------------------"
+	@for PV in $(PVS); do make 			\
+			BUILD_PY_VER=$${PV} 		\
+			TESTPREFIX="0_"	 			\
+			ORGNAME="MPIMSP" 			\
+			ORGPREFIX=""     			\
+			STAGE="testing"  			\
+	build; done
+	
+	
+o4i: header
+	@echo "---------- building O4I package(s) ----------------------------------"
+	@for PV in $(PVS); do make 			\
+			BUILD_PY_VER=$${PV} 		\
+			TESTPREFIX=""    			\
+			ORGNAME="O4I"    			\
+			ORGPREFIX="o4i_" 			\
+			STAGE="release"  			\
+	build; done
+
+
+o4i_test: header
+	@echo "---------- building O4I testing package(s) --------------------------"
+	@for PV in $(PVS); do make 			\
+			BUILD_PY_VER=$${PV} 		\
+			TESTPREFIX="test_"  		\
+			ORGNAME="O4I"    			\
+			ORGPREFIX="o4i_" 			\
+			STAGE="testing"  			\
+	build; done
+
+o4i_test_0: header
+	@echo "---------- building O4I testing package(s) --------------------------"
+	@for PV in $(PVS); do make 			\
+			BUILD_PY_VER=$${PV} 		\
+			TESTPREFIX="0_"  			\
+			ORGNAME="O4I"    			\
+			ORGPREFIX="o4i_" 			\
+			STAGE="testing"  			\
+	build; done
+
+o4i_test_noprefix: header
+	@echo "---------- building O4I testing package(s) --------------------------"
+	@for PV in $(PVS); do make 			\
+			BUILD_PY_VER=$${PV} 		\
+			TESTPREFIX=""    			\
+			ORGNAME="O4I"    			\
+			ORGPREFIX="o4i_" 			\
+			STAGE="testing"  			\
+	build; done
+	
+
 dfn: header
 	@echo "---------- building DFN package(s) ----------------------------------"
 	@for PV in $(PVS); do make 			\
@@ -224,15 +285,6 @@ dfn: header
 			STAGE="release"  			\
 	build; done
 
-mpimsp_test: header
-	@echo "---------- building MPIMSP testing package(s) -----------------------"
-	@for PV in $(PVS); do make 			\
-			BUILD_PY_VER=$${PV} 		\
-			TESTPREFIX="0_"	 			\
-			ORGNAME="MPIMSP" 			\
-			ORGPREFIX=""     			\
-			STAGE="testing"  			\
-	build; done
 
 dfn_test: header
 	@echo "---------- building DFN testing package(s) --------------------------"
@@ -281,6 +333,10 @@ help: header
 	@echo "	download"
 	@echo "	mpimsp"
 	@echo "	mpimsp_test"
+	@echo "	o4i"
+	@echo "	o4i_test"
+	@echo "	o4i_test_0"
+	@echo "	o4i_test_noprefix"	
 	@echo "	dfn"
 	@echo "	dfn_test"
 	@echo "	dfn_test_0"
@@ -417,8 +473,8 @@ build: pkgdownload clean copy_from_src
 	cd $(CURDIR)
 
 
-all_test:  header mpimsp_test dfn_test dfn_test_0
+all_test:  header mpimsp_test o4i_test dfn_test dfn_test_0
 
-all_prod : header mpimsp dfn
+all_prod : header mpimsp o4i dfn
 
-all : header mpimsp dfn mpimsp_test dfn_test dfn_test_0
+all : header download mpimsp o4i dfn

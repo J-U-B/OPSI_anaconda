@@ -2,7 +2,7 @@
 ; setup.opsiscript ANACONDA
 ; Installer-Typ: NSIS
 ; 
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-28 13:43:50 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-10-23 11:42:12 +0200
 ;======================================================================
 
 ;======================================================================
@@ -122,6 +122,11 @@ else
 			include_insert "%ScriptPath%\custom\" + $CustomPostInstall$
 			ShowBitmap $Img_Install$ $ProductName$
 		endif
+	endif
+	
+	if ($pr_SkipUpdate$ = "true")
+		Message "Skipping update after setup by property"
+		noUpdateScript
 	endif
 	
 	;=== measure installation time

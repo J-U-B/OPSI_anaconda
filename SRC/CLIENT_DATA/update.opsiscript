@@ -1,7 +1,7 @@
 ;======================================================================
 ; update.opsiscript ANACONDA
 ; 
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-26 12:24:16 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-10-24 16:36:56 +0200
 ;======================================================================
 
 ;======================================================================
@@ -22,6 +22,11 @@ StayOnTop=false
 ;======================================================================
 include_insert "%ScriptPath%\product_variables.opsiinc"
 
+if (not ($State$ = "installed")) AND ($ActionRequest$ = "update")
+	logError "Can't perform update for " + $ProductName$ + " (" + $FullProductId$ + ") - product is not installed."
+	isFatalError
+endif
+
 if FileExists("%ScriptPath%\add_packages.opsiinc")
 	include_append "%ScriptPath%\add_packages.opsiinc"
 	set $Has_AddPackages$ = "true"
@@ -32,9 +37,9 @@ endif
 
 
 
-if ($pr_SkipUpdate$ = "true")
-	Message "Update skipped by property"
-else
+;if ($pr_SkipUpdate$ = "true")
+;	Message "Update skipped by property"
+;else
 	if not (FileExists($ActivateBat$))
 		logError "Can't find " + $ActivateBat$
 		isFatalError "activate.bat not found"
@@ -49,7 +54,7 @@ else
 		comment  "Elapsed time after adding packages: " + $TimeDiff$ + " seconds"
 	endif
 
-	ShowBitmap $Img_Update$ $ProductName$
+	ShowBitmap $Img_Prepare$ $ProductName$
 
 	set $CondaOpts$ = ""
 	if ($pr_VerboseUpdate$ = "true")
@@ -58,9 +63,63 @@ else
 	if ($pr_DryUpdate$ = "true")
 		set $CondaOpts$ = $CondaOpts$ + " --dry-run"
 	endif
+	
+	;=== get current anaconda version (BEFORE update)
+	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_get_anaconda_version')
+	set $ExitCode$ = getLastExitCode
+	if ($ExitCode$ = "0")
+		set $Str$=takeString("-1",$ResultList$)
+		if not ($Str$ = "")
+			set $ResultList$ = splitString($Str$, "=")
+			set $Ver_anaconda$ = takeString("1", $ResultList$)
+			set $Ver_python$   = takeString("2", $ResultList$)
+			set $Ver_pre$      = "Anaconda: [" + $Ver_anaconda$ + "], Python: [" + $Ver_python$ + "]"
+		else
+			set $Ver_pre$      = "Anaconda: [???], Python: [???]"
+		endif
+	else
+		LogWarning("Can't detect Anaconda version in shell!)
+		set $Ver_pre$          = "Anaconda: [???], Python: [???]"
+	endif	
+	
+	;=== run upgrade?
+	if ($pr_ReleaseUpgrade$ = "True")
+		ShowBitmap $Img_Upgrade$ $ProductName$
+		Message $ProductName$ + " " + $Version$+ " (" + $sw_arch$ + " bit) - performing UPGRADE"
+		setLogLevel = 7
+		set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_conda_upgrade')
+		setlogLevel = $LogLevelDefault$
+		set $ExitCode$ = getLastExitCode
+		comment "Upgrade returned exit code " + $ExitCode$
+		set $TimeDiff$ = getDiffTimeSec
+		comment  "Elapsed upgrade time: " + $TimeDiff$ + " seconds"	
+		
+		;=== get current anaconda version (AFTER UPGRADE)
+		set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_get_anaconda_version')
+		set $ExitCode$ = getLastExitCode
+		if ($ExitCode$ = "0")
+			set $Str$=takeString("-1",$ResultList$)
+			if not ($Str$ = "")
+				set $ResultList$ = splitString($Str$, "=")
+				set $Ver_anaconda$ = takeString("1", $ResultList$)
+				set $Ver_python$   = takeString("2", $ResultList$)
+				set $Ver_post$     = "Anaconda: [" + $Ver_anaconda$ + "], Python: [" + $Ver_python$ + "]"
+			else
+				set $Ver_post$     = "Anaconda: [???], Python: [???]"
+			endif
+		else
+			LogWarning("Can't detect Anaconda version in shell!)
+			set $Ver_post$         = "Anaconda: [???], Python: [???]"
+		endif
+		comment "Version BEFORE UPGRADE: " + $Ver_pre$
+		comment "Version AFTER UPGRADE : " + $Ver_post$		
+		set $Ver_pre$ = $Ver_post$
+	endif
+	
 
 	;=== run update
-	Message "Updating " + $ProductName$ + " " + $Version$+ " (" + $sw_arch$ + " bit)"
+	ShowBitmap $Img_Update$ $ProductName$
+	Message $ProductName$ + " " + $Version$+ " (" + $sw_arch$ + " bit) - performing update"
 	setLogLevel = 7
 	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_conda_update')
 	setlogLevel = $LogLevelDefault$
@@ -78,6 +137,27 @@ else
 	comment "Conda clean returned exit code " + $ExitCode$
 	set $TimeDiff$ = getDiffTimeSec
 	comment  "Elapsed time after cleanup: " + $TimeDiff$ + " seconds"
+	
+	;=== get current anaconda version (AFTER update)
+	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_get_anaconda_version')
+	set $ExitCode$ = getLastExitCode
+	if ($ExitCode$ = "0")
+		set $Str$=takeString("-1",$ResultList$)
+		if not ($Str$ = "")
+			set $ResultList$ = splitString($Str$, "=")
+			set $Ver_anaconda$ = takeString("1", $ResultList$)
+			set $Ver_python$   = takeString("2", $ResultList$)
+			set $Ver_post$     = "Anaconda: [" + $Ver_anaconda$ + "], Python: [" + $Ver_python$ + "]"
+		else
+			set $Ver_post$     = "Anaconda: [???], Python: [???]"
+		endif
+	else
+		LogWarning("Can't detect Anaconda version in shell!)
+		set $Ver_post$         = "Anaconda: [???], Python: [???]"
+	endif
+	
+	comment "Version BEFORE UPDATE: " + $Ver_pre$
+	comment "Version AFTER UPDATE : " + $Ver_post$
 
 	;=== fix for update (rights inheritance):
 	if ($pr_SkipFixRights$ = "false")
@@ -94,7 +174,13 @@ else
 	;=== finally measure installation time
 	set $TimeDiff$ = getDiffTimeSec
 	Message  "Total update time: " + $TimeDiff$ + " seconds"
-endif
+;endif
+
+;=====================================================================
+[ShellInAnIcon_conda_upgrade]
+;=====================================================================
+"$ActivateBat$" "$InstallDir$." && $CondaUpgradeCmd$ $CondaOpts$
+exit %ERRORLEVEL%
 
 ;=====================================================================
 [ShellInAnIcon_conda_update]
@@ -106,6 +192,12 @@ exit %ERRORLEVEL%
 [ShellInAnIcon_conda_clean]
 ;=====================================================================
 "$ActivateBat$" "$InstallDir$." && $CondaCleanCmd$ $CondaOpts$
+exit %ERRORLEVEL%
+
+;=====================================================================
+[ShellInAnIcon_get_anaconda_version]
+;=====================================================================
+"$ActivateBat$" "$InstallDir$." && conda list --export anaconda | find "anaconda="
 exit %ERRORLEVEL%
 
 ;=====================================================================

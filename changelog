@@ -1,3 +1,22 @@
+anaconda 5.3.0-6:
+	* product update -> 5.3.0
+	* leave actionRequest unchanged if application is runnig and OPSI is not allowed to kill it
+	* changed behavior of preinst script if $TMP_DIR already exists
+	* changed update_skip behavior (allows action request update even if update after setup is prohibited)
+	* version information for Anaconda upgrade/update in log
+	* check installation state before update; terminate with error if not installed
+	* new property: upgrade_release (try an inline release upgrade on update)
+	* completion of documentation (readme.md - properties)
+	* new: icon for upgrade
+	* support for building packages with o4i prefix
+	* Makefile: support for OPSI 4.1 (opsi-makepackage)
+	* fixes in preinst.in/postinst.in
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-10-26 08:23:53 +0200
+
+anaconda 5.2.0-5:
+	* Makefile fix for KEEPFILES
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-28 15:24:05 +0200
+	
 anaconda 5.2.0-4:
 	* new properties:
 		* required_mimimum_space - variable value for required disk space; see tooltip

@@ -1,6 +1,6 @@
 {{! ========================================================================== }}
 {{!  Anaconda 2/3 CONTROL                                                      }}
-{{!  J. Boettge <boettge@mpi-halle.mpg.de> 2018-06-28 13:55:53 +0200           }}
+{{!  J. Boettge <boettge@mpi-halle.mpg.de> 2018-10-24 14:51:11 +0200           }}
 {{! ========================================================================== }}
 [Package]
 version: {{O_PKG_VER}}
@@ -42,7 +42,7 @@ type: unicode
 name: install_architecture
 multivalue: False
 editable: False
-description: which architecture (32/64 bit) should be installed (64 bit currently experimental)
+description: which architecture (32/64 bit) should be installed
 values: ["32 bit", "64 bit", "sysnative"]
 default: ["sysnative"]
 {{/ifdef_64bit_only}}
@@ -92,13 +92,13 @@ default: ["setup"]
 [ProductProperty]
 type: bool
 name: update_dry_run
-description: Just pretend to updating anaconda and install additional packages.
+description: Just pretend to upgrade/update anaconda and install additional packages.
 default: False
 
 [ProductProperty]
 type: bool
 name: update_verbose
-description: Be more verbose on update
+description: Be more verbose on upgrade/update
 default: False
 
 [ProductProperty]
@@ -111,6 +111,12 @@ default: False
 type: bool
 name: update_rights_skip
 description: Skip repair of access rights during update to save time. (Not reccommended.)
+default: False
+
+[ProductProperty]
+type: bool
+name: upgrade_release
+description: Perform an inline release upgrade before update via conda (without previous uninstall)
 default: False
 
 [ProductProperty]

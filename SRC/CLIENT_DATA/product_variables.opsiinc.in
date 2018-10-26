@@ -1,7 +1,7 @@
 ;=====================================================================
 ; product specific variables ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-28 14:04:49 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-10-25 13:59:57 +0200
 ;=====================================================================
 
 include_insert "%ScriptPath%\variables.opsiinc"
@@ -11,6 +11,7 @@ Set $FullProductId$   	= getValue("id", $MAP$)
 Set $ProductName$     	= getValue("name", $MAP$)
 Set $Version$         	= getValue("ProductVersion", $MAP$)
 Set $ActionRequest$		= getValue("actionreuest", $MAP$)
+Set $State$				= getValue("installationstate", $MAP$)
 Set $SystemType$      	= GetSystemType
 Set $NTVersion$   		= GetMsVersionInfo
 
@@ -57,7 +58,7 @@ setlogLevel 				= $LogLevelDefault$
 ;-----------------------------------------------------------
 ;*** detect DFN package:
 ;-----------------------------------------------------------
-if strPos($FullProductId$, "dfn_") = "0"
+if (strPos($FullProductId$, "o4i_") = "0") AND (strPos($FullProductId$, "dfn_") = "0")
 	set $isDFN$ = "false"
 	set $StrippedProductId$ = $ProductId$
 else
@@ -80,6 +81,7 @@ Set $Img_Uninstall_Custom$	= "%ScriptPath%\images\" + $Img_Base$ + "_uninstall_c
 Set $Img_Prepare$			= "%ScriptPath%\images\" + $Img_Base$ + "_prepare.png"
 Set $Img_Plugins$			= "%ScriptPath%\images\" + $Img_Base$ + "_plugins.png"
 Set $Img_Update$			= "%ScriptPath%\images\" + $Img_Base$ + "_update.png"
+Set $Img_Upgrade$			= "%ScriptPath%\images\" + $Img_Base$ + "_upgrade.png"
 
 comment "preparing..."
 ShowBitmap $Img_Prepare$ $ProductName$
@@ -145,6 +147,7 @@ Set $pr_SkipUpdate$ 				= GetProductProperty("update_skip","False")
 Set $pr_SkipFixRights$ 				= GetProductProperty("update_rights_skip","False")
 Set $pr_DryUpdate$ 					= GetProductProperty("update_dry_run","False")
 Set $pr_VerboseUpdate$ 				= GetProductProperty("update_verbose","False")
+Set $pr_ReleaseUpgrade$				= GetProductProperty("upgrade_release","False")
 Set $pr_MinimumSpace$				= Trim(GetProductProperty("required_mimimum_space","default"))
 
 Set $pr_AddPack_InstallMode$		= GetProductProperty("additional_packages_install_mode","none")
@@ -221,6 +224,7 @@ Set $Uninst_Opts$      	= "/S"
 
 
 Set $ActivateBat$		= $InstallDir$ + "Scripts\activate.bat"
+Set $CondaUpgradeCmd$	= "conda install -y -q anaconda python conda"
 Set $CondaUpdateCmd$	= "conda update -y -q --all"
 Set $CondaCleanCmd$		= "conda clean -y --all"
 Set $CondaInstallCmd$	= "conda install -y"

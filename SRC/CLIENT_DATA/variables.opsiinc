@@ -4,7 +4,7 @@
 ; This file contains all possible variables, excluding the opsi-system
 ; variables, for the opsi-winst scripts in use.
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-28 14:05:09 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2018-10-24 16:33:49 +0200
 ;=====================================================================
 
 DefStringList $EXE$
@@ -21,6 +21,7 @@ DefVar $AppParameters$
 DefVar $AppTarget$
 DefVar $CheckBin$
 DefVar $CondaUpdateCmd$
+DefVar $CondaUpgradeCmd$
 DefVar $CondaCleanCmd$
 DefVar $CondaInstallCmd$
 DefVar $CondaOpts$
@@ -38,7 +39,8 @@ DefVar $Img_Uninstall$
 DefVar $Img_Uninstall_Custom$
 DefVar $Img_Prepare$
 DefVar $Img_Plugins$
-DefVar $Img_Update$	
+DefVar $Img_Update$
+DefVar $Img_Upgrade$
 DefVar $InstallBase$
 DefVar $InstallDir$
 DefVar $InstDir$
@@ -63,6 +65,8 @@ DefVar $RegProductID$
 DefVar $RegSearchOpts$
 DefVar $sArch$
 DefVar $SearchPattern$
+DefVar $State$
+DefVar $Str$
 DefVar $StrippedProductId$
 DefVar $sw_lang$
 DefVar $sw_arch$
@@ -79,6 +83,10 @@ DefVar $Uninst_Prg$
 DefVar $Uninst_Prg_Hidden$
 DefVar $Uninst_RegDir$
 DefVar $Version$
+DefVar $Ver_anaconda$
+DefVar $Ver_python$
+DefVar $Ver_pre$
+DefVar $Ver_post$
 
 ; Properties:
 DefVar $pr_DesktopLink_Navigator$
@@ -86,6 +94,7 @@ DefVar $pr_DesktopLink_Spyder$
 DefVar $pr_DesktopLink_Jupyter$
 DefVar $pr_DesktopLink_AnacondaPrompt$
 DefVar $pr_DryUpdate$
+DefVar $pr_ReleaseUpgrade$
 DefVar $pr_VerboseUpdate$
 DefVar $pr_SkipUpdate$
 DefVar $pr_SkipFixRights$

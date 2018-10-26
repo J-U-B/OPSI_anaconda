@@ -3,6 +3,7 @@
 ## ToC ##
 
 * [Paketinfo](#paketinfo)
+  * [Was ist Anaconda?](#anaconda-info)
 * [Paket erstellen](#paket_erstellen)
   * [Makefile und spec.json](#makefile_und_spec)
   * [pystache](#pystache)
@@ -11,6 +12,7 @@
   * [spec.json](#spec_json)
     * [32-Bit-Umgebung](#spec_32bit)
 * [Installation](#installation)
+  * [Properties](#properties)
 * [Allgemeines](#allgemeines)
   * [Aufbau des Paketes](#paketaufbau)
   * [Nomenklatur](#nomenklatur)
@@ -24,13 +26,27 @@
 
 <div id="paketinfo"></div>
 
-Diese OPSI-Paket fuer **Anaconda 2/3** wurde fuer das Repository des *DFN* und 
-des *Max-Planck-Instituts fuer Mikrostrukturphysik* erstellt.  
+Diese OPSI-Paket fuer **Anaconda 2/3** wurde fuer die Verwendung im *OPSI-4-Institutes*-Repository
+sowie des *Max-Planck-Instituts fuer Mikrostrukturphysik* erstellt.  
 Es wird versucht auf die Besonderheiten der jeweiligen Repositories einzugehen;
 entsprechend werden durch ein einfaches *Makefile* aus den Quellen verschiedene
 Pakete erstellt.  
 Grundsaetzlich werden <u>separate OPSI-Pakete</u> für **Anaconda2** und **Anaconda3**
 erstellt.
+
+<div id="anaconda-info"></div>
+
+###Was ist Anaconda?###
+
+Anaconda ist eine Freemium-Open-Source-Distribution für die Programmiersprachen 
+**Python** und **R**, die unter anderem die Entwicklungsumgebung **Spyder**, 
+den Kommandozeileninterpreter **IPython**, und ein webbasiertes Frontend für 
+**Jupyter** enthält.  
+Der Fokus liegt vor allem auf der Verarbeitung von großen Datenmengen, Vorhersageanalyse 
+und wissenschaftlichem Rechnen.  
+Das Ziel der Distribution ist die Vereinfachung
+von Paketmanagement und Softwareverteilung.  
+*([Wikipedia](https://de.wikipedia.org/wiki/Anaconda_(Python-Distribution))*
 
 
 <div id="paket_erstellen"></div>
@@ -153,6 +169,110 @@ Auf dem Depot-Server ist **wget** erforderlich.
 Das Gesamtvolumen der herunterzuladenden Dateien betraegt in der umfangreichsten
 Konfiguration ca. **1920 MByte** (Anaconada 2 und 3, 32/64 Bit)!
 
+
+<div id="properties"></div>
+
+## Properties ##
+
+Zur Steuerung der Installation des Paketes auf den Clients ist eine Reihe von 
+Properties vorgesehen. Einige hiervon sind eher generischer Natur, andere spezifisch 
+fuer die vorliegende Software.
+
+### generische Properties ###
+
+**<code>kill_running</code>** - Wird bei der Installation eine laufende Instanz
+definierter Programme  erkannt (<code>python.exe, pythonw.exe, Scripts\*.exe</code>
+im Zielverzeichnis), koennen diese durch das OPSI-Paket beendet werden.  
+Sollen ggf. laufende Programme nicht beendet werden, wird die Installation
+des Paketes zurueckgestellt und spaeter erneut versucht.  
+(*default: false*)
+
+**<code>install_architecture</code>** - Diese Option ist nur verfuegbar, wenn
+das Paket nicht ausschliesslich fuer 64-Bit-Umgebungen erstellt wurde (siehe 
+[32-Bit-Umgebung](#spec_32bit)) und legt fest, welche Architektur der Software
+installiert werden soll.  
+Zur Auswahl stehen: "32 bit", "64 bit", "sysnative".
+(*default: sysnative*)
+
+**<code>log_level</code>** - Es kann hier ein abweichender Log-Level fuer das
+Paket definiert werden. Fuer Test-Pakete ist der Default-Wert 7, fuer Produktiv-Pakete
+wurde 5 festgelegt.
+
+**<code>custom_post_install</code>** und **<code>custom_post_uninstall</code>** - Hier
+koennen Skripte hinterlegt werden, welche optional nach Abschluss der Installation
+bzw. Deinstallation ausgefuehrt werden sollen. Die Skripte muessen im Unterverzeichnis
+<code>custom</code> des Paketes auf dem Depot-Server liegen.
+(*default: none*)
+
+**<code>required_mimimum_space</code>** - Aufgrund der Komplexitaet des vorliegenden
+Paketes und der daraus entstehenden Setups laesst sich der erforderliche Platzbedarf
+auf dem Zielsystem nicht im Voraus exakt bestimmen. Mit dieser Variablen laesst
+sich die Angabe praezisieren.  
+Der Default-Wert betraegt 9000 (Megabyte). Es koennen hier neben absoluten
+auch relative Werte angegeben werden. Hierfuer der Wert mit einem Vorzeichen (+/-)
+zu versehen.  
+Bei Installation zusaetzlicher Pakete (<code>additional_packages</code>) ist
+der Wert ggf. zu erhoehen.  
+Es ist zu beruecksichtigen, dass fuer die Bemessung des Wertes nicht der Umfang
+des Setups nach der Installation relevant ist, sondern der Maximal-Bedarf
+waehrend der Installation. Dieser Wert kann deutlich hoeher ausfallen.
+
+
+### spezifische Properties ###
+
+**<code>additional_packages</code>** - Neben der Distribution koennen bei der
+Installation gleich weitere Pakete hinzugefuegt werden (z.B. <code>tensorflow</code>, 
+<code>django</code>, ...). Werden hier mehrere Pakete angegeben, erfolgt die 
+Trennung ueber Leerzeichen.  
+Gegebenenfalls ist eine Anpassung von <code>required_mimimum_space</code>
+erforderlich.  
+Fuer diese Funktion ist eine Verbindung zum Internet erforderlich.  
+
+**<code>additional_packages_install_mode</code>** - Fuer die unter <code>additional_packages</code>
+angegebenen Pakete laesst sich festlegen, wann die Installation erfolgen soll:
+waehrend des Setup-Skriptes, des Update-Skriptes ...oder gar nicht. (*default: setup*)
+
+**<code>upgrade_release</code>** - Das Update-Skript bietet die Moeglichkeit
+fuer die Anaconda-Distribution inline ein Release-Upgrade vorzunehmen. Das erspart
+unter Umstaenden die Notwendigkeit einer kompletten Neuinstallation bzw. ermoeglicht
+ein Distributions-Upgrade ohne Vorliegen einer neuen Version des OPSI-Paketes.  
+Hierbei werden jedoch die Versionsnummern in der Software-Verwaltung von Windows
+und auf dem Depot-Server aktualisiert. Das erfolgte Upgrade laesst sich hier
+nur anhand der Logs auf dem Depot-Server erkennen bzw. auf dem Client direkt
+(z.B. mit <code>conda list</code>). - Experimentell!  
+Fuer diese Funktion ist eine Verbindung zum Internet erforderlich.  
+(*default: false*)
+
+**<code>update_dry_run</code>** - Mit dieser Einstellung laesst sich den Logs
+auf dem Depot-Server entnehmen, was bei einer Installation zusaeztlicher Pakete 
+bzw. einem Upgrade/Update installiert werden <u>wuerde</u>.  
+(*default: false*)
+
+**<code>update_verbose</code>** - Hiermit liefert <code>conda</code> detailiertere Informationen.  
+(*default: false*)
+
+**<code>update_skip</code>** - Standardmaessig fuehrt OPSI bei Vorliegen eines
+Update-Skriptes dieses im Anschluss an die Installation aus. Hiermit laesst sich
+die Ausfuehrung unterbinden.  
+Unabhaengig von der hier vorgenommenen Einstellung wird der Action-Request *Update*
+jedoch ausgefuehrt.  
+Fuer die Installation von Updates ist eine Verbindung zum Internet erforderlich.  
+(*default: false*)
+
+**<code>update_rights_skip</code>** - Bei der Installation von zusaetzlichen 
+Paketen bzw. Updates kann es dazu kommen, dass Berechtigungen fuer Dateien
+falsch gesetzt werden. Diese Einstellung erlaubt das Ueberspringen
+der Reparatur von Zugriffsrechten waehrend des Updates um Zeit zu sparen. - Nicht empfohlen!  
+(*default: false*)
+
+
+
+
+**<code>link_desktop_Anaconda_Navigator</code>**,  
+**<code>link_desktop_Spyder</code>**,  
+**<code>link_desktop_Jupyter_Notebook</code>**,  
+**<code>link_desktop_Anaconda_Prompt</code>** - optional kann fuer die angegebenen
+Programme jeweils eine Verknuepung auf dem Desktop angelegt werden. (*default: false*)
 
 
 <div id="allgemeines"></div>
@@ -302,7 +422,18 @@ Fuer die Nutzung wird das *.NET Framework ab v3.5*  benoetigt.
 
 ## Anmerkungen/ToDo ##
 
-* Überarbeitung readme.md
+### Unterschiede zwischen Neuinstallation (5.3.0) und Upgrade (5.2.0 -> 5.3.0)
+
+Mit *<code>upgrade_release</code>* laesst sich eine bestehende Installation
+inline via <code>conda</code> upgraden. Dabei sind kleinere Abweichungen zu 
+einer vollstaendigen Installation der neueren Distribution zu beobachten.
+
+* Nach der Neuinstallation ist das Paket <code>bokeh</code> in Version 1.0.0
+vorhanden, waehrend es nach einem Upgrade in Version 0.13.0 vorliegt. Das
+kann jedoch ueber *<code>additional_packages</code>* ausgeglichen werden.
+* Bei einer Neuinstallation fehlen die Pakete <code>conda-verify</code>,
+<code>future</code> und <code>typing</code>, die nach einem Upgrade von 5.2
+(noch) vorhanden sind.
 
 -----
-Jens Boettge <<boettge@mpi-halle.mpg.de>>, 2018-06-28 08:51:52 +0200
+Jens Boettge <<boettge@mpi-halle.mpg.de>>, 2018-10-25 09:13:01 +0200
