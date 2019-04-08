@@ -78,7 +78,7 @@ endif
 			set $Ver_pre$      = "Anaconda: [???], Python: [???]"
 		endif
 	else
-		LogWarning("Can't detect Anaconda version in shell!)
+		LogWarning "Can't detect Anaconda version in shell!"
 		set $Ver_pre$          = "Anaconda: [???], Python: [???]"
 	endif	
 	
@@ -108,7 +108,7 @@ endif
 				set $Ver_post$     = "Anaconda: [???], Python: [???]"
 			endif
 		else
-			LogWarning("Can't detect Anaconda version in shell!)
+			LogWarning "Can't detect Anaconda version in shell!"
 			set $Ver_post$         = "Anaconda: [???], Python: [???]"
 		endif
 		comment "Version BEFORE UPGRADE: " + $Ver_pre$
@@ -152,7 +152,7 @@ endif
 			set $Ver_post$     = "Anaconda: [???], Python: [???]"
 		endif
 	else
-		LogWarning("Can't detect Anaconda version in shell!)
+		LogWarning "Can't detect Anaconda version in shell!"
 		set $Ver_post$         = "Anaconda: [???], Python: [???]"
 	endif
 	
@@ -205,3 +205,4 @@ exit %ERRORLEVEL%
 ;=====================================================================
 icacls "$InstallDir$\*" /inheritance:e /T /C /L /Q
 exit %ERRORLEVEL%
+

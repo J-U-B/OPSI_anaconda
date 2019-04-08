@@ -1,3 +1,16 @@
+anaconda 2019.03-6:
+	* product update -> 2019.03
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2019-04-08 11:33:29 +0200
+
+anaconda 2018.12-7:
+	* fixed updater module
+	* fixed handling of empty list for additional packages
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2019-02-06 16:06:00 +0100
+
+anaconda 2018.12-6:
+	* product update -> 2018.12
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2019-01-02 09:04:43 +0100
+
 anaconda 5.3.1-6:
 	* product update -> 5.3.1
 	-- J. Boettge <boettge@mpi-halle.mpg.de>  2018-12-12 07:49:24 +0100

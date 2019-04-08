@@ -1,7 +1,7 @@
 ;=====================================================================
 ; product specific variables ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-10-25 13:59:57 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2019-02-06 16:03:55 +0100
 ;=====================================================================
 
 include_insert "%ScriptPath%\variables.opsiinc"
@@ -151,7 +151,8 @@ Set $pr_ReleaseUpgrade$				= GetProductProperty("upgrade_release","False")
 Set $pr_MinimumSpace$				= Trim(GetProductProperty("required_mimimum_space","default"))
 
 Set $pr_AddPack_InstallMode$		= GetProductProperty("additional_packages_install_mode","none")
-Set $pr_AddPackList$				= GetProductPropertyList("additional_packages","")
+Set $TempList$				= emptyList($TempList$)
+Set $pr_AddPackList$				= GetProductPropertyList("additional_packages",$TempList$)
 
 ;-----------------------------------------------------------
 ;*** properties: post install/uninstall

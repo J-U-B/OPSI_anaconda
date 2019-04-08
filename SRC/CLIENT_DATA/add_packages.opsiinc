@@ -1,7 +1,7 @@
 ;======================================================================
 ; Install additional Conda packages
 ; 
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-28 14:55:30 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2019-02-06 17:21:30 +0100
 ;======================================================================
 
 ;======================================================================
@@ -10,24 +10,27 @@
 if (count($pr_AddPackList$) = "0")
 	comment "No additional packages to install"
 else
-	ShowBitmap $Img_Plugins$ $ProductName$
-	Message "Installing additional packages"
-	
 	set $AddPacks$ = composeString($pr_AddPackList$, " ")
 	set $AddPacks$ = stringReplace($AddPacks$, "," , " ")
+	if ($AddPacks$ = "")
+		comment "The list of additional packages is empty"
+	else
+		ShowBitmap $Img_Plugins$ $ProductName$
+		Message "Installing additional packages"
 	
-	set $CondaOpts$ = ""
-	if ($pr_VerboseUpdate$ = "true")
-		set $CondaOpts$ = $CondaOpts$ + " -v"
+		set $CondaOpts$ = ""
+		if ($pr_VerboseUpdate$ = "true")
+			set $CondaOpts$ = $CondaOpts$ + " -v"
+		endif
+		if ($pr_DryUpdate$ = "true")
+			set $CondaOpts$ = $CondaOpts$ + " --dry-run"
+		endif
+		setLogLevel = 7
+		set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_conda_install')
+		setlogLevel = $LogLevelDefault$
+		set $ExitCode$ = getLastExitCode
+		comment "Conda install returned exit code " + $ExitCode$
 	endif
-	if ($pr_DryUpdate$ = "true")
-		set $CondaOpts$ = $CondaOpts$ + " --dry-run"
-	endif
-	setLogLevel = 7
-	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_conda_install')
-	setlogLevel = $LogLevelDefault$
-	set $ExitCode$ = getLastExitCode
-	comment "Conda install returned exit code " + $ExitCode$
 endif
 
 
