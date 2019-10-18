@@ -1,7 +1,7 @@
 ;=====================================================================
 ; delsub.opsiinc ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-06-26 13:32:33 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2019-10-18 13:23:13 +0200
 ;=====================================================================
 
 
@@ -44,14 +44,17 @@ if not ( count ($ResultList$) = "0" )
 		endif
 	endif	
 	
+	;=== update productOnClient information on depot server
+	Message "Updating status information on depot"
+	set $result$ = removeProductVerOnClientStatus($ProductFilter$, $ProductVersionFilter$)
+
 	;=== measure time
 	set $TimeDiff$ = getDiffTimeSec
 	Message  "Removal time: " + $TimeDiff$ + " seconds"	
 	
 else
 	comment "Empty result list while searching for " + $ProductName$ + " in registry - does not seem to be installed"
-endif	
-
+endif
 
 
 
@@ -93,6 +96,12 @@ else
 		Sub_Uninstall
 	else
 		logError "Uninstaller does not exist!"
+		comment "Cleaning up orphaned registry entry " + $Uninst_ID$ + " (" + $Uninst_Arch$ + ")"
+		if $Uninst_Arch$ = "x64"
+			Registry_DeleteUninstKey /64Bit
+		else
+			Registry_DeleteUninstKey /32Bit
+		endif
 	endif
 endif
 
@@ -179,4 +188,7 @@ else
 endif
 
 
-
+;======================================================================
+[Registry_DeleteUninstKey]
+;======================================================================
+DeleteKey $RegKey$

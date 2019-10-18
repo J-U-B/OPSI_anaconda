@@ -1,3 +1,10 @@
+anaconda 2019.10-8:
+	* product update -> 2019.10
+	* added helpers.opsifunc
+	* set status for foreign product anacondaX/dfn_anacondaX/o4i_anacondaX
+	* delete orphaned uninstall keys
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2019-10-18 13:23:56 +0200
+
 anaconda 2019.03-7:
 	* product update -> 2019.03
 	-- J. Boettge <boettge@mpi-halle.mpg.de>  2019-04-08 11:33:29 +0200

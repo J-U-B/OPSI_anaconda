@@ -1,7 +1,7 @@
 ;=====================================================================
 ; product specific variables ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2019-02-06 16:03:55 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2019-10-18 12:36:19 +0200
 ;=====================================================================
 
 include_insert "%ScriptPath%\variables.opsiinc"
@@ -19,6 +19,11 @@ Set $NTVersion$   		= GetMsVersionInfo
 ;*** basic requirements
 ;-----------------------------------------------------------
 requiredWinstVersion >= "4.11.6"
+
+;-----------------------------------------------------------
+;*** helper functions
+;-----------------------------------------------------------
+importlib "helpers.opsifunc"
 
 if CompareDotSeparatedNumbers($NTVersion$, "<", "6.1")
 	LogError "OS is not Windows 7 or above"
@@ -181,6 +186,12 @@ set $Kill_Running$ 			= GetProductProperty("kill_running", "False")
 Set $RegPathUninstall64$ 	= "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
 Set $RegPathUninstall32$ 	= "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
 
+;-------------------------------------------------------
+; filter for opsiServiceCall productOnClient_getObjects:
+;-------------------------------------------------------
+set $ProductFilter$	= "*" + $StrippedProductId$
+set $ProductVersionFilter$ = "*"
+
 ;-----------------------------------------------------------
 ;*** specific settings
 ;-----------------------------------------------------------
@@ -212,7 +223,7 @@ Set $AppTarget$			= '"' + $InstallDir$ + 'pythonw.exe"'
 Set $AppParameters$		= '-q "' + $InstallDir$ + 'cwp.py" "' + $InstallDir$ + '." "' +  $InstallDir$ + 'pythonw.exe" "' + $InstallDir$ + 'Scripts\anaconda-navigator-script.py"'
 
 
-Set $SearchPattern$ 	= "("+$ProductName$
+Set $SearchPattern$ 	= $ProductName$
 Set $Uninst_ID_std$	   	= $ProductName$
 Set $Uninst_Prg$       	= "Uninstall-"+ $StrippedProductId$ + ".exe"
 Set $Uninst_Prg_Hidden$ = "Un_A.exe"
