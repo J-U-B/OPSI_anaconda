@@ -1,7 +1,7 @@
 {  
 	"_": "=== OPSI package variables ===",
-	"O_PKG_VER"         : "8",
-	"O_SOFTWARE_VER"    : "2019.10",
+	"O_PKG_VER"         : "9",
+	"O_SOFTWARE_VER"    : "2020.02",
 	"O_SOFTWARE"        : "Anaconda",
 	"O_RELEASE_DATE"    : "{{M_TODAY}}",
 	"O_INST_LOG"        : "/tmp/{{M_ORGPREFIX}}anaconda__opsi_package_install.log",
@@ -13,6 +13,7 @@
 	"ORGNAME"           : "{{M_ORGNAME}}",
 	
 	"PY_VER"            : "{{M_PY_VER}}",
+	"DOWNLOADER"		: "{{M_DOWNLOADER}}",
 
 	"_":"=== conditions ===",
 	"ifdef_64bit_only"              :false,

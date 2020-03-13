@@ -1,12 +1,21 @@
 ############################################################
 # OPSI package Makefile (ANACONDA)
-# Version: 2.4.2
+# Version: 2.5.0
 # Jens Boettge <boettge@mpi-halle.mpg.de>
-# 2019-10-18 08:34:06 +0200
+# 2020-03-13 11:58:13 +0100
 ############################################################
 
 .PHONY: header clean mpimsp mpimsp_test o4i o4i_test dfn dfn_test all_test all_prod all help download dummy_build
 .DEFAULT_GOAL := help
+
+### defaults:
+DEFAULT_SPEC = spec.json
+DEFAULT_ALLINC = false
+DEFAULT_KEEPFILES = false
+DEFAULT_ARCHIVEFORMAT = cpio
+DEFAULT_PYVER = 3
+#...vaild values: 2 | 3 | 2,3 | both
+DEFAULT_DOWNLOADER = curl
 
 PWD = ${CURDIR}
 BUILD_DIR = BUILD
@@ -25,7 +34,7 @@ $(info * OPSI_BUILDER = $(OPSI_BUILDER))
 
 
 ### spec file:
-SPEC ?= spec.json
+SPEC ?= $(DEFAULT_SPEC)
 ifeq ($(shell test -f $(SPEC) && echo OK),OK)
     # $(info [INFO] spec file found: $(SPEC))
 else
@@ -34,7 +43,7 @@ endif
 
 
 ### Which Python flavour 2, 3 or both
-PYVER ?= both
+PYVER ?= $(DEFAULT_PYVER)
 PYTHON_VERSIONS:="[2] [3] [2,3] [3,2] [both]"
 PKGX := $(firstword $(PYVER))
 PKGY := $(shell echo $(PKGX) | tr A-Z a-z)
@@ -115,7 +124,7 @@ else
 endif
 
 ### build "batteries included' package?
-ALLINC ?= false
+ALLINC ?= $(DEFAULT_ALLINC)
 ALLINC_SEL := "[true] [false]"
 AFX := $(firstword $(ALLINC))
 AFY := $(shell echo $(AFX) | tr A-Z a-z)
@@ -133,7 +142,7 @@ else
 endif
 
 ### Keep all files in files/ directory?
-KEEPFILES ?= false
+KEEPFILES ?= $(DEFAULT_KEEPFILES)
 KEEPFILES_SEL := "[true] [false]"
 KFX := $(firstword $(KEEPFILES))
 override KFX := $(shell echo $(KFX) | tr A-Z a-z)
@@ -144,15 +153,26 @@ else
 	override KEEPFILES := $(shell echo $(KFX) | tr -d '[]')
 endif
 
-ARCHIVE_FORMAT ?= cpio
+ARCHIVE_FORMAT ?= $(DEFAULT_ARCHIVEFORMAT)
 ARCHIVE_TYPES :="[cpio] [tar]"
-AFX := $(firstword $(ARCHIVE_FORMAT))
-AFY := $(shell echo $(AFX) | tr A-Z a-z)
+FFX := $(firstword $(ARCHIVE_FORMAT))
+FFY := $(shell echo $(FFX) | tr A-Z a-z)
 
-ifeq (,$(findstring [$(AFY)],$(ARCHIVE_TYPES)))
-	BUILD_FORMAT = cpio
+ifeq (,$(findstring [$(FFY)],$(ARCHIVE_TYPES)))
+	BUILD_FORMAT = $(DEFAULT_ARCHIVEFORMAT)
 else
-	BUILD_FORMAT = $(AFY)
+	BUILD_FORMAT = $(FFY)
+endif
+
+DOWNLOADER ?= $(DEFAULT_DOWNLOADER)
+DOWNLOADER_VALID :="[curl] [wget]"
+override DFX := $(firstword $(DOWNLOADER))
+override DFY := $(shell echo $(DFX) | tr A-Z a-z)
+
+ifeq (,$(findstring [$(DFY)],$(DOWNLOADER_VALID)))
+	override DOWNLOADER = $(DEFAULT_DOWNLOADER)
+else
+	override DOWNLOADER = $(DFY)
 endif
 
 
@@ -167,12 +187,13 @@ var_test:
 	@echo "* SPEC file             : [$(SPEC)]"
 	@echo "* Batteries included    : [default: $(ALLINC)] --> [$(ALLINCLUSIVE)]"
 	@echo "* Python version(s)     : [default: $(PYVER)] --> [$(PKGX)] --> [$(PKGY)] --> [$(PKGZ)] --> [$(PY_VER)]"
-	@echo "		* BUILD_PY_VER = $(BUILD_PY_VER)"
-	@echo "		* PVS = $(PVS)"
+	@echo "  * BUILD_PY_VER = $(BUILD_PY_VER)"
+	@echo "  * PVS          = $(PVS)"
 	@echo "* 64 bit only?          : [$(SW_ONLY64)]"
 	@echo "* Custom Name           : [$(CUSTOMNAME)]"
 	@#echo "* OPSI Archive Types    : [$(ARCHIVE_TYPES)]"
 	@echo "* OPSI Archive Format   : [default: $(ARCHIVE_FORMAT)] --> $(BUILD_FORMAT)"
+	@echo "* Downloader            : [default: $(DEFAULT_DOWNLOADER)] --> $(DOWNLOADER)"
 	@echo "* Templates OPSI        : [$(FILES_OPSI_IN)]"
 	@echo "* Templates CLIENT_DATA : [$(FILES_IN)]"
 	@echo "* Files Mask            : [$(FILES_MASK)]"
@@ -348,16 +369,19 @@ help: header
 	@echo "	clean_packages"
 	@echo ""
 	@echo "Options:"
-	@echo "	SPEC=<filename>                 (default: spec.json)"
+	@echo "	SPEC=<filename>                 (default: $(DEFAULT_SPEC))"
 	@echo "			Use the given alternative spec file."
-	@echo "	PYVER=<2|3|2,3|both>            (default: both)"
+	@echo "	PYVER=<2|3|2,3|both>            (default: $(DEFAULT_PYVER))"
 	@echo "			...build OPSI package for Python version 2 and/or 3"
-	@echo "	ALLINC=[true|false]             (default: false)"
+	@echo "	ALLINC=[true|false]             (default: $(DEFAULT_ALLINC))"
 	@echo "			Include software in OPSI package?"
-	@echo "	KEEPFILES=[true|false]          (default: false)"
+	@echo "	KEEPFILES=[true|false]          (default: $(DEFAULT_KEEPFILES))"
 	@echo "			Keep really all previous files from files/?"
 	@echo "			If false only files matching this package version are kept."
-	@echo "	ARCHIVE_FORMAT=[cpio|tar]       (default: cpio)"
+	@echo "	ARCHIVE_FORMAT=[cpio|tar]       (default: $(DEFAULT_ARCHIVEFORMAT))"
+	@echo "	DOWNLOADER=[curl|wget]          (default: $(DEFAULT_DOWNLOADER))"
+	@echo "			Prefer to use the given download program for retieving the software"
+	@echo "			(Try the other one if the preferred tool could not be found.)"
 	@echo ""
 
 build_dirs:
@@ -426,6 +450,7 @@ build_json:
 	                         \"M_PY_VER\"     : \"$(BUILD_PY_VER)\",  \
 	                         \"M_KEEPFILES\"  : \"$(KEEPFILES)\",     \
 	                         \"M_ALLINC\"     : \"$(ALLINCLUSIVE)\",  \
+	                         \"M_DOWNLOADER\" : \"$(DOWNLOADER)\",    \
 	                         \"M_TESTING\"    : \"$(TESTING)\"        }" > $(BUILD_JSON)
 
 pkgdownload: build_json
