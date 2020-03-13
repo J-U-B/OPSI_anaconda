@@ -4,7 +4,8 @@ anaconda 2020.02-9:
 	* product_downloader: modified detection of curl/wget
 	* select preferred downloder via variable (for make)
 	* do not build anaconda2 by default (last release is 2019.10)
-	-- J. Boettge <boettge@mpi-halle.mpg.de>  2020-03-13 12:43:29 +0100
+	* ORGNAME for dfn_ packages changed to O4I
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2020-03-13 13:17:31 +0100
 
 anaconda 2019.10-8:
 	* product update -> 2019.10

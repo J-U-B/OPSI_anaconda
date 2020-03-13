@@ -301,7 +301,7 @@ dfn: header
 	@for PV in $(PVS); do make 			\
 			BUILD_PY_VER=$${PV} 		\
 			TESTPREFIX=""    			\
-			ORGNAME="DFN"    			\
+			ORGNAME="O4I"    			\
 			ORGPREFIX="dfn_" 			\
 			STAGE="release"  			\
 	build; done
@@ -312,7 +312,7 @@ dfn_test: header
 	@for PV in $(PVS); do make 			\
 			BUILD_PY_VER=$${PV} 		\
 			TESTPREFIX="test_"  		\
-			ORGNAME="DFN"    			\
+			ORGNAME="O4I"    			\
 			ORGPREFIX="dfn_" 			\
 			STAGE="testing"  			\
 	build; done
@@ -322,7 +322,7 @@ dfn_test_0: header
 	@for PV in $(PVS); do make 			\
 			BUILD_PY_VER=$${PV} 		\
 			TESTPREFIX="0_"  			\
-			ORGNAME="DFN"    			\
+			ORGNAME="O4I"    			\
 			ORGPREFIX="dfn_" 			\
 			STAGE="testing"  			\
 	build; done
@@ -332,7 +332,7 @@ dfn_test_noprefix: header
 	@for PV in $(PVS); do make 			\
 			BUILD_PY_VER=$${PV} 		\
 			TESTPREFIX=""    			\
-			ORGNAME="DFN"    			\
+			ORGNAME="O4I"    			\
 			ORGPREFIX="dfn_" 			\
 			STAGE="testing"  			\
 	build; done
