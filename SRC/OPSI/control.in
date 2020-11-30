@@ -1,6 +1,6 @@
 {{! ========================================================================== }}
-{{!  Anaconda 2/3 CONTROL                                                      }}
-{{!  J. Boettge <boettge@mpi-halle.mpg.de> 2018-10-24 14:51:11 +0200           }}
+{{!  Anaconda CONTROL                                                          }}
+{{!  J. Boettge <boettge@mpi-halle.mpg.de> 2020-11-30 00:51:45 +0100           }}
 {{! ========================================================================== }}
 [Package]
 version: {{O_PKG_VER}}
@@ -10,14 +10,25 @@ incremental: False
 [Product]
 type: localboot
 id: {{TESTPREFIX}}{{ORGPREFIX}}anaconda{{PY_VER}}
-name: Anaconda{{PY_VER}}
+name: Anaconda{{PY_VER}} - Individual Edition
 description: The Most Popular Python Data Science Platform
  ___
- Homepage: https://www.anaconda.com
- Changelog: https://www.anaconda.com/blog/company-blog/
-advice: Maintainer: {{O_MAINTAINER}}
+ Maintainer: {{O_MAINTAINER}}
  Organization: {{ORGNAME}}
  Release date: {{O_RELEASE_DATE}}
+ ___
+ Homepage: {{O_SOFTWARE_WEBSITE}}
+ Changelog: {{O_SOFTWARE_CHANGES}}
+{{^ifdef_legacy}}
+advice:
+{{/ifdef_legacy}}
+{{#ifdef_legacy}}
+advice: Important note: This package is DEPRECATED! Use o4i_{{O_SOFTWARE}} instead!
+ (There is no need to set this package to uninstall. This will be done automatically.)
+{{/ifdef_legacy}}
+{{#ifdef_special_advice}}
+{{O_SPECIAL_ADVICE}}
+{{/ifdef_special_advice}}
 version: {{O_SOFTWARE_VER}}
 priority: 0
 licenseRequired: False
@@ -32,8 +43,15 @@ userLoginScript:
 
 [ProductProperty]
 type: bool
+name: local_installer_copy
+description: Use a temporary local copy of the installation package to avoid to avoid delays through the network.
+default: False
+
+[ProductProperty]
+type: bool
 name: kill_running
-description: kill running instance (for software on_demand)
+description: Kill running instance (for software on_demand)
+  Otherwise the installation of this package will be deferred.
 default: False
 
 {{^ifdef_64bit_only}}
@@ -162,5 +180,6 @@ default: ["default"]
 
 
 [Changelog]
-{{! The changelog is outsourced  to a separate file in the root of this project. }}
-{{! It will be included on building the OPSI package. }}
+{{! The changelog is outsourced to a separate file in the root of this project.  }}
+{{! Depending on the setting in the Makefile it will be included on building the }}
+{{! OPSI package or kept in a separate file in this directory. }}

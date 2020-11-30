@@ -1,11 +1,11 @@
 ############################################################
 # OPSI package Makefile (ANACONDA)
-# Version: 2.5.0
+# Version: 2.8
 # Jens Boettge <boettge@mpi-halle.mpg.de>
-# 2020-03-13 11:58:13 +0100
+# 2020-11-30 01:06:33 +0100
 ############################################################
 
-.PHONY: header clean mpimsp mpimsp_test o4i o4i_test dfn dfn_test all_test all_prod all help download dummy_build
+.PHONY: header clean mpimsp mpimsp_test o4i o4i_test dfn dfn_test all_test all_prod all help download pdf var_check dummy_build
 .DEFAULT_GOAL := help
 
 ### defaults:
@@ -13,9 +13,27 @@ DEFAULT_SPEC = spec.json
 DEFAULT_ALLINC = false
 DEFAULT_KEEPFILES = false
 DEFAULT_ARCHIVEFORMAT = cpio
+### to keep the changelog inside the control set CHANGELOG_TGT to an empty string
+### otherwise the given filename will be used:
+CHANGELOG_TGT = changelog.txt
+# CHANGELOG_TGT =
 DEFAULT_PYVER = 3
 #...vaild values: 2 | 3 | 2,3 | both
 DEFAULT_DOWNLOADER = curl
+
+#--- temporary for DFN - O4I transition ----------
+DEFAULT_LEGACY = false
+LEGACY ?= $(DEFAULT_LEGACY)
+LEGACY_SEL := "[true] [false]"
+LFX := $(firstword $(LEGACY))
+LFY := $(shell echo $(LFX) | tr A-Z a-z)
+LFZ := $(findstring [$(LFY)],$(LEGACY_SEL))
+ifeq (,$(LFZ))
+	IS_LEGACY := false
+else
+	IS_LEGACY := $(LFY)
+endif
+#-------------------------------------------------
 
 PWD = ${CURDIR}
 BUILD_DIR = BUILD
@@ -42,7 +60,7 @@ else
 endif
 
 
-### Which Python flavour 2, 3 or both
+### Which Python flavour 2, 3 or both (...or what's cominf next)
 PYVER ?= $(DEFAULT_PYVER)
 PYTHON_VERSIONS:="[2] [3] [2,3] [3,2] [both]"
 PKGX := $(firstword $(PYVER))
@@ -59,6 +77,8 @@ else
     $(info [INFO] Building packages for Anaconda $(PYVER))
 endif
 PVS=$(shell echo $(PY_VER) | sed 's/,/ /')
+#PY_VER := $(PYVER)
+#PVS = $(PYVER)
 
 SW_VER := $(shell grep '"O_SOFTWARE_VER"' $(SPEC)     	| sed -e 's/^.*\s*:\s*\"\(.*\)\".*$$/\1/' )
 SW_BUILD := $(shell grep '"O_PKG_VER"' $(SPEC)        	| sed -e 's/^.*\s*:\s*\"\(.*\)\".*$$/\1/' )
@@ -88,7 +108,7 @@ else
 endif
 
 
-PYSTACHE = ./SRC/SCRIPTS/pystache_opsi.py
+MUSTACHE = ./SRC/TOOLS/mustache.32
 BUILD_JSON = $(BUILD_DIR)/build.json
 CONTROL_IN = $(SRC_DIR)/OPSI/control.in
 CONTROL = $(BUILD_DIR)/OPSI/control
@@ -98,9 +118,10 @@ OPSI_FILES := control preinst postinst
 FILES_IN := $(basename $(shell (cd $(SRC_DIR)/CLIENT_DATA; ls *.in 2>/dev/null)))
 FILES_OPSI_IN := $(basename $(shell (cd $(SRC_DIR)/OPSI; ls *.in 2>/dev/null)))
 TODAY := $(shell date +"%Y-%m-%d")
+TMP_FILE := $(shell mktemp -u)
 
 ### spec file:
-SPEC ?= spec.json
+SPEC ?= $(DEFAULT_SPEC)
 ifeq ($(shell test -f $(SPEC) && echo OK),OK)
     $(info * spec file found: $(SPEC))
 else
@@ -179,14 +200,15 @@ endif
 leave_err:
 	exit 1
 
-var_test:
+var_check:
 	@echo "=================================================================="
 	@echo "* Software Name         : [$(SW_NAME)]"
 	@echo "* Software Version      : [$(SW_VER)]"
 	@echo "* Package Build         : [$(SW_BUILD)]"
 	@echo "* SPEC file             : [$(SPEC)]"
 	@echo "* Batteries included    : [default: $(ALLINC)] --> [$(ALLINCLUSIVE)]"
-	@echo "* Python version(s)     : [default: $(PYVER)] --> [$(PKGX)] --> [$(PKGY)] --> [$(PKGZ)] --> [$(PY_VER)]"
+#	@echo "* Python version(s)     : [default: $(PYVER)] --> [$(PKGX)] --> [$(PKGY)] --> [$(PKGZ)] --> [$(PY_VER)]"
+	@echo "* Python version(s)     : [default: $(PYVER)] --> [$(PY_VER)]"
 	@echo "  * BUILD_PY_VER = $(BUILD_PY_VER)"
 	@echo "  * PVS          = $(PVS)"
 	@echo "* 64 bit only?          : [$(SW_ONLY64)]"
@@ -199,6 +221,8 @@ var_test:
 	@echo "* Files Mask            : [$(FILES_MASK)]"
 	@echo "* Files expected        : [$(FILES_EXPECTED)]"
     @echo "* Keep files            : [$(KEEPFILES)]"
+	@echo "* Legacy build          : [$(IS_LEGACY)]"
+	@echo "* Changelog target      : [$(CHANGELOG_TGT)]"
 	@echo "=================================================================="
 	@echo "* Installer files in $(DL_DIR):"
 	@for F in `ls -1 $(DL_DIR)/$(FILES_MASK) | sed -re 's/.*\/(.*)$$/\1/' `; do echo "    $$F"; done 
@@ -213,13 +237,14 @@ dummy_build:
 	@echo "          Files Mask: $(FILES_MASK)"
 	@echo "          Files expected: $(FILES_EXPECTED)"
 
-header: var_test
+header: var_check
 	@echo "=================================================================="
 	@echo "                      Building OPSI package(s)"
 	@echo "=================================================================="
 
 fix_rights: header
 	@echo "---------- setting rights for PACKAGES folder --------------------"
+	chgrp opsiadmin .
 	chgrp -R opsiadmin $(PACKAGE_DIR)
 	chmod g+rx $(PACKAGE_DIR)
 	chmod g+r $(PACKAGE_DIR)/*
@@ -304,6 +329,7 @@ dfn: header
 			ORGNAME="O4I"    			\
 			ORGPREFIX="dfn_" 			\
 			STAGE="release"  			\
+			LEGACY="true"               \
 	build; done
 
 
@@ -315,6 +341,7 @@ dfn_test: header
 			ORGNAME="O4I"    			\
 			ORGPREFIX="dfn_" 			\
 			STAGE="testing"  			\
+			LEGACY="true"               \
 	build; done
 
 dfn_test_0: header
@@ -325,6 +352,7 @@ dfn_test_0: header
 			ORGNAME="O4I"    			\
 			ORGPREFIX="dfn_" 			\
 			STAGE="testing"  			\
+			LEGACY="true"               \
 	build; done
 
 dfn_test_noprefix: header
@@ -336,6 +364,33 @@ dfn_test_noprefix: header
 			ORGPREFIX="dfn_" 			\
 			STAGE="testing"  			\
 	build; done
+
+
+pdf:
+	@# requirements for ths script (under Debian/Ubuntu):
+	@#    pandoc
+	@#    texlive-latex-base
+	@#    texlive-fonts-recommended
+	@#    texlive-latex-recommended
+	@if [ -f "readme.md" ]; then \
+		if [ ! -e readme.pdf -o readme.pdf -ot readme.md ]; then \
+			echo "* Converting readme.md to readme.pdf"; \
+			pandoc "readme.md" \
+				--latex-engine=xelatex \
+				-f markdown \
+				-V linkcolor:blue \
+				-V geometry:a4paper \
+				-V geometry:margin=30mm \
+				-V mainfont="DejaVu Serif" \
+				-V monofont="DejaVu Sans Mono" \
+				-o "readme.pdf"; \
+		else \
+			echo "* readme.pdf seems to be up to date"; \
+		fi \
+	else \
+		echo "* Error: readme.md is missing!"; \
+	fi
+
 
 clean_packages: header
 	@echo "---------- cleaning packages, checksums and zsync ----------------"
@@ -365,8 +420,11 @@ help: header
 	@echo "	all_prod"
 	@echo "	all_test"
 	@echo "	fix_rights"
+	@echo "	var_check"
 	@echo "	clean"
 	@echo "	clean_packages"
+	@echo "	download              - download installation archive(s) from vendor"
+	@echo "	pdf                   - create PDF from readme.md (req. pandoc)"
 	@echo ""
 	@echo "Options:"
 	@echo "	SPEC=<filename>                 (default: $(DEFAULT_SPEC))"
@@ -440,50 +498,71 @@ build_json:
 	@if [ ! -f "$(SPEC)" ]; then echo "*Error* spec file not found: \"$(SPEC)\""; exit 1; fi
 	@if [ ! -d "$(BUILD_DIR)" ]; then mkdir -p "$(BUILD_DIR)"; fi
 	@$(if $(filter $(STAGE),testing), $(eval TESTING :="true"), $(eval TESTING := "false"))
+	@$(if $(filter $(ORGPREFIX),dfn_), $(eval LEGACY :="true"), $(eval LEGACY := "false"))
+	@echo "* Legacy build: $(LEGACY)"
 	@echo "* Creating $(BUILD_JSON)"
 	@rm -f $(BUILD_JSON)
-	$(PYSTACHE) $(SPEC)   "{ \"M_TODAY\"      : \"$(TODAY)\",         \
-	                         \"M_STAGE\"      : \"$(STAGE)\",         \
-	                         \"M_ORGNAME\"    : \"$(ORGNAME)\",       \
-	                         \"M_ORGPREFIX\"  : \"$(ORGPREFIX)\",     \
-	                         \"M_TESTPREFIX\" : \"$(TESTPREFIX)\",    \
-	                         \"M_PY_VER\"     : \"$(BUILD_PY_VER)\",  \
-	                         \"M_KEEPFILES\"  : \"$(KEEPFILES)\",     \
-	                         \"M_ALLINC\"     : \"$(ALLINCLUSIVE)\",  \
-	                         \"M_DOWNLOADER\" : \"$(DOWNLOADER)\",    \
-	                         \"M_TESTING\"    : \"$(TESTING)\"        }" > $(BUILD_JSON)
+	@echo "{\n\
+              \"M_TODAY\"      : \"$(TODAY)\",\n\
+              \"M_STAGE\"      : \"$(STAGE)\",\n\
+              \"M_ORGNAME\"    : \"$(ORGNAME)\",\n\
+              \"M_ORGPREFIX\"  : \"$(ORGPREFIX)\",\n\
+              \"M_TESTPREFIX\" : \"$(TESTPREFIX)\",\n\
+              \"M_PY_VER\"     : \"$(BUILD_PY_VER)\",\n\
+              \"M_KEEPFILES\"  : \"$(KEEPFILES)\",\n\
+              \"M_LEGACY\"     : \"$(LEGACY)\",\n\
+              \"M_ALLINC\"     : \"$(ALLINCLUSIVE)\",\n\
+              \"M_DOWNLOADER\" : \"$(DOWNLOADER)\",\n\
+              \"M_TESTING\"    : \"$(TESTING)\"\n}"      > $(TMP_FILE)
+	@cat  $(TMP_FILE)
+	@$(MUSTACHE) $(TMP_FILE) $(SPEC)	 > $(BUILD_JSON)
+	@rm -f $(TMP_FILE)
 
 pkgdownload: build_json
 	@echo "**Debug** [ALLINC=$(ALLINCLUSIVE)]  [ONLY_DOWNLOAD=$(ONLY_DOWNLOAD)]"
 	@if [ "$(ALLINCLUSIVE)" = "true" -o  $(ONLY_DOWNLOAD) = "true" ]; then \
 		rm -f $(DOWNLOAD_SH) ;\
-		$(PYSTACHE) $(DOWNLOAD_SH_IN) $(BUILD_JSON) > $(DOWNLOAD_SH) ;\
+		$(MUSTACHE) $(BUILD_JSON) $(DOWNLOAD_SH_IN) > $(DOWNLOAD_SH) ;\
 		chmod +x $(DOWNLOAD_SH) ;\
 		if [ ! -d "$(DL_DIR)" ]; then mkdir -p "$(DL_DIR)"; fi ;\
 		DEST_DIR=$(DL_DIR) $(DOWNLOAD_SH) ;\
 	fi
 
 	
-build: pkgdownload clean copy_from_src
+build: pkgdownload pdf clean copy_from_src
 	@make build_json
 	
 	for F in $(FILES_OPSI_IN); do \
 		echo "* Creating OPSI/$$F"; \
 		rm -f $(BUILD_DIR)/OPSI/$$F; \
-		${PYSTACHE} $(SRC_DIR)/OPSI/$$F.in $(BUILD_JSON) > $(BUILD_DIR)/OPSI/$$F; \
-	done	
-	
+		${MUSTACHE} $(BUILD_JSON) $(SRC_DIR)/OPSI/$$F.in > $(BUILD_DIR)/OPSI/$$F; \
+	done
+
+	for E in txt md pdf; do \
+		if [ -e readme.$$E ]; then \
+			echo "Copying additional file: readme.$$E"; \
+			cp -f readme.$$E $(BUILD_DIR)/OPSI/; \
+		fi; \
+	done
+
 	if [ -e $(BUILD_DIR)/OPSI/control -a -e changelog ]; then \
-		cat changelog >> $(BUILD_DIR)/OPSI/control; \
+		if [ -n "$(CHANGELOG_TGT)" ]; then \
+			echo "* Using separate CHANGELOG file."; \
+			echo "The logs were moved to $(CHANGELOG_TGT)" >> $(BUILD_DIR)/OPSI/control; \
+			cp -f changelog $(BUILD_DIR)/OPSI/$(CHANGELOG_TGT); \
+		else \
+			echo "* Including changelogs in CONTROL file."; \
+			cat changelog >> $(BUILD_DIR)/OPSI/control; \
+		fi; \
 	fi
-	
+
 	for F in $(FILES_IN); do \
 		echo "* Creating CLIENT_DATA/$$F"; \
 		rm -f $(BUILD_DIR)/CLIENT_DATA/$$F; \
-		${PYSTACHE} $(SRC_DIR)/CLIENT_DATA/$$F.in $(BUILD_JSON) > $(BUILD_DIR)/CLIENT_DATA/$$F; \
+		${MUSTACHE} $(BUILD_JSON) $(SRC_DIR)/CLIENT_DATA/$$F.in > $(BUILD_DIR)/CLIENT_DATA/$$F; \
 	done
 	chmod +x $(BUILD_DIR)/CLIENT_DATA/*.sh
-	
+
 	@echo "* OPSI Archive Format: $(BUILD_FORMAT)"
 	@echo "* Building OPSI package"
 	if [ -z $(CUSTOMNAME) ]; then \
@@ -498,7 +577,7 @@ build: pkgdownload clean copy_from_src
 	cd $(CURDIR)
 
 
-all_test:  header mpimsp_test o4i_test dfn_test dfn_test_0
+all_test:  header mpimsp_test o4i_test_0 dfn_test dfn_test_0
 
 all_prod : header mpimsp o4i dfn
 

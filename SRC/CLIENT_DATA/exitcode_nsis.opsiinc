@@ -4,7 +4,9 @@
 ;	https://forum.opsi.org/wiki/userspace:check_nullsoft-exitcode
 ;	http://nsis.sourceforge.net/Docs/AppendixD.html#errorlevels
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2017-07-05 13:11:25 +0200
+; Version: 1.1
+; Date   : 2020-11-29 23:04:00 +0100
+; Author :J. Boettge <boettge@mpi-halle.mpg.de>
 ;=====================================================================
 
 
@@ -16,7 +18,9 @@
 set $currentLogLevel$ = getLogLevel
 
 ;*** ExitCode des Installers abfragen
-set $ExitCode$ = getLastExitCode
+set $ExitCode$   = getLastExitCode
+set $ErrorMsg$   = ""
+set $FatalError$ = ""
  
 ;*** Loglevel anpassen
 setLogLevel = 4
@@ -32,22 +36,26 @@ Switch $ExitCode$
 	 
 	Case "1"
 		setLogLevel = 5
-		logError "ExitCode = " + $ExitCode$ + " Installation aborted by user (cancel button)"
-		isFatalError
+		set $ErrorMsg$ = "ExitCode = " + $ExitCode$ + " Installation aborted by user (cancel button)"
+		set $FatalError$ = "true"
 	EndCase
 	 
 	Case "2"
 		setLogLevel = 5
-		logError "ExitCode = " + $ExitCode$ + " Installation aborted by script"
-		isFatalError
+		set $ErrorMsg$ = "ExitCode = " + $ExitCode$ + " Installation aborted by script"
+		set $FatalError$ = "true"
 	EndCase
 	
 	DefaultCase
 		setLogLevel = 5
-		logError "ExitCode = " + $ExitCode$ + " Unknown error"
-		isFatalError	
+		set $ErrorMsg$ = "ExitCode = " + $ExitCode$ + " Unknown error"
+		set $FatalError$ = "true"
 	EndCase
 EndSwitch
+
+if ($FatalError$ = "true")
+	logError $ErrorMsg$
+endif
  
 ;***Loglevel anpassen
 setLogLevel = $currentLogLevel$

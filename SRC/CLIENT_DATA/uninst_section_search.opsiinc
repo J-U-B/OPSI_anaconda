@@ -1,6 +1,6 @@
 ;======================================================================
 ; unist_section_search.opsiinc
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-02-20 16:24:03 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2020-11-05 13:12:39 +0100
 ;======================================================================
 ; based on:
 ; https://opsi.wzb.eu/wiki/index.php/Uninstall-Registry_durchsuchen_und_Schlüssel_ermitteln
@@ -24,8 +24,12 @@ Set $ResultList$ = emptylist ($ResultList$)
 
 ;** reg query liefert alle Zeilen, in denen Searchpattern gefunden wird,
 ;** (auch z.B. DisplayName - nicht bei /k in reg query)
-Set $TempList$ =                           getOutStreamFromSection ("ExecWith_UninstSearch_registry_query_64 '%SystemRoot%\cmd64.exe' /C")
-Set $TempList$ = addListToList($TempList$, getOutStreamFromSection ("ExecWith_UninstSearch_registry_query_32 '%SystemRoot%\cmd64.exe' /C"))
+if ($SystemType$ = "64 Bit System") or ($SystemType$ = "x64")
+	Set $TempList$ =                           shellCall('reg query "' + $RegPathUninstall64$ + '" ' + $RegSearchOpts$ + ' | find "HKEY_"')
+	Set $TempList$ = addListToList($TempList$, shellCall('reg query "' + $RegPathUninstall32$ + '" ' + $RegSearchOpts$ + ' | find "HKEY_"'))
+else
+	Set $TempList$ =                           shellCall('reg query "' + $RegPathUninstall64$ + '" ' + $RegSearchOpts$ + ' | find "HKEY_"')
+endif
 
 ;** wir wollen aber nur die Zeilen haben, in denen der RegPath enthalten
 ;** ist, um z.B. eine MSI-ID zu erhalten
@@ -33,8 +37,8 @@ Set $TempList$ = addListToList($TempList$, getOutStreamFromSection ("ExecWith_Un
 ;** ... nicht erforderlich wg. Anpassung reg query
 
 if not ( count ($TempList$) = "0" )
-	; zusÃ¤tzliche Filterung, du ein anderes Paket auch auf den Suchbegriff 
-	; anspringen kÃ¶nnte
+	; zusaetzliche Filterung, du ein anderes Paket auch auf den Suchbegriff
+	; anspringen koennte
 	for %s% in $TempList$ do Sub_UninstSearch_filter_result
 endif
 ; Set $ResultList$ = $TempList$
@@ -79,18 +83,3 @@ if not (strPos($DisplayName$, $SearchPattern$)="0")
 ; if (strPos(lower($DisplayName$), lower($SearchPattern$))="1")
 	Set $ResultList$ = AddToList($ResultList$, $RegProductID$ + "|" + $Uninst_Arch$)
 endif
-
-
-;======================================================================
-[ExecWith_UninstSearch_registry_query_64]
-;======================================================================
-@echo off
-; reg query "$RegPathUninstall64$" /f "$SearchPattern$"
-reg query "$RegPathUninstall64$" $RegSearchOpts$ | find "HKEY_"
-
-;======================================================================
-[ExecWith_UninstSearch_registry_query_32]
-;======================================================================
-@echo off
-; reg query "$RegPathUninstall32$" /f "$SearchPattern$"
-reg query "$RegPathUninstall32$" $RegSearchOpts$ | find "HKEY_"

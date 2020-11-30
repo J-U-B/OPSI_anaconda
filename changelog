@@ -1,3 +1,21 @@
+anaconda 2020.11-10:
+	* product update -> 2020.11
+	* compatibility with opsi-winst 4.12.3.16 and above ensured: cmd64 replaced
+	* updated helpers.opsifunc to v1.7 (added: productExtUpdateOnClient, clearProductOnClientStatus)
+	* revised checkinstance.opsiinc (v1.3)
+	* new property: local_installer_copy - optional temporary local copy of the installation package
+	* replaced pystache by mustache (Go implementation from https://github.com/cbroglie/mustache.git
+	* build only Anaconda3; removed Anaconda2 support
+	* Makefile adjusted: 
+		* target for creating readme.pdf (req. pandoc)
+		* optional readme.[txt|md|pdf] in package
+	* control adjusted
+	* refreshed image set
+	* added code of conduct
+	* separate spec file for anaconda2 (end of life!)
+	* starting dfn->o4i transition: stage 1 (logWarning)
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2020-11-30 00:52:45 +0100
+
 anaconda 2020.02-9:
 	* product update -> 2020.02
 	* Makefile: handling of default values made more comfortable

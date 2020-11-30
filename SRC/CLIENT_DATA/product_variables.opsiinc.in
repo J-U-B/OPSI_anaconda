@@ -1,7 +1,7 @@
 ;=====================================================================
 ; product specific variables ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2019-10-18 12:36:19 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2020-11-29 23:12:52 +0100
 ;=====================================================================
 
 include_insert "%ScriptPath%\variables.opsiinc"
@@ -13,18 +13,23 @@ Set $Version$         	= getValue("ProductVersion", $MAP$)
 Set $ActionRequest$		= getValue("actionreuest", $MAP$)
 Set $State$				= getValue("installationstate", $MAP$)
 Set $SystemType$      	= GetSystemType
-Set $NTVersion$   		= GetMsVersionInfo
+Set $OS$                = GetOS
+Set $Stage$             = lower("{{STAGE}}")
 
 ;-----------------------------------------------------------
 ;*** basic requirements
 ;-----------------------------------------------------------
-requiredWinstVersion >= "4.11.6"
+requiredWinstVersion >= "4.12.0"
 
 ;-----------------------------------------------------------
-;*** helper functions
+;*** check OS
 ;-----------------------------------------------------------
-importlib "helpers.opsifunc"
+if not($OS$ = "Windows_NT")
+       logError "Installation aborted: wrong OS  — This package only supports Windows"
+       isFatalError
+endif
 
+Set $NTVersion$	= GetMsVersionInfo
 if CompareDotSeparatedNumbers($NTVersion$, "<", "6.1")
 	LogError "OS is not Windows 7 or above"
 	isFatalError
@@ -38,12 +43,18 @@ if not ($SystemType$ = "64 Bit System")
 endif
 
 ;-----------------------------------------------------------
+;*** helper functions
+;-----------------------------------------------------------
+importlib "helpers.opsifunc"
+
+;-----------------------------------------------------------
 ;*** get LogLevel from property
 Set $LogLevelDefault$ = GetProductProperty("log_level","default")
 ;-----------------------------------------------------------
 ;*** detect testing package:
-if (strPos($FullProductId$, "0_") = "0") and (strPos($FullProductId$, "test_") = "0")
+if (strPos($FullProductId$, "0_") = "0") and (strPos($FullProductId$, "test_") = "0") and (strPos($Stage$,"test") = "0")
 	; not a testing package
+	comment "INFO: RELEASE package detected"
 	set $ProductId$  	= $FullProductId$ 
 	set $Testing$ 		= "false"
 	if ($LogLevelDefault$ = "default")
@@ -51,42 +62,68 @@ if (strPos($FullProductId$, "0_") = "0") and (strPos($FullProductId$, "test_") =
 	endif
 else
 	; this is a testing package
-	comment "Prefix for testing package detected"
-	set $ProductId$  		= strPart($FullProductId$, calculate(strPos($FullProductId$,"_") + "+1"), strLength($FullProductId$))
+	comment "INFO: TESTING package detected"
+	if (strPos($FullProductId$, "0_") = "0") and (strPos($FullProductId$, "test_") = "0")
+		set $ProductId$	= $FullProductId$
+	else
+		set $ProductId$	= strPart($FullProductId$, calculate(strPos($FullProductId$,"_") + "+1"), strLength($FullProductId$))
+	endif
 	set $Testing$ 		= "true"
 	if ($LogLevelDefault$ = "default")
 		set $LogLevelDefault$  	= "{{DEFAULT_TESTING_LOGLEVEL}}"
 	endif
 endif
-setlogLevel 				= $LogLevelDefault$
+setlogLevel = $LogLevelDefault$
 
 ;-----------------------------------------------------------
-;*** detect DFN package:
+;*** detect O4I/DFN package:
 ;-----------------------------------------------------------
 if (strPos($FullProductId$, "o4i_") = "0") AND (strPos($FullProductId$, "dfn_") = "0")
-	set $isDFN$ = "false"
+	set $isO4I$ = "false"
 	set $StrippedProductId$ = $ProductId$
 else
-	set $isDFN$ = "true"
+	set $isO4I$ = "true"
 	set $StrippedProductId$ = strPart($ProductId$,"5",strLength($ProductId$))
+endif
+
+; required for full change from dfn_ to o4i_:
+if (strPos($FullProductId$, "dfn_") = "0")
+	set $isDFN$ = "false"
+else
+	set $isDFN$ = "true"
 endif
 
 ;-----------------------------------------------------------
 ;*** Images
 ;-----------------------------------------------------------
 Set $Img_Base$ = "anaconda"
-if ($isDFN$ = "true")
-	set $Img_Install$		= "%ScriptPath%\images\" + $Img_Base$ + "_install_dfn.png"
+if (FileExists("%ScriptPath%\..\lib\icons\%installingProdName%.png"))
+	set $Img_Install$           = "%ScriptPath%\..\lib\icons\%installingProdName%.png"
+	set $Img_Install_Custom$    = "%ScriptPath%\..\lib\icons\%installingProdName%.png"
+	Set $Img_Uninstall$         = "%ScriptPath%\..\lib\icons\%installingProdName%.png"
+	Set $Img_Uninstall_Custom$  = "%ScriptPath%\..\lib\icons\%installingProdName%.png"
+	Set $Img_Prepare$           = "%ScriptPath%\..\lib\icons\%installingProdName%.png"
+	Set $Img_Plugins$           = "%ScriptPath%\..\lib\icons\%installingProdName%.png"
+	Set $Img_Update$            = "%ScriptPath%\..\lib\icons\%installingProdName%.png"
+	Set $Img_Upgrade$           = "%ScriptPath%\..\lib\icons\%installingProdName%.png"
+	Set $Img_Config$            = "%ScriptPath%\..\lib\icons\%installingProdName%.png"
+	Set $Img_Defer$             = "%ScriptPath%\..\lib\icons\%installingProdName%.png"
 else
-	set $Img_Install$		= "%ScriptPath%\images\" + $Img_Base$ + "_install.png"
+	if ($isO4I$ = "true")
+		set $Img_Install$		= "%ScriptPath%\images\" + $Img_Base$ + "_install_o4i.png"
+	else
+		set $Img_Install$		= "%ScriptPath%\images\" + $Img_Base$ + "_install.png"
+	endif
+	set $Img_Install_Custom$	= "%ScriptPath%\images\" + $Img_Base$ + "_install_custom.png"
+	Set $Img_Uninstall$			= "%ScriptPath%\images\" + $Img_Base$ + "_uninstall.png"
+	Set $Img_Uninstall_Custom$	= "%ScriptPath%\images\" + $Img_Base$ + "_uninstall_custom.png"
+	Set $Img_Prepare$			= "%ScriptPath%\images\" + $Img_Base$ + "_prepare.png"
+	Set $Img_Plugins$			= "%ScriptPath%\images\" + $Img_Base$ + "_plugins.png"
+	Set $Img_Update$			= "%ScriptPath%\images\" + $Img_Base$ + "_update.png"
+	Set $Img_Upgrade$			= "%ScriptPath%\images\" + $Img_Base$ + "_upgrade.png"
+	Set $Img_Config$            = "%ScriptPath%\images\" + $Img_Base$ + "_config.png"
+	Set $Img_Defer$             = "%ScriptPath%\images\" + $Img_Base$ + "_defer.png"
 endif
-set $Img_Install_Custom$	= "%ScriptPath%\images\" + $Img_Base$ + "_install_custom.png"
-Set $Img_Uninstall$			= "%ScriptPath%\images\" + $Img_Base$ + "_uninstall.png"
-Set $Img_Uninstall_Custom$	= "%ScriptPath%\images\" + $Img_Base$ + "_uninstall_custom.png"
-Set $Img_Prepare$			= "%ScriptPath%\images\" + $Img_Base$ + "_prepare.png"
-Set $Img_Plugins$			= "%ScriptPath%\images\" + $Img_Base$ + "_plugins.png"
-Set $Img_Update$			= "%ScriptPath%\images\" + $Img_Base$ + "_update.png"
-Set $Img_Upgrade$			= "%ScriptPath%\images\" + $Img_Base$ + "_upgrade.png"
 
 comment "preparing..."
 ShowBitmap $Img_Prepare$ $ProductName$
@@ -134,6 +171,11 @@ if ($SystemType$="x86 System") and ($sw_arch$="64")
 endif
 
 ;-----------------------------------------------------------
+;*** property: use a local copy of the installer?
+;-----------------------------------------------------------
+Set $pr_localCopy$          = GetProductProperty("local_installer_copy","False")
+
+;-----------------------------------------------------------
 ;*** property: language - "de_DE, "en_US"
 ; application language defined via environment variable LANG
 ;-----------------------------------------------------------
@@ -156,85 +198,115 @@ Set $pr_ReleaseUpgrade$				= GetProductProperty("upgrade_release","False")
 Set $pr_MinimumSpace$				= Trim(GetProductProperty("required_mimimum_space","default"))
 
 Set $pr_AddPack_InstallMode$		= GetProductProperty("additional_packages_install_mode","none")
-Set $TempList$				= emptyList($TempList$)
+Set $TempList$						= emptyList($TempList$)
 Set $pr_AddPackList$				= GetProductPropertyList("additional_packages",$TempList$)
 
 ;-----------------------------------------------------------
 ;*** properties: post install/uninstall
 ;-----------------------------------------------------------
-set $CustomPostInstall$ 	= getProductProperty("custom_post_install","none")
-set $CustomPostUninstall$ 	= getProductProperty("custom_post_uninstall","none")
+set $CustomPostInstall$     = getProductProperty("custom_post_install","none")
+set $CustomPostUninstall$   = getProductProperty("custom_post_uninstall","none")
 
 ;-----------------------------------------------------------
 ;*** misc settings
 ;-----------------------------------------------------------
 {{^ifdef_PSDETAIL_DEBUG}}
-set $PSDETAIL$ 			= "%ScriptPath%\bin\psdetail.exe"
+set $PSDETAIL$              = "%ScriptPath%\bin\psdetail.exe"
 if (CompareDotSeparatedNumbers($NTVersion$, ">=", "10.0"))
-	set $PSDETAIL$ 			= "%ScriptPath%\bin\psdetail4.exe"
+	set $PSDETAIL$          = "%ScriptPath%\bin\psdetail4.exe"
 endif
 {{/ifdef_PSDETAIL_DEBUG}}
 {{#ifdef_PSDETAIL_DEBUG}}
-set $PSDETAIL$ 			= "%ScriptPath%\bin\psdetail_debug.exe"
+set $PSDETAIL$              = "%ScriptPath%\bin\psdetail_debug.exe"
 if (CompareDotSeparatedNumbers($NTVersion$, ">=", "10.0"))
-	set $PSDETAIL$ 			= "%ScriptPath%\bin\psdetail4_debug.exe"
+	set $PSDETAIL$          = "%ScriptPath%\bin\psdetail4_debug.exe"
 endif
 {{/ifdef_PSDETAIL_DEBUG}}
-set $PSDETAIL_mod$			= ""
-set $Kill_Running$ 			= GetProductProperty("kill_running", "False")
 
-Set $RegPathUninstall64$ 	= "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
-Set $RegPathUninstall32$ 	= "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
+set $Kill_Running$          = GetProductProperty("kill_running", "False")
+
+Set $TempDir$               = "%opsiTmpDir%"
+Set $RegPathUninstall64$    = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
+Set $RegPathUninstall32$    = "HKEY_LOCAL_MACHINE\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
 
 ;-------------------------------------------------------
 ; filter for opsiServiceCall productOnClient_getObjects:
 ;-------------------------------------------------------
 set $ProductFilter$	= "*" + $StrippedProductId$
-set $ProductVersionFilter$ = "*"
+set $ProductVersionFilter$  = "*"
 
 ;-----------------------------------------------------------
 ;*** specific settings
 ;-----------------------------------------------------------
-Set $InstallerType$   	= "NSIS"
+Set $InstallerType$         = "NSIS"
 include_append "%ScriptPath%\exitcode_nsis.opsiinc"
 
+Set $StrippedProductName$   = takeString(0, splitString ($ProductName$ ," "))
 
 ; packages (for example):
 ; 		Anaconda3-5.1.0-Windows-x86_64.exe
 ; 		Anaconda2-5.1.0-Windows-x86.exe
-;Set $Installer$		  	= "%ScriptPath%\files\" + $StrippedProductId$ + "-" + $Version$ + "-Windows-x86" + $sArch$ + ".exe"
-Set $Installer$		  	= "%ScriptPath%\files\" + $ProductName$ + "-" + $Version$ + "-Windows-x86" + $sArch$ + ".exe"
+;Set $Installer$            = "%ScriptPath%\files\" + $StrippedProductId$ + "-" + $Version$ + "-Windows-x86" + $sArch$ + ".exe"
+;Set $Installer$             = "%ScriptPath%\files\" + $StrippedProductName$ + "-" + $Version$ + "-Windows-x86" + $sArch$ + ".exe"
 
-Set $InstallDir$      	= $InstallBase$ + "\" + stringReplace($ProductName$," ", "") + "\"
-;Set $InstallDir$      	= $InstallBase$ + "\" + $ProductName$ + "\"
-Set $InstDir$     	 	= $InstallBase$ + "\" + stringReplace($ProductName$," ", "")
+Set $InstallerFile$         = $StrippedProductName$ + "-" + $Version$ + "-Windows-x86" + $sArch$ + ".exe"
+Set $InstallerSrc$		    = "%ScriptPath%\files\" + $InstallerFile$
+if not (FileExists($InstallerSrc$))
+	LogError "FATAL ERROR: Installer not found [" + $InstallerSrc$ + "]"
+	isFatalError
+endif
+
+
+Set $InstallDir$            = $InstallBase$ + "\" + stringReplace($StrippedProductName$," ", "") + "\"
+;Set $InstallDir$           = $InstallBase$ + "\" + $ProductName$ + "\"
+Set $InstDir$               = $InstallBase$ + "\" + stringReplace($StrippedProductName$," ", "")
 
 ;default value for required space (in MB):
-Set $MinimumSpaceDefault$ = "9000"
+Set $MinimumSpaceDefault$   = "9000"
 
-;Set $MainBin$       	= $StrippedProductId$ + ".exe"
-Set $MainBin$       	= "Scripts\anaconda-navigator.exe"
-;Set $EXE$				= CreateStringList('python.exe', 'pythonw.exe', 'Scripts\Spyder.exe', 'Scripts\pandoc.exe', 'Scripts\anaconda.exe', 'Scripts\anaconda-navigator.exe', 'Scripts\jupyter-notebook.exe', 'Scripts\jupyter-qtkonsole.exe')
-Set $EXE$				= CreateStringList('python.exe', 'pythonw.exe', 'Scripts\%.exe')
+;Set $MainBin$              = $StrippedProductId$ + ".exe"
+;Set $CheckBin$             = $StrippedProductId$ + ".exe"
+Set $MainBin$               = "Scripts\anaconda-navigator.exe"
+Set $CheckBin$              = "Scripts\anaconda-navigator.exe"
+;Set $EXE$                  = CreateStringList('python.exe', 'pythonw.exe', 'Scripts\Spyder.exe', 'Scripts\pandoc.exe', 'Scripts\anaconda.exe', 'Scripts\anaconda-navigator.exe', 'Scripts\jupyter-notebook.exe', 'Scripts\jupyter-qtkonsole.exe')
+Set $EXE$                   = CreateStringList('python.exe', 'pythonw.exe', 'Scripts\%.exe')
 
-Set $AppName$			= $ProductName$ + " Navigator"
-Set $AppIcon$			= $InstallDir$ + "\Menu\Anaconda-navigator.ico"
-Set $AppTarget$			= '"' + $InstallDir$ + 'pythonw.exe"'
-Set $AppParameters$		= '-q "' + $InstallDir$ + 'cwp.py" "' + $InstallDir$ + '." "' +  $InstallDir$ + 'pythonw.exe" "' + $InstallDir$ + 'Scripts\anaconda-navigator-script.py"'
+Set $AppName$               = $StrippedProductName$ + " Navigator"
+Set $AppIcon$               = $InstallDir$ + "\Menu\Anaconda-navigator.ico"
+Set $AppTarget$             = '"' + $InstallDir$ + 'pythonw.exe"'
+Set $AppParameters$         = '-q "' + $InstallDir$ + 'cwp.py" "' + $InstallDir$ + '." "' +  $InstallDir$ + 'pythonw.exe" "' + $InstallDir$ + 'Scripts\anaconda-navigator-script.py"'
 
 
-Set $SearchPattern$ 	= $ProductName$
-Set $Uninst_ID_std$	   	= $ProductName$
-Set $Uninst_Prg$       	= "Uninstall-"+ $StrippedProductId$ + ".exe"
-Set $Uninst_Prg_Hidden$ = "Un_A.exe"
-Set $Uninstaller$	   	= $InstallDir$ + $Uninst_Prg$
+Set $SearchPattern$         = $StrippedProductName$
+Set $Uninst_ID_std$         = $StrippedProductName$
+Set $Uninst_Prg$            = "Uninstall-"+ $StrippedProductId$ + ".exe"
+Set $Uninst_Prg_Hidden$     = "Un_A.exe"
+Set $Uninstaller$           = $InstallDir$ + $Uninst_Prg$
 ; ...oder UninstallString aus Registry
 
+;-------------------------------------------------------
+; filter for opsiServiceCall productOnClient_getObjects:
+;-------------------------------------------------------
+Set $ProductFilter$              = "*" + $StrippedProductId$
+Set $ProductFilterForbidden$     = ""
+{{^ifdef_legacy}}
+; only the o4i package should set the traget confguration to forbidden:
+if ($isO4I$ = "true") and ($isDFN$ = "false")
+	Set $ProductFilterForbidden$ = "*dfn_" + $StrippedProductId$
+endif
+{{/ifdef_legacy}}
+Set $ProductVersionFilter$       = "*"
+
+;-------------------------------------------------------
+; Install/uninstall options
 ; https://conda.io/docs/user-guide/install/windows.html
+;-------------------------------------------------------
 Set $Inst_Opts$        	= "/InstallationType=AllUsers  /S  /D=" + $InstallDir$
 Set $Uninst_Opts$      	= "/S"
 
-
+;-------------------------------------------------------
+; Various commands
+;-------------------------------------------------------
 Set $ActivateBat$		= $InstallDir$ + "Scripts\activate.bat"
 Set $CondaUpgradeCmd$	= "conda install -y -q anaconda python conda"
 Set $CondaUpdateCmd$	= "conda update -y -q --all"

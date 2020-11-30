@@ -1,7 +1,7 @@
 {  
 	"_": "=== OPSI package variables ===",
 	"O_PKG_VER"            : "10",
-	"O_SOFTWARE_VER"       : "2020.11",
+	"O_SOFTWARE_VER"       : "2019.10",
 	"O_SOFTWARE"           : "Anaconda",
 	"O_RELEASE_DATE"       : "{{M_TODAY}}",
 	"O_INST_LOG"           : "/tmp/{{M_ORGPREFIX}}anaconda__opsi_package_install.log",
@@ -9,7 +9,7 @@
 
 	"O_SOFTWARE_WEBSITE"   : "https://www.anaconda.com/products/individual",
 	"O_SOFTWARE_CHANGES"   : "https://www.anaconda.com/blog/topic/news",
-	"O_SPECIAL_ADVICE"     : "",
+	"O_SPECIAL_ADVICE"     : "IMPORTANT: Anaconda 2 is END OF LIFE!",	
 
 	"STAGE"                : "{{M_STAGE}}",
 	"TESTPREFIX"	       : "{{M_TESTPREFIX}}",
@@ -22,7 +22,7 @@
 	"_":"=== conditions ===",
 	"ifdef_64bit_only"     :false,
 	"ifdef_auto_download"  :true,
-	"ifdef_special_advice" :false,
+	"ifdef_special_advice" :true,
 
 	"ifdef_testing"        :{{M_TESTING}},
 	"ifdef_allinc"         :{{M_ALLINC}},

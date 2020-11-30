@@ -1,7 +1,7 @@
 ;=====================================================================
 ; delsub.opsiinc ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2019-10-18 13:23:13 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2020-11-30 00:18:26 +0100
 ;=====================================================================
 
 
@@ -9,11 +9,12 @@
 [sub_delsub_main]
 ;=======================================
 Message "Removing previous version(s) of " + $ProductName$
-ShowBitmap $Img_Prepare$ $ProductName$
+ShowBitmap $Img_Uninstall$ $ProductName$
 marktime
 
 if FileExists("%ScriptPath%\checkinstance.opsiinc")
 	include_append "%ScriptPath%\checkinstance.opsiinc"
+	sub_checkinstance_init
 else
 	isFatalError "File not found: checkinstance.opsiinc"
 endif
@@ -46,7 +47,10 @@ if not ( count ($ResultList$) = "0" )
 	
 	;=== update productOnClient information on depot server
 	Message "Updating status information on depot"
-	set $result$ = removeProductVerOnClientStatus($ProductFilter$, $ProductVersionFilter$)
+	if not ($ProductFilterForbidden$ = "")
+		set $result$ = clearProductVerOnClientStatus($ProductFilterForbidden$, $ProductVersionFilter$, 'forbidden', 'not_installed')
+	endif
+	set $result$ = clearProductVerOnClientStatus($ProductFilter$, $ProductVersionFilter$, 'undefined', 'not_installed')
 
 	;=== measure time
 	set $TimeDiff$ = getDiffTimeSec
@@ -129,12 +133,19 @@ if not (lower($Uninstaller$) = lower(stringReplace($UninstallString$,'"','')))
 endif
 
 ;=== check for running binaries
+;...the application:
+set $CheckProcess$ = $Uninst_RegDir$ + $CheckBin$
+set $Kill_Override$ = "false"
+set $PSDETAIL_MODE$ = ""
 sub_checkinstance
 
 ;=== run uninstaller
 LinkFolder_RemoveDesktopLink
 Winbatch_Uninstall /WaitForProcessEnding $Uninst_Prg_Hidden$
 sub_check_exitcode_nsis
+if not($FatalError$ = "")
+	isFatalError "Uninstaller returns fatal error!"
+endif
 if ($ExitCode$ = "0") and not ($Uninst_RegDir$ = "")
 	;=== does the installation directory still exist?
 		if (FileExists($Inst_Loc$))

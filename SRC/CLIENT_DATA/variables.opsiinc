@@ -4,7 +4,7 @@
 ; This file contains all possible variables, excluding the opsi-system
 ; variables, for the opsi-winst scripts in use.
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2019-10-18 08:38:04 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2020-11-29 23:13:53 +0100
 ;=====================================================================
 
 DefStringList $EXE$
@@ -19,7 +19,10 @@ DefVar $AppName$
 DefVar $AppIcon$
 DefVar $AppParameters$
 DefVar $AppTarget$
+DefVar $bCheckInstance$
+DefVar $bPSDetail$
 DefVar $CheckBin$
+DefVar $CheckProcess$
 DefVar $CondaUpdateCmd$
 DefVar $CondaUpgradeCmd$
 DefVar $CondaCleanCmd$
@@ -29,10 +32,14 @@ DefVar $currentLogLevel$
 DefVar $CustomPostInstall$
 DefVar $CustomPostUninstall$
 DefVar $DisplayName$
+DefVar $ErrorMsg$
 DefVar $ExitCode$
+DefVar $FatalError$
 DefVar $FullProductId$
 DefVar $Has_AddPackages$
 DefVar $Img_Base$
+DefVar $Img_Config$
+DefVar $Img_Defer$
 DefVar $Img_Install$
 DefVar $Img_Install_Custom$
 DefVar $Img_Uninstall$
@@ -45,17 +52,22 @@ DefVar $InstallBase$
 DefVar $InstallDir$
 DefVar $InstDir$
 DefVar $Installer$
+DefVar $InstallerFile$
+DefVar $InstallerSrc$
 DefVar $InstallerType$
 DefVar $Inst_Loc$
 DefVar $Inst_Opts$
 DefVar $Inst_Ver$
+DefVar $isO4I$
 DefVar $isDFN$
 DefVar $LogLevelDefault$
 DefVar $MainBin$
 DefVar $MinimumSpace$
 DefVar $MinimumSpaceDefault$
 DefVar $NTVersion$
+DefVar $OS$
 DefVar $ProductFilter$
+DefVar $ProductFilterForbidden$
 DefVar $ProductId$
 DefVar $ProductName$
 DefVar $ProductVersionFilter$
@@ -70,10 +82,13 @@ DefVar $sArch$
 DefVar $SearchPattern$
 DefVar $State$
 DefVar $Str$
+DefVar $Stage$
 DefVar $StrippedProductId$
+DefVar $StrippedProductName$
 DefVar $sw_lang$
 DefVar $sw_arch$
 DefVar $SystemType$
+defVar $TempDir$
 DefVar $Testing$
 DefVar $TimeDiff$
 DefVar $Uninstaller$
@@ -97,6 +112,7 @@ DefVar $pr_DesktopLink_Spyder$
 DefVar $pr_DesktopLink_Jupyter$
 DefVar $pr_DesktopLink_AnacondaPrompt$
 DefVar $pr_DryUpdate$
+DefVar $pr_localCopy$
 DefVar $pr_ReleaseUpgrade$
 DefVar $pr_VerboseUpdate$
 DefVar $pr_SkipUpdate$
@@ -109,5 +125,6 @@ DefStringList $pr_AddPackList$
 DefVar $Proc_Cnt$
 DefVar $Proc_Killed$
 DefVar $PSDETAIL$
-DefVar $PSDETAIL_mod$
+DefVar $PSDETAIL_MODE$
 DefVar $Kill_Running$
+DefVar $Kill_Override$

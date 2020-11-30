@@ -2,7 +2,7 @@
 ; setup.opsiscript ANACONDA
 ; Installer-Typ: NSIS
 ; 
-; J. Boettge <boettge@mpi-halle.mpg.de>  2018-10-23 11:42:12 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2020-11-29 23:10:13 +0100
 ;======================================================================
 
 ;======================================================================
@@ -70,26 +70,39 @@ else
 		logError "Can't find uninstaller script"
 		isFatalError "delsub.opsiinc not found"
 	endif	
-	
+
 	; Start the installation
+	marktime
+
+	if $pr_localCopy$ = "True"
+		ShowBitmap $Img_Prepare$ $ProductName$
+		Message "Copying the installer to local disk"
+		Files_CopyLocalInstaller
+		set $Installer$ = $TempDir$ + "\" + $InstallerFile$
+	else
+		set $Installer$ = $InstallerSrc$
+	endif
+
 	ShowBitmap $Img_Install$ $ProductName$
-	Message "Installing " + $ProductName$ + " " + $Version$+ " (" + $sw_arch$ + " bit)"
-	
-	marktime	
+	Message "Installing " + $ProductName$ + " " + $Version$+ " (" + $sw_arch$ + " bit)"	
 	
 	if not (FileExists($Installer$))
 		logError "Installer not found: [" + $Installer$ + "]"
 		isFatalError
 	endif
 	
+	;=== run the installer
 	comment "Start setup program"
 	Winbatch_install
 	Sub_check_exitcode_nsis
-	
-	set $CheckBin$ = $InstallDir$+$MainBin$
-	if not (FileExists($CheckBin$))
-		logError "Main binary not found! [" + $CheckBin$ + "]"
-		isFatalError
+
+	if $pr_localCopy$ = "True"
+		comment "delete local installer copy: [" + $TempDir$ + "\" + $InstallerFile$ = "]"
+		Files_DeleteLocalInstaller
+	endif
+
+	if not($FatalError$ = "")
+		isFatalError "Installer returns fatal error!"
 	endif
 	
 	if (($pr_AddPack_InstallMode$ = "setup") AND ($Has_AddPackages$ = "true"))
@@ -131,16 +144,47 @@ else
 	
 	;=== measure installation time
 	set $TimeDiff$ = getDiffTimeSec
-	Message  "Setup time: " + $TimeDiff$ + " seconds"	
+	if $pr_localCopy$ = "True"
+		Message  "Setup time:  " + $TimeDiff$ + " seconds  (includes time for local copy)"
+	else
+		Message  "Setup time: " + $TimeDiff$ + " seconds"
+	endif
 	
 endif
 
+{{#ifdef_legacy}}
+;=== Prepare the change from dfn_ to o4i_
+; Stage 1 - logWarning
+; Stage 2 - logError (entire functionality)
+; Stage 3 - logError (NO functionality)
+; Stage 4 - logError (NO functionality except uninstall; no binaries)
+;           removal of this package from repository pending
+;-----------------------------------------
+; This is stage 1
+;-----------------------------------------
+logWarning "*******************************************************************************************"
+logWarning "This package will not be maintained any longer and will be removed from the repository in"
+logWarning "the near future. The functionality is completely taken over by o4i_" + $StrippedProductId$+"."
+logWarning "Please install o4i_" + $StrippedProductId$ + " from the repository."
+logWarning "dfn_" + $StrippedProductId$ + " should be removed the then from your depot."
+logWarning "*******************************************************************************************"
+{{/ifdef_legacy}}
  
+
+;======================================================================
+[Files_CopyLocalInstaller]
+;======================================================================
+copy "$InstallerSrc$" "$TempDir$"
+
+;======================================================================
+[Files_DeleteLocalInstaller]
+;======================================================================
+delete -f "$TempDir$\$InstallerFile$"
+
 ;======================================================================
 [Winbatch_install]
 ;======================================================================
 "$Installer$" $Inst_Opts$ 
- 
  
 ;=====================================================================
 [LinkFolder_CreateDesktopLink_AnacondaPrompt]
