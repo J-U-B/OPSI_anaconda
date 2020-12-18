@@ -378,6 +378,7 @@ pdf:
 			pandoc "readme.md" \
 				--latex-engine=xelatex \
 				-f markdown \
+				-H DOCU/readme.sty \
 				-V linkcolor:blue \
 				-V geometry:a4paper \
 				-V geometry:margin=30mm \

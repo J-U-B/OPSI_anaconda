@@ -1,29 +1,32 @@
 # ![](./SRC/IMAGES/AnacondaLogo.png "Anaconda")   Anaconda 2/3 #
 
+----
+
 ## ToC ##
 
-* [Paketinfo](#paketinfo)
-  * [Was ist Anaconda?](#anaconda-info)
-* [Paket erstellen](#paket_erstellen)
-  * [Makefile und spec.json](#makefile_und_spec)
-  * [Mustache](#mustache)
-  * [Verzeichnisstruktur](#verzeichnisstruktur)
-  * [Makefile-Parameter](#makefile_parameter)
-  * [spec.json](#spec_json)
-    * [32-Bit-Umgebung](#spec_32bit)
-* [Installation](#installation)
-  * [Properties](#properties)
-* [Allgemeines](#allgemeines)
-  * [Aufbau des Paketes](#paketaufbau)
-  * [Nomenklatur](#nomenklatur)
-  * [Unattended-Switches](#unattended_switches)
-* [Lizenzen](#lizenzen)
-  * [Dieses Paket](#lic_paket)
-  * [Anaconda](#lic_anaconda)
-  * [Mustache](#lic_mustache)
-  * [psDetail](#lic_psdetail)
-* [Anmerkungen/ToDo](#anmerkungen_todo)
+- [Paketinfo](#paketinfo)
+	- [Was ist Anaconda?](#anaconda-info)
+- [Paket erstellen](#paket_erstellen)
+	- [Makefile und spec.json](#makefile_und_spec)
+	- [Mustache](#mustache)
+	- [Verzeichnisstruktur](#verzeichnisstruktur)
+	- [Makefile-Parameter](#makefile_parameter)
+	- [spec.json](#spec_json)
+		- [32-Bit-Umgebung](#spec_32bit)
+- [Installation](#installation)
+	- [Properties](#properties)
+- [Allgemeines](#allgemeines)
+	- [Aufbau des Paketes](#paketaufbau)
+	- [Nomenklatur](#nomenklatur)
+	- [Unattended-Switches](#unattended_switches)
+- [Lizenzen](#lizenzen)
+	- [Dieses Paket](#lic_paket)
+	- [Anaconda](#lic_anaconda)
+	- [Mustache](#lic_mustache)
+	- [psDetail](#lic_psdetail)
+- [Anmerkungen/ToDo](#anmerkungen_todo)
 
+----
 
 <div id="paketinfo"></div>
 
@@ -47,7 +50,7 @@ Der Fokus liegt vor allem auf der Verarbeitung von großen Datenmengen, Vorhersa
 und wissenschaftlichem Rechnen.  
 Das Ziel der Distribution ist die Vereinfachung
 von Paketmanagement und Softwareverteilung.  
-*([Wikipedia](https://de.wikipedia.org/wiki/Anaconda_(Python-Distribution))*
+*([Wikipedia](https://de.wikipedia.org/wiki/Anaconda_(Python-Distribution)))*
 
 
 <div id="paket_erstellen"></div>
@@ -64,15 +67,16 @@ dem Source-Paket und nicht mit dem OPSI-Paket selbst.
 
 Da aus den Quellen verschiedene Versionen des Paketes mit entsprechenden Anpassungen
 generiert werden sollen (mpimsp/o4i/dfn; testing/release) wurde hierfür ein
-**<code>Makefile</code>** erstellt. Darüber hinaus steuert **<code>spec.json</code>** 
+**`Makefile`** erstellt. Darüber hinaus steuert **`spec.json`** 
 die Erstellung der Pakete.  
 
 Im Idealfall ist beim Erscheinen einer neuen Release von Anaconda lediglich die
-**<code>spec.json</code>** anzupassen.
+**`spec.json`** anzupassen.
 
 Zur Vorbereitung der eigentlichen Paketerstellung sind zuvor die Softwarepakete
 mit
-><code>make download</code>
+
+> `make download`
 
 herunterzuladen. Hierbei werden die später benötigten MD5sums erstellt.
 
@@ -91,42 +95,45 @@ für Linux und Windows liegen diesem Paket bei.
 
 ### Verzeichnisstruktur ###
 
-Die erstellten Pakete werden im Unterverzeichnis **<code>BUILD</code>** abgelegt.
+Die erstellten Pakete werden im Unterverzeichnis **`BUILD`** abgelegt.
 
-Einige Files (derzeit <code>control, preinst, postinst</code>) werden bei der Erstellung erst aus _<code>.in</code>_-Files
-generiert, welche sich in den Verzeichnissen <code>SRC/OPSI</code> und <code>SRC/CLIENT_DATA</code> befinden.
-Die <code>SRC</code>-Verzeichnisse sind in den OPSI-Paketen nicht mehr enthalten.
+Einige Files (derzeit `control, preinst, postinst`) werden bei der Erstellung erst aus _`.in`_-Files
+generiert, welche sich in den Verzeichnissen `SRC/OPSI` und `SRC/CLIENT_DATA` befinden.
+Die `SRC`-Verzeichnisse sind in den OPSI-Paketen nicht mehr enthalten.
 
 
 <div id="makefile_parameter"></div>
 
 ### Makefile-Parameter ###
 Eine kurze Hilfe zu den verfügbaren Parametern liefert:
-><code>make help</code>
+
+> `make help`
 
 Der vorliegende Code erlaubt die Erstellung von OPSI-Paketen für die Releases
-gemäss der Angaben in <code>spec.json</code>. Es kann jedoch bei der Paketerstellung
+gemäss der Angaben in `spec.json`. Es kann jedoch bei der Paketerstellung
 ein alternatives Spec--File übergeben werden:
 
-> *<code>SPEC=&lt;spec_file&gt;</code>*
+> *`SPEC=<spec_file>`*
 
 
 Aus den vorliegenden Skripten können OPSI-Pakete für Anaconda2 und/oder Anaconda3
 erstellt werden:
 
-> *<code>PYVER=&lt;2|3|2,3|both&gt;</code>*
+> *`PYVER=(2|3|2,3|both)`*
 
 Das Paket kann mit *"batteries included"* erstellt werden. In dem Fall erfolgt 
 der Download der Software beim Erstellen des OPSI-Paketes und nicht erst bei
 dessen Installation:
-> *<code>ALLINC=[true|false]</code>*
+
+> *`ALLINC=[true|false]`*
 
 Standard ist hier die Erstellung des leichtgewichtigen Paketes (```ALLINC=false```).
 
-OPSI erlaubt des Pakete im Format <code>cpio</code> und <code>tar</code> zu erstellen.  
-Als Standard ist <code>cpio</code> festgelegt.  
+OPSI erlaubt des Pakete im Format `cpio` und `tar` zu erstellen.  
+Als Standard ist `cpio` festgelegt.  
 Das Makefile erlaubt die Wahl des Formates über die Umgebungsvariable bzw. den Parameter:
-> *<code>ARCHIVE_FORMAT=&lt;cpio|tar&gt;</code>*
+
+> *`ARCHIVE_FORMAT=(cpio|tar)`*
 
 
 <div id="spec_json"></div>
@@ -137,7 +144,7 @@ Häufig beschränkt sich die Aktualisierung eines Paketes auf das Aendern der
 Versionsnummern und des Datums etc. In einigen Fällen ist jedoch auch das Anpassen
 weiterer Variablen erforderlich, die sich auf verschiedene Files verteilen.  
 Auch das soll durch das Makefile vereinfacht werden. Die relevanten Variablen
-sollen nur noch in <code>spec.json</code> angepasst werden. Den Rest übernimmt *<code>make</code>*
+sollen nur noch in `spec.json` angepasst werden. Den Rest übernimmt *`make`*
 
 <div id="spec_32bit"></div>
 
@@ -146,7 +153,8 @@ sollen nur noch in <code>spec.json</code> angepasst werden. Den Rest übernimmt 
 Die 32-Bit-Systeme kommen immer seltener zum Einsatz. Daher ist es nicht in
 jedem Fall erforderlich auch eine entsprechende Version von Anacoda zur Verfügung
 zu stellen. Beeinflussen lässt sich das über das spec-File mit:
->*<code>"ifdef_64bit_only" :true</code>*
+
+> *`"ifdef_64bit_only" :true`*
 
 Standardmässig ist der Support für 32 Bit aktiviert..
 
@@ -160,7 +168,7 @@ Die Software selbst wird - sofern bei der Paketerstellung nicht anders vorgegebe
 entfällt dieser Abschnitt.
 
 Je nach Art des erstellten Paketes erfolgt bei der Installation im Depot durch 
-das <code>postinst</code>-Script der Download der Software vom Hersteller 
+das `postinst`-Script der Download der Software vom Hersteller 
 (möglich sind hier Umgebungen für Python 2 und Python 3, jeweils 32 und 64 Bit).  
 Ein manueller Download sollte dann nicht erforderlich sein. 
 Auf dem Depot-Server ist **wget** erforderlich.
@@ -179,44 +187,44 @@ für die vorliegende Software.
 
 ### generische Properties ###
 
-**<code>local_installer_copy</code>** - Hiermit kann fuer die Installation
+**`local_installer_copy`** - Hiermit kann fuer die Installation
 eine temporäre lokale Kopie des Installationspaketes auf dem Client erstellt
 werden, statt diesen direkt vom Netzlaufwerk aufzurufen. In langsamen Netzwerken
 kann das zu einer Beschleunigung der Installation führen.  
 (*default: false*)
 
-**<code>kill_running</code>** - Wird bei der Installation eine laufende Instanz
-definierter Programme  erkannt (<code>python.exe, pythonw.exe, Scripts\*.exe</code>
+**`kill_running`** - Wird bei der Installation eine laufende Instanz
+definierter Programme  erkannt (`python.exe, pythonw.exe, Scripts\*.exe`
 im Zielverzeichnis), können diese durch das OPSI-Paket beendet werden.  
 Sollen ggf. laufende Programme nicht beendet werden, wird die Installation
 des Paketes zurückgestellt und später erneut versucht.  
 (*default: false*)
 
-**<code>install_architecture</code>** - Diese Option ist nur verfügbar, wenn
+**`install_architecture`** - Diese Option ist nur verfügbar, wenn
 das Paket nicht ausschliesslich für 64-Bit-Umgebungen erstellt wurde (siehe 
 [32-Bit-Umgebung](#spec_32bit)) und legt fest, welche Architektur der Software
 installiert werden soll.  
 Zur Auswahl stehen: "32 bit", "64 bit", "sysnative".
 (*default: sysnative*)
 
-**<code>log_level</code>** - Es kann hier ein abweichender Log-Level für das
+**`log_level`** - Es kann hier ein abweichender Log-Level für das
 Paket definiert werden. Für Test-Pakete ist der Default-Wert 7, für Produktiv-Pakete
 wurde 5 festgelegt.
 
-**<code>custom_post_install</code>** und **<code>custom_post_uninstall</code>** - Hier
+**`custom_post_install`** und **`custom_post_uninstall`** - Hier
 können Skripte hinterlegt werden, welche optional nach Abschluss der Installation
 bzw. Deinstallation ausgeführt werden sollen. Die Skripte müssen im Unterverzeichnis
-<code>custom</code> des Paketes auf dem Depot-Server liegen.
+`custom` des Paketes auf dem Depot-Server liegen.
 (*default: none*)
 
-**<code>required_mimimum_space</code>** - Aufgrund der Komplexität des vorliegenden
+**`required_mimimum_space`** - Aufgrund der Komplexität des vorliegenden
 Paketes und der daraus entstehenden Setups lässt sich der erforderliche Platzbedarf
 auf dem Zielsystem nicht im Voraus exakt bestimmen. Mit dieser Variablen lässt
 sich die Angabe präzisieren.  
 Der Default-Wert beträgt 9000 (Megabyte). Es können hier neben absoluten
 auch relative Werte angegeben werden. Hierfür der Wert mit einem Vorzeichen (+/-)
 zu versehen.  
-Bei Installation zusätzlicher Pakete (<code>additional_packages</code>) ist
+Bei Installation zusätzlicher Pakete (`additional_packages`) ist
 der Wert ggf. zu erhöhen.  
 Es ist zu berücksichtigen, dass für die Bemessung des Wertes nicht der Umfang
 des Setups nach der Installation relevant ist, sondern der Maximal-Bedarf
@@ -225,38 +233,38 @@ während der Installation. Dieser Wert kann deutlich höher ausfallen.
 
 ### spezifische Properties ###
 
-**<code>additional_packages</code>** - Neben der Distribution können bei der
-Installation gleich weitere Pakete hinzugefügt werden (z.B. <code>tensorflow</code>, 
-<code>django</code>, ...). Werden hier mehrere Pakete angegeben, erfolgt die 
+**`additional_packages`** - Neben der Distribution können bei der
+Installation gleich weitere Pakete hinzugefügt werden (z.B. `tensorflow`, 
+`django`, ...). Werden hier mehrere Pakete angegeben, erfolgt die 
 Trennung über Leerzeichen.  
-Gegebenenfalls ist eine Anpassung von <code>required_mimimum_space</code>
+Gegebenenfalls ist eine Anpassung von `required_mimimum_space`
 erforderlich.  
 Für diese Funktion ist eine Verbindung zum Internet erforderlich.  
 
-**<code>additional_packages_install_mode</code>** - Für die unter <code>additional_packages</code>
+**`additional_packages_install_mode`** - Für die unter `additional_packages`
 angegebenen Pakete lässt sich festlegen, wann die Installation erfolgen soll:
 während des Setup-Skriptes, des Update-Skriptes ...oder gar nicht. (*default: setup*)
 
-**<code>upgrade_release</code>** - Das Update-Skript bietet die Möglichkeit
+**`upgrade_release`** - Das Update-Skript bietet die Möglichkeit
 für die Anaconda-Distribution inline ein Release-Upgrade vorzunehmen. Das erspart
 unter Umständen die Notwendigkeit einer kompletten Neuinstallation bzw. ermöglicht
 ein Distributions-Upgrade ohne Vorliegen einer neuen Version des OPSI-Paketes.  
 Hierbei werden jedoch die Versionsnummern in der Software-Verwaltung von Windows
 und auf dem Depot-Server aktualisiert. Das erfolgte Upgrade lässt sich hier
 nur anhand der Logs auf dem Depot-Server erkennen bzw. auf dem Client direkt
-(z.B. mit <code>conda list</code>). - Experimentell!  
+(z.B. mit `conda list`). - Experimentell!  
 Für diese Funktion ist eine Verbindung zum Internet erforderlich.  
 (*default: false*)
 
-**<code>update_dry_run</code>** - Mit dieser Einstellung lässt sich den Logs
+**`update_dry_run`** - Mit dieser Einstellung lässt sich den Logs
 auf dem Depot-Server entnehmen, was bei einer Installation zusäztlicher Pakete 
 bzw. einem Upgrade/Update installiert werden <u>würde</u>.  
 (*default: false*)
 
-**<code>update_verbose</code>** - Hiermit liefert <code>conda</code> detailiertere Informationen.  
+**`update_verbose`** - Hiermit liefert `conda` detailiertere Informationen.  
 (*default: false*)
 
-**<code>update_skip</code>** - Standardmässig führt OPSI bei Vorliegen eines
+**`update_skip`** - Standardmässig führt OPSI bei Vorliegen eines
 Update-Skriptes dieses im Anschluss an die Installation aus. Hiermit lässt sich
 die Ausführung unterbinden.  
 Unabhängig von der hier vorgenommenen Einstellung wird der Action-Request *Update*
@@ -264,7 +272,7 @@ jedoch ausgeführt.
 Für die Installation von Updates ist eine Verbindung zum Internet erforderlich.  
 (*default: false*)
 
-**<code>update_rights_skip</code>** - Bei der Installation von zusätzlichen 
+**`update_rights_skip`** - Bei der Installation von zusätzlichen 
 Paketen bzw. Updates kann es dazu kommen, dass Berechtigungen für Dateien
 falsch gesetzt werden. Diese Einstellung erlaubt das Ueberspringen
 der Reparatur von Zugriffsrechten während des Updates um Zeit zu sparen. - Nicht empfohlen!  
@@ -273,10 +281,10 @@ der Reparatur von Zugriffsrechten während des Updates um Zeit zu sparen. - Nich
 
 
 
-**<code>link_desktop_Anaconda_Navigator</code>**,  
-**<code>link_desktop_Spyder</code>**,  
-**<code>link_desktop_Jupyter_Notebook</code>**,  
-**<code>link_desktop_Anaconda_Prompt</code>** - optional kann für die angegebenen
+**`link_desktop_Anaconda_Navigator`**,  
+**`link_desktop_Spyder`**,  
+**`link_desktop_Jupyter_Notebook`**,  
+**`link_desktop_Anaconda_Prompt`** - optional kann für die angegebenen
 Programme jeweils eine Verknüpfung auf dem Desktop angelegt werden. (*default: false*)
 
 
@@ -287,24 +295,24 @@ Programme jeweils eine Verknüpfung auf dem Desktop angelegt werden. (*default: 
 <div id="aufbau_des_paketes"></div>
 
 ### Aufbau des Paketes ###
-* **<code>variables.opsiinc</code>** - Da Variablen über die Scripte hinweg mehrfach
+* **`variables.opsiinc`** - Da Variablen über die Scripte hinweg mehrfach
 verwendet werden, werden diese (bis auf wenige Ausnahmen) zusammengefasst hier deklariert.
-* **<code>product_variables.opsiinc</code>** - die producktspezifischen Variablen werden
+* **`product_variables.opsiinc`** - die producktspezifischen Variablen werden
 hier definiert
-* **<code>setup.opsiscript </code>** - Das Script für die Installation.
-* **<code>update.opsiscript </code>** - Das Script für das Update bzw. Upgrade von Anaconda.
-* **<code>uninstall.opsiscript</code>** - Das Uninstall-Script
-* **<code>delsub.opsiinc</code>**- Wird von Setup und Uninstall gemeinsam verwendet.
+* **`setup.opsiscript `** - Das Script für die Installation.
+* **`update.opsiscript `** - Das Script für das Update bzw. Upgrade von Anaconda.
+* **`uninstall.opsiscript`** - Das Uninstall-Script
+* **`delsub.opsiinc`**- Wird von Setup und Uninstall gemeinsam verwendet.
 Vor jeder Installation/jedem Update wird eine alte Version entfernt. (Ein explizites
 Update-Script existiert derzeit nicht.)
-* **<code>checkinstance.opsiinc</code>** - Prüfung, ob eine Instanz der Software läuft.
+* **`checkinstance.opsiinc`** - Prüfung, ob eine Instanz der Software läuft.
 Gegebenenfalls wird das Setup abgebrochen. Optional kann eine laufende Instanz 
 zwangsweise beendet werden.
-* **<code>checkvars.sh</code>** - Hilfsscript für die Entwicklung zur Ueberprüfung,
+* **`checkvars.sh`** - Hilfsscript für die Entwicklung zur Ueberprüfung,
 ob alle verwendeten Variablen deklariert sind bzw. nicht verwendete Variablen
 aufzuspüren.
-* **<code>bin/</code>** - Hilfprogramme; hier: **7zip**, **psdetail**
-* **<code>images/</code>** - Programmbilder für OPSI
+* **`bin/`** - Hilfprogramme; hier: **7zip**, **psdetail**
+* **`images/`** - Programmbilder für OPSI
 
 <div id="nomenklatur"></div>
 
@@ -337,7 +345,7 @@ siehe auch: http://www.silentinstall.org/nsis
 
 Dieses OPSI-Paket steht unter der *GNU General Public License* **GPLv3**.
 
-Ausgenommen von dieser Lizenz sind die unter **<code>bin/</code>** zu findenden
+Ausgenommen von dieser Lizenz sind die unter **`bin/`** zu findenden
 Hilfsprogramme. Diese unterliegen ihren jeweiligen Lizenzen.
 
 <div id="lic_anaconda"></div>
@@ -429,8 +437,8 @@ Für die Nutzung wird das *.NET Framework ab v3.5*  benötigt.
 
 ### Unterschiede zwischen Neuinstallation und Upgrade
 
-Mit *<code>upgrade_release</code>* lässt sich eine bestehende Installation
-inline via <code>conda</code> upgraden. Dabei sind u.U. kleinere Abweichungen zu 
+Mit *`upgrade_release`* lässt sich eine bestehende Installation
+inline via `conda` upgraden. Dabei sind u.U. kleinere Abweichungen zu 
 einer vollständigen Installation der neueren Distribution zu beobachten.
 
 ### Fehler, Requests for enhancement,...

@@ -1,7 +1,7 @@
 ;=====================================================================
 ; delsub.opsiinc ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2020-11-30 00:18:26 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2020-12-18 12:16:44 +0100
 ;=====================================================================
 
 
@@ -134,10 +134,13 @@ endif
 
 ;=== check for running binaries
 ;...the application:
-set $CheckProcess$ = $Uninst_RegDir$ + $CheckBin$
 set $Kill_Override$ = "false"
 set $PSDETAIL_MODE$ = ""
+set $CheckProcess$ = $Uninst_RegDir$ + $CheckBin$
 sub_checkinstance
+set $TempList$ = emptyList($TempList$)
+for %p% in $EXE$ do set $TempList$ = addToList($TempList$, stringReplace($Uninst_RegDir$+"\%p%", "\\", "\"))
+for %p% in $TempList$ do sub_checkinstance
 
 ;=== run uninstaller
 LinkFolder_RemoveDesktopLink

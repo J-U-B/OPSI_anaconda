@@ -1,7 +1,7 @@
 ;===============================================================================
 ; checkinstance.opsiinc
 ; Version: 1.3
-; J. Boettge <boettge@mpi-halle.mpg.de>		2019-07-24 17:01:18 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>		2020-12-18 11:32:32 +0100
 ;===============================================================================
 
 ;===============================================================================
@@ -24,7 +24,11 @@ endif
 ;===============================================================================
 [sub_checkinstance]
 ;===============================================================================
-comment "Checking for running instances and kill it (if allowed)."
+if ($CheckProcess$ = "") and not("%p%" = "") and not("%p%" = '%'+'p'+'%')
+	; only for loops
+	set $CheckProcess$ = "%p%"
+endif
+comment "Checking for running instances of [" + $CheckProcess$ + "] and kill it (if allowed)."
 if ($bPSDetail$ = "true")
 	switch strPart(lower($PSDETAIL_MODE$),"1","1")
 		case "c"
@@ -69,7 +73,7 @@ if ($bPSDetail$ = "true")
 		else
 			; logError $Proc_Cnt$+" running instance(s) of " + $CheckProcess$ + " found, but I'm not allowed to kill them."
 			; isFatalError "running instance"
-			logWarning $Proc_Cnt$+" running instance(s) of " + $MainBin$ + " found, but I'm not allowed to kill them."
+			logWarning $Proc_Cnt$+" running instance(s) of " + $CheckProcess$ + " found, but I'm not allowed to kill them."
 			comment "DEFERRING ACTION"
 			if (FileExists($Img_Defer$))
 				ShowBitmap $Img_Defer$	 $ProductName$
@@ -86,6 +90,7 @@ if ($bPSDetail$ = "true")
 		endif
 	endif
 endif
+set $CheckProcess$ = ""
 
 ;===============================================================================
 [winbatch_psdetail_count]
