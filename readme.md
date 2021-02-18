@@ -353,8 +353,7 @@ Hilfsprogramme. Diese unterliegen ihren jeweiligen Lizenzen.
 ### Anaconda ###
 Anaconda steht unter **BSD-Lizenz**:
 
->Anaconda End User License Agreement
->===================================
+>**Anaconda End User License Agreement**
 >
 >Copyright 2015, Anaconda, Inc.
 >
@@ -368,8 +367,7 @@ Anaconda steht unter **BSD-Lizenz**:
 >
 >THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL ANACONDA, INC. BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 >
->Notice of Third Party Software Licenses
->=======================================
+>**Notice of Third Party Software Licenses**
 >
 >Anaconda Distribution contains open source software packages from third parties. These are available on an "as is" basis and subject to their individual license agreements. These licenses are available in Anaconda Distribution or at http://docs.anaconda.com/anaconda/pkg-docs. Any binary packages of these third party tools you obtain via Anaconda Distribution are subject to their individual licenses as well as the Anaconda license. Anaconda, Inc. reserves the right to change which third party tools are provided in Anaconda Distribution.
 >
@@ -380,8 +378,7 @@ Anaconda steht unter **BSD-Lizenz**:
 >
 >Anaconda Distribution also contains Visual Studio Code software binaries from Microsoft Corporation ("VS Code"). You are specifically authorized to use VS Code with your installation of Anaconda Distribution. Use of VS Code is subject to the licensing terms located at https://code.visualstudio.com/License.
 >
->Cryptography Notice
->===================
+>**Cryptography Notice**
 >
 >This distribution includes cryptographic software. The country in which you currently reside may have restrictions on the import, possession, use, and/or re-export to another country, of encryption software. BEFORE using any encryption software, please check your country's laws, regulations and policies concerning the import, possession, or use, and re-export of encryption software, to see if this is permitted. See the Wassenaar Arrangement http://www.wassenaar.org/ for more information.
 >
@@ -403,6 +400,14 @@ Anaconda steht unter **BSD-Lizenz**:
 >
 >cryptography
 >    A Python library which exposes cryptographic recipes and primitives.
+
+
+<div id="lic_mustache"></div>
+
+### Mustache ###
+
+Die verwendete *Mustache Template Engine for Go* steht unter
+[MIT-Lizenz](https://github.com/cbroglie/mustache/blob/master/LICENSE).
 
 
 <div id="lic_psdetail"></div>
