@@ -1,3 +1,10 @@
+anaconda 2021.11-12:
+	* product update -> 2021.11
+	* updated helpers.opsifunc -> v1.7.1
+	* dfn -> o4i transition entered stage 2 (logError, entire functionality)
+	* extended dfn->o4i transition code (using legacy_level)
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2022-02-10 10:26:29 +0100
+
 anaconda 2020.11-11:
 	* fix for issue: check for runnig binaries didn't work
 	* style file for pandoc

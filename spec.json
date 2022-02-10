@@ -1,7 +1,7 @@
 {  
 	"_": "=== OPSI package variables ===",
-	"O_PKG_VER"            : "11",
-	"O_SOFTWARE_VER"       : "2020.11",
+	"O_PKG_VER"            : "12",
+	"O_SOFTWARE_VER"       : "2021.11",
 	"O_SOFTWARE"           : "Anaconda",
 	"O_RELEASE_DATE"       : "{{M_TODAY}}",
 	"O_INST_LOG"           : "/tmp/{{M_ORGPREFIX}}anaconda__opsi_package_install.log",
@@ -20,15 +20,17 @@
 	"DOWNLOADER"           : "{{M_DOWNLOADER}}",
 
 	"_":"=== conditions ===",
-	"ifdef_64bit_only"     :false,
-	"ifdef_auto_download"  :true,
-	"ifdef_special_advice" :false,
+	"ifdef_64bit_only"     : false,
+	"ifdef_auto_download"  : true,
+	"ifdef_special_advice" : false,
 
-	"ifdef_testing"        :{{M_TESTING}},
-	"ifdef_allinc"         :{{M_ALLINC}},
-	"ifdef_keepfiles"      :{{M_KEEPFILES}},
+	"ifdef_testing"        : {{M_TESTING}},
+	"ifdef_allinc"         : {{M_ALLINC}},
+	"ifdef_keepfiles"      : {{M_KEEPFILES}},
 	
-	"ifdef_legacy"         :{{M_LEGACY}},
+	"_":"=== legacy package? ===",
+	"ifdef_legacy"        : {{M_LEGACY}},
+	"legacy_level"        : "{{M_LEGACY_LEVEL}}",
 	
 	"_":"=== some tuning ===",
 	"DEFAULT_TESTING_LOGLEVEL" : "7",

@@ -1,10 +1,7 @@
 ;======================================================================
 ; unist_section_search.opsiinc
-; J. Boettge <boettge@mpi-halle.mpg.de>  2020-11-05 13:12:39 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2022-01-27 12:29:31 +0100
 ;======================================================================
-; based on:
-; https://opsi.wzb.eu/wiki/index.php/Uninstall-Registry_durchsuchen_und_Schlüssel_ermitteln
-;
 ; * searching 64 bit AND 32 bit tree in this order
 ;======================================================================
 

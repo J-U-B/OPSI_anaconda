@@ -1,8 +1,8 @@
 ############################################################
 # OPSI package Makefile (ANACONDA)
-# Version: 2.8
+# Version: 2.9
 # Jens Boettge <boettge@mpi-halle.mpg.de>
-# 2020-11-30 01:06:33 +0100
+# 2022-02-10 10:30:46 +0100
 ############################################################
 
 .PHONY: header clean mpimsp mpimsp_test o4i o4i_test dfn dfn_test all_test all_prod all help download pdf var_check dummy_build
@@ -196,6 +196,9 @@ else
 	override DOWNLOADER = $(DFY)
 endif
 
+### legacy level:
+LEGACY_LEVEL ?= 0
+
 
 leave_err:
 	exit 1
@@ -330,6 +333,7 @@ dfn: header
 			ORGPREFIX="dfn_" 			\
 			STAGE="release"  			\
 			LEGACY="true"               \
+			LEGACY_LEVEL="2"            \
 	build; done
 
 
@@ -342,6 +346,7 @@ dfn_test: header
 			ORGPREFIX="dfn_" 			\
 			STAGE="testing"  			\
 			LEGACY="true"               \
+			LEGACY_LEVEL="2"            \
 	build; done
 
 dfn_test_0: header
@@ -353,6 +358,7 @@ dfn_test_0: header
 			ORGPREFIX="dfn_" 			\
 			STAGE="testing"  			\
 			LEGACY="true"               \
+			LEGACY_LEVEL="2"            \
 	build; done
 
 dfn_test_noprefix: header
@@ -363,6 +369,8 @@ dfn_test_noprefix: header
 			ORGNAME="O4I"    			\
 			ORGPREFIX="dfn_" 			\
 			STAGE="testing"  			\
+			LEGACY="true"               \
+			LEGACY_LEVEL="2"            \
 	build; done
 
 
@@ -466,7 +474,7 @@ copy_from_src:	build_dirs build_md5
 	@cp -upr $(SRC_DIR)/CLIENT_DATA/*.opsiinc     $(BUILD_DIR)/CLIENT_DATA/
 	@cp -upr $(SRC_DIR)/CLIENT_DATA/*.opsifunc    $(BUILD_DIR)/CLIENT_DATA/
 	$(eval NUM_FILES := $(shell ls -l $(DL_DIR)/$(FILES_MASK) 2>/dev/null | wc -l))
-	@if [ "$(ALLINCLUSIVE)" = "true" ]; then \
+	@if [ "$(ALLINCLUSIVE)" = "true" -a "${LEGACY_LEVEL}" != "3" ]; then \
 		echo "  * building batteries included package"; \
 		if [ ! -d "$(BUILD_DIR)/CLIENT_DATA/files" ]; then \
 			echo "    * creating directory $(BUILD_DIR)/CLIENT_DATA/files"; \
@@ -504,17 +512,18 @@ build_json:
 	@echo "* Creating $(BUILD_JSON)"
 	@rm -f $(BUILD_JSON)
 	@echo "{\n\
-              \"M_TODAY\"      : \"$(TODAY)\",\n\
-              \"M_STAGE\"      : \"$(STAGE)\",\n\
-              \"M_ORGNAME\"    : \"$(ORGNAME)\",\n\
-              \"M_ORGPREFIX\"  : \"$(ORGPREFIX)\",\n\
-              \"M_TESTPREFIX\" : \"$(TESTPREFIX)\",\n\
-              \"M_PY_VER\"     : \"$(BUILD_PY_VER)\",\n\
-              \"M_KEEPFILES\"  : \"$(KEEPFILES)\",\n\
-              \"M_LEGACY\"     : \"$(LEGACY)\",\n\
-              \"M_ALLINC\"     : \"$(ALLINCLUSIVE)\",\n\
-              \"M_DOWNLOADER\" : \"$(DOWNLOADER)\",\n\
-              \"M_TESTING\"    : \"$(TESTING)\"\n}"      > $(TMP_FILE)
+              \"M_TODAY\"        : \"$(TODAY)\",\n\
+              \"M_STAGE\"        : \"$(STAGE)\",\n\
+              \"M_ORGNAME\"      : \"$(ORGNAME)\",\n\
+              \"M_ORGPREFIX\"    : \"$(ORGPREFIX)\",\n\
+              \"M_TESTPREFIX\"   : \"$(TESTPREFIX)\",\n\
+              \"M_PY_VER\"       : \"$(BUILD_PY_VER)\",\n\
+              \"M_KEEPFILES\"    : \"$(KEEPFILES)\",\n\
+              \"M_LEGACY\"       : \"$(LEGACY)\",\n\
+              \"M_LEGACY_LEVEL\" : \"$(LEGACY_LEVEL)\",  \
+              \"M_ALLINC\"       : \"$(ALLINCLUSIVE)\",\n\
+              \"M_DOWNLOADER\"   : \"$(DOWNLOADER)\",\n\
+              \"M_TESTING\"      : \"$(TESTING)\"\n}"      > $(TMP_FILE)
 	@cat  $(TMP_FILE)
 	@$(MUSTACHE) $(TMP_FILE) $(SPEC)	 > $(BUILD_JSON)
 	@rm -f $(TMP_FILE)
