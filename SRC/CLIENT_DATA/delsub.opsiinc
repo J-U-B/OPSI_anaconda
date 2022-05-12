@@ -1,7 +1,7 @@
 ;=====================================================================
 ; delsub.opsiinc ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2020-12-18 12:16:44 +0100
+; Jens Boettge <boettge@mpi-halle.mpg.de>  2022-05-12 13:26:42 +0200
 ;=====================================================================
 
 
@@ -36,12 +36,15 @@ if not ( count ($ResultList$) = "0" )
 	for %id% in $ResultList$ do sub_Uninstall_ID
 	
 	;=== custom post uninstall
-	comment "include custom post uninstall file"
 	if not ($CustomPostUninstall$ = "none")
 		if FileExists("%ScriptPath%\custom\" + $CustomPostUninstall$)
 			ShowBitmap $Img_Uninstall_Custom$ $ProductName$
-			include_insert "%ScriptPath%\custom\" + $CustomPostUninstall$
+			comment "Starting custom post uninstall"
+			include_append "%ScriptPath%\custom\" + $CustomPostUninstall$
+			SUB_POST_UNINSTALL
 			ShowBitmap $Img_Uninstall$ $ProductName$
+		else
+			logError "Can't find custom post uninstall script: %ScriptPath%\custom\" + $CustomPostUninstall$
 		endif
 	endif	
 	
@@ -206,3 +209,7 @@ endif
 [Registry_DeleteUninstKey]
 ;======================================================================
 DeleteKey $RegKey$
+
+;=====================================================================
+[sub_end]
+;=====================================================================

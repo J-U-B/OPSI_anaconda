@@ -1,8 +1,8 @@
 ############################################################
 # OPSI package Makefile (ANACONDA)
-# Version: 2.9
+# Version: 2.10.0
 # Jens Boettge <boettge@mpi-halle.mpg.de>
-# 2022-02-10 10:30:46 +0100
+# 2022-05-12 11:35:56 +0200
 ############################################################
 
 .PHONY: header clean mpimsp mpimsp_test o4i o4i_test dfn dfn_test all_test all_prod all help download pdf var_check dummy_build
@@ -138,7 +138,8 @@ FILES_EXPECTED = 2
 MD5SUM_FILE := $(SW_NAME).md5sums
 
 ### Only download packages?
-ifeq ($(MAKECMDGOALS),download)
+# ifeq ($(MAKECMDGOALS),download)
+ifneq ($(filter download all_%,$(MAKECMDGOALS)),)
 	ONLY_DOWNLOAD=true
 else
 	ONLY_DOWNLOAD=false
@@ -333,7 +334,7 @@ dfn: header
 			ORGPREFIX="dfn_" 			\
 			STAGE="release"  			\
 			LEGACY="true"               \
-			LEGACY_LEVEL="2"            \
+			LEGACY_LEVEL="3"            \
 	build; done
 
 
@@ -346,7 +347,7 @@ dfn_test: header
 			ORGPREFIX="dfn_" 			\
 			STAGE="testing"  			\
 			LEGACY="true"               \
-			LEGACY_LEVEL="2"            \
+			LEGACY_LEVEL="3"            \
 	build; done
 
 dfn_test_0: header
@@ -358,7 +359,7 @@ dfn_test_0: header
 			ORGPREFIX="dfn_" 			\
 			STAGE="testing"  			\
 			LEGACY="true"               \
-			LEGACY_LEVEL="2"            \
+			LEGACY_LEVEL="3"            \
 	build; done
 
 dfn_test_noprefix: header
@@ -370,7 +371,7 @@ dfn_test_noprefix: header
 			ORGPREFIX="dfn_" 			\
 			STAGE="testing"  			\
 			LEGACY="true"               \
-			LEGACY_LEVEL="2"            \
+			LEGACY_LEVEL="3"            \
 	build; done
 
 
@@ -384,7 +385,7 @@ pdf:
 		if [ ! -e readme.pdf -o readme.pdf -ot readme.md ]; then \
 			echo "* Converting readme.md to readme.pdf"; \
 			pandoc "readme.md" \
-				--latex-engine=xelatex \
+				--pdf-engine=xelatex \
 				-f markdown \
 				-H DOCU/readme.sty \
 				-V linkcolor:blue \
@@ -587,8 +588,8 @@ build: pkgdownload pdf clean copy_from_src
 	cd $(CURDIR)
 
 
-all_test:  header mpimsp_test o4i_test_0 dfn_test dfn_test_0
+all_test:  header download mpimsp_test o4i_test_0 dfn_test dfn_test_0
 
-all_prod : header mpimsp o4i dfn
+all_prod : header download mpimsp o4i dfn
 
 all : header download mpimsp o4i dfn

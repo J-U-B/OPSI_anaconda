@@ -11,7 +11,7 @@
 #   PRODUCT_ID: id of the current product
 #   CLIENT_DATA_DIR: directory which contains the installed client data
 #=====================================================================
-# J. Boettge <boettge@mpi-halle.mpg.de>  2018-10-26 07:45:20 +0200
+# J. Boettge <boettge@mpi-halle.mpg.de>  2022-05-12 13:18:26 +0200
 #=====================================================================
 
 TS=$(date +"%s")
@@ -107,14 +107,18 @@ rm -rf $TMP_DIR
 
 {{^ifdef_allinc}}
 {{#ifdef_auto_download}}
-### product downloader
-if [[ -f "${CLIENT_DATA_DIR}/product_downloader.sh" ]]; then
-	echo -e "\nCalling product downloader"
-	DEST_DIR=${DST} ${CLIENT_DATA_DIR}/product_downloader.sh
-	ERR=$?
+if [[ "{{legacy_level}}" -lt "3" && "{{ifdef_legacy}}" == "false" ]]; then
+	### product downloader
+	if [[ -f "${CLIENT_DATA_DIR}/product_downloader.sh" ]]; then
+		echo -e "\nCalling product downloader"
+		DEST_DIR=${DST} ${CLIENT_DATA_DIR}/product_downloader.sh
+		ERR=$?
+	else
+		echo -e "\nProduct downloader not found!"
+		ERR=2
+	fi
 else
-	echo -e "\nProduct downloader not found!"
-	ERR=2
+	echo -e "\nProduct downloader disabled for legacy level 3!\n"
 fi
 {{/ifdef_auto_download}}
 {{/ifdef_allinc}}

@@ -1,3 +1,19 @@
+anaconda 2022.05-14:
+	* product update ==> 2022.05
+	* changed handling of custom scripts (require SUB_POST_INSTALL an SUB_POST_UNINSTALL sections)
+	* adjusted legacy code in setup
+	* adjusted legacy code in postint (downloader disabled)
+	* legacy_level 3 reached for dfn-Package of Anaconda3
+	* updated helpers.opsiinc -> v1.9.0
+	* adjustment in Makefile for download
+	* updated readme (custom_post_(un)install)
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2022-05-12 13:55:56 +0200
+
+anaconda 2021.11-13:
+	* minimum OS requirements raised to Windows 10
+	* added Anaconda EULA and Terms of Service in Advice (control)
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2022-02-21 07:16:37 +0100
+
 anaconda 2021.11-12:
 	* product update -> 2021.11
 	* updated helpers.opsifunc -> v1.7.1

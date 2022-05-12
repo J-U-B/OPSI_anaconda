@@ -1,4 +1,4 @@
-# ![](./SRC/IMAGES/AnacondaLogo.png "Anaconda")   Anaconda 2/3 #
+# ![](./SRC/IMAGES/AnacondaLogo_80x80.png "Anaconda")     Anaconda 2/3 #
 
 ----
 
@@ -214,7 +214,10 @@ wurde 5 festgelegt.
 **`custom_post_install`** und **`custom_post_uninstall`** - Hier
 können Skripte hinterlegt werden, welche optional nach Abschluss der Installation
 bzw. Deinstallation ausgeführt werden sollen. Die Skripte müssen im Unterverzeichnis
-`custom` des Paketes auf dem Depot-Server liegen.
+`custom` des Paketes auf dem Depot-Server liegen.  
+Die Skripte muessen Sektionen mit den Namen `SUB_POST_INSTALL` bzw. `SUB_POST_UNINSTALL`
+enthalten; beide koennen auch in einem gemeinsamen Skript untergebracht sein.
+Innerhalb dieser koennen weitere Sektionen aufgerufen werden.  
 (*default: none*)
 
 **`required_mimimum_space`** - Aufgrund der Komplexität des vorliegenden
@@ -451,4 +454,4 @@ einer vollständigen Installation der neueren Distribution zu beobachten.
 Siehe hierzu: [Issues](https://git.o4i.org/jens.boettge/anaconda/issues) 
 
 -----
-Jens Böttge <<boettge@mpi-halle.mpg.de>>, 2020-11-30 00:40:15 +0100
+Jens Böttge <<boettge@mpi-halle.mpg.de>>, 2022-05-12 13:49:25 +0200

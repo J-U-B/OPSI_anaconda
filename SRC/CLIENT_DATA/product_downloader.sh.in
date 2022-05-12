@@ -4,13 +4,13 @@
 # Product: ANACONDA
 #
 # Version 1.4
-# Jens Boettge <boettge@mpi-halle.mpg.de>  2020-03-13 12:24:52 +0100
+# Jens Boettge <boettge@mpi-halle.mpg.de>  2022-05-12 11:44:48 +0200
 #=======================================================================
 # link examples:
 # https://www.anaconda.com/download/#windows
-# 	https://repo.continuum.io/archive/Anaconda3-5.1.0-Windows-x86_64.exe
+# 	https://repo.anaconda.com/archive/Anaconda3-2022.05-Windows-x86_64.exe
 # 	https://repo.continuum.io/archive/Anaconda2-5.1.0-Windows-x86_64.exe
-#	https://repo.continuum.io/archive/Anaconda3-5.1.0-Windows-x86.exe
+#	https://repo.anaconda.com/archive/Anaconda3-2022.05-Windows-x86.exe
 #	https://repo.continuum.io/archive/Anaconda2-5.1.0-Windows-x86.exe
 #=======================================================================
 

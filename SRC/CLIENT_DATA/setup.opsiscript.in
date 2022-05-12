@@ -1,8 +1,8 @@
 ;======================================================================
 ; setup.opsiscript ANACONDA
 ; Installer-Typ: NSIS
-; 
-; J. Boettge <boettge@mpi-halle.mpg.de>  2022-02-10 10:26:45 +0100
+;
+; Jens Boettge <boettge@mpi-halle.mpg.de>  2022-05-12 13:27:07 +0200
 ;======================================================================
 
 ;======================================================================
@@ -71,6 +71,7 @@ else
 		isFatalError "delsub.opsiinc not found"
 	endif	
 
+{{^ifdef_legacy}}
 	; Start the installation
 	marktime
 
@@ -128,19 +129,24 @@ else
 	endif
 	
 	;=== custom post install
-	comment "include custom post install file"
 	if not ($CustomPostInstall$ = "none")
 		if FileExists("%ScriptPath%\custom\" + $CustomPostInstall$)
 			ShowBitmap $Img_Install_Custom$ $ProductName$
-			include_insert "%ScriptPath%\custom\" + $CustomPostInstall$
+			comment "Starting custom post install"
+			include_append "%ScriptPath%\custom\" + $CustomPostInstall$
+			SUB_POST_INSTALL
 			ShowBitmap $Img_Install$ $ProductName$
+		else
+			logError "Can't find custom post install script: %ScriptPath%\custom\" + $CustomPostInstall$
+			; isFatalError "delsub.opsiinc not found"
 		endif
-	endif
+	endif	
 	
 	if ($pr_SkipUpdate$ = "true")
 		Message "Skipping update after setup by property"
 		noUpdateScript
 	endif
+{{/ifdef_legacy}}
 	
 	;=== measure installation time
 	set $TimeDiff$ = getDiffTimeSec
@@ -158,9 +164,9 @@ endif
 ; Stage 2 - logError (entire functionality)
 ; Stage 3 - logError (NO functionality except uninstall; no binaries)
 ; Stage 4 - removal of this package from repository pending
-;
+;   
 ;-----------------------------------------
-; This is stage 2
+; This is stage 3
 ;-----------------------------------------
 if  ("{{legacy_level}}" = "1")
 	logWarning "*******************************************************************************************"
@@ -172,7 +178,7 @@ if  ("{{legacy_level}}" = "1")
 	Message "Updating status information for this package on depot"
 	set $result$ = productSetActionRequest($ProductId$, "none")
 	set $result$ = "Package is deprecated!"
-	; set $result$ = currentProductSetReport($result$)
+	set $result$ = currentProductSetReport($result$)
 	set $result$ = productExtUpdateOnClient($ProductId$, "installed", "installed", "None", $result$)
 	isSuspended
 endif
@@ -183,15 +189,14 @@ if  ("{{legacy_level}}" = "2")
 	logError "The functionality is completely taken over by o4i_" + $StrippedProductId$+"."
 	logError "Use o4i_{{O_SOFTWARE}} instead! (dfn_{{O_SOFTWARE}} will be removed then automatically)"
 	logError "dfn_" + $StrippedProductId$ + " should be removed the then from your depot."
-	logError "*******************************************************************************************"
 	Message "Updating status information for this package on depot"
 	set $result$ = productSetActionRequest($ProductId$, "none")
 	set $result$ = "Package is deprecated!"
-	; set $result$ = currentProductSetReport($result$)
+	set $result$ = currentProductSetReport($result$)
 	set $result$ = productExtUpdateOnClient($ProductId$, "installed", "installed", "None", $result$)
 	isSuspended
 endif
-if  ("{{legacy_level}}" = "3")
+if  ("{{legacy_level}}" INT>= "3")
 	logError "*******************************************************************************************"
 	logError "This package is END OF LIFE!"
 	logError "This package will not be maintained any longer!"
@@ -205,7 +210,6 @@ if  ("{{legacy_level}}" = "3")
 	set $result$ = productSetActionRequest($ProductId$, "none")
 	set $result$ = "Package is end of life!"
 	set $result$ = productExtUpdateOnClient($ProductId$, "forbidden", "not_installed", "failed", "Discontinued package!")
-	; isFatalError "Discontinued package!"
 	isSuspended
 endif
 {{/ifdef_legacy}}
@@ -282,5 +286,7 @@ set_link
        icon_index:
 end_link
 
-
+;=====================================================================
+[sub_end]
+;=====================================================================
 

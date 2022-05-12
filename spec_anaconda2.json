@@ -20,15 +20,17 @@
 	"DOWNLOADER"           : "{{M_DOWNLOADER}}",
 
 	"_":"=== conditions ===",
-	"ifdef_64bit_only"     :false,
-	"ifdef_auto_download"  :true,
-	"ifdef_special_advice" :true,
+	"ifdef_64bit_only"     : false,
+	"ifdef_auto_download"  : true,
+	"ifdef_special_advice" : true,
 
-	"ifdef_testing"        :{{M_TESTING}},
-	"ifdef_allinc"         :{{M_ALLINC}},
-	"ifdef_keepfiles"      :{{M_KEEPFILES}},
-	
-	"ifdef_legacy"         :{{M_LEGACY}},
+	"ifdef_testing"        : {{M_TESTING}},
+	"ifdef_allinc"         : {{M_ALLINC}},
+	"ifdef_keepfiles"      : {{M_KEEPFILES}},
+
+	"_":"=== legacy package? ===",
+	"ifdef_legacy"         : {{M_LEGACY}},
+	"legacy_level"         : "4",
 	
 	"_":"=== some tuning ===",
 	"DEFAULT_TESTING_LOGLEVEL" : "7",

@@ -1,6 +1,6 @@
 {{! ========================================================================== }}
 {{!  Anaconda CONTROL                                                          }}
-{{!  J. Boettge <boettge@mpi-halle.mpg.de> 2020-11-30 00:51:45 +0100           }}
+{{!  J. Boettge <boettge@mpi-halle.mpg.de> 2022-05-12 12:06:17 +0200           }}
 {{! ========================================================================== }}
 [Package]
 version: {{O_PKG_VER}}
@@ -23,9 +23,12 @@ description: The Most Popular Python Data Science Platform
 advice:
 {{/ifdef_legacy}}
 {{#ifdef_legacy}}
-advice: Important note: This package is DEPRECATED! Use o4i_{{O_SOFTWARE}} instead!
+advice: Important note: This package is DEPRECATED! Use o4i_{{O_SOFTWARE}}{{PY_VER}} instead!
  (There is no need to set this package to uninstall. This will be done automatically.)
 {{/ifdef_legacy}}
+  Please be sure to note:
+  - https://www.anaconda.com/eula-anaconda-individual-edition
+  - https://www.anaconda.com/terms-of-service
 {{#ifdef_special_advice}}
 {{O_SPECIAL_ADVICE}}
 {{/ifdef_special_advice}}
