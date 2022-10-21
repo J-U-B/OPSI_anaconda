@@ -1,7 +1,7 @@
-{  
+{
 	"_": "=== OPSI package variables ===",
-	"O_PKG_VER"            : "14",
-	"O_SOFTWARE_VER"       : "2022.05",
+	"O_PKG_VER"            : "15",
+	"O_SOFTWARE_VER"       : "2022.10",
 	"O_SOFTWARE"           : "Anaconda",
 	"O_RELEASE_DATE"       : "{{M_TODAY}}",
 	"O_INST_LOG"           : "/tmp/{{M_ORGPREFIX}}anaconda__opsi_package_install.log",
@@ -20,7 +20,7 @@
 	"DOWNLOADER"           : "{{M_DOWNLOADER}}",
 
 	"_":"=== conditions ===",
-	"ifdef_64bit_only"     : false,
+	"ifdef_64bit_only"     : true,
 	"ifdef_auto_download"  : true,
 	"ifdef_special_advice" : false,
 
@@ -31,10 +31,10 @@
 	"_":"=== legacy package? ===",
 	"ifdef_legacy"        : {{M_LEGACY}},
 	"legacy_level"        : "{{M_LEGACY_LEVEL}}",
-	
+
 	"_":"=== some tuning ===",
 	"DEFAULT_TESTING_LOGLEVEL" : "7",
 	"DEFAULT_RELEASE_LOGLEVEL" : "5",
-	
+
 	"_":""
 }

@@ -1,7 +1,7 @@
 ;======================================================================
 ; update.opsiscript ANACONDA
-; 
-; J. Boettge <boettge@mpi-halle.mpg.de>  2022-02-10 10:41:20 +0100
+;
+; J. Boettge <boettge@mpi-halle.mpg.de>  2022-10-19 17:12:44 +0200
 ;======================================================================
 
 ;======================================================================
@@ -68,7 +68,7 @@ endif
 	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_get_anaconda_version')
 	set $ExitCode$ = getLastExitCode
 	if ($ExitCode$ = "0")
-		set $Str$=takeString("-1",$ResultList$)
+		set $Str$ = takeString("-1",$ResultList$)
 		if not ($Str$ = "")
 			set $ResultList$ = splitString($Str$, "=")
 			set $Ver_anaconda$ = takeString("1", $ResultList$)
@@ -98,7 +98,7 @@ endif
 		set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_get_anaconda_version')
 		set $ExitCode$ = getLastExitCode
 		if ($ExitCode$ = "0")
-			set $Str$=takeString("-1",$ResultList$)
+			set $Str$ = takeString("-1",$ResultList$)
 			if not ($Str$ = "")
 				set $ResultList$ = splitString($Str$, "=")
 				set $Ver_anaconda$ = takeString("1", $ResultList$)
@@ -142,7 +142,7 @@ endif
 	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_get_anaconda_version')
 	set $ExitCode$ = getLastExitCode
 	if ($ExitCode$ = "0")
-		set $Str$=takeString("-1",$ResultList$)
+		set $Str$ = takeString("-1",$ResultList$)
 		if not ($Str$ = "")
 			set $ResultList$ = splitString($Str$, "=")
 			set $Ver_anaconda$ = takeString("1", $ResultList$)

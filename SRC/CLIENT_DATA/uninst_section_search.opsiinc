@@ -1,6 +1,6 @@
 ;======================================================================
 ; unist_section_search.opsiinc
-; J. Boettge <boettge@mpi-halle.mpg.de>  2022-01-27 12:29:31 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2022-10-19 17:09:54 +0200
 ;======================================================================
 ; * searching 64 bit AND 32 bit tree in this order
 ;======================================================================
@@ -14,8 +14,7 @@
 ; Set $RegSearchOpts$ = "/k"
 Set $RegSearchOpts$ = '/s /d  /f "' + $SearchPattern$ + '"'
 
-DefStringList $TempList$
-;** "Unset" erforderlich, da evtl. dieses Sub mehrmals genutzt wird und 
+;** "Unset" erforderlich, da evtl. dieses Sub mehrmals genutzt wird und
 ;** alte Werte in der Liste sein koennten
 Set $ResultList$ = emptylist ($ResultList$)
 
