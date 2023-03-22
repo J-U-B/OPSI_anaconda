@@ -1,6 +1,6 @@
 {{! ========================================================================== }}
 {{!  Anaconda CONTROL                                                          }}
-{{!  J. Boettge <boettge@mpi-halle.mpg.de> 2022-05-12 12:06:17 +0200           }}
+{{!  J. Boettge <boettge@mpi-halle.mpg.de> 2023-03-22 15:14:45 +0100           }}
 {{! ========================================================================== }}
 [Package]
 version: {{O_PKG_VER}}
@@ -67,6 +67,23 @@ description: which architecture (32/64 bit) should be installed
 values: ["32 bit", "64 bit", "sysnative"]
 default: ["sysnative"]
 {{/ifdef_64bit_only}}
+
+[ProductProperty]
+type: bool
+name: register_as_system_python
+description: Register Anaconda{{PY_VER}} as the system Python
+  Recommended.
+  Allows other programs, such as VSCode, PyCharm, etc. to automatically
+  detect Anaconda{{PY_VER}} as the primary Python{{PY_VER}} on the system.
+default: True
+
+[ProductProperty]
+type: bool
+name: clear_package_cache
+description: Clear package cache upon completition.
+  Recommended.
+  Recovers some disk space without harming functionality.
+default: True
 
 [ProductProperty]
 type: bool

@@ -248,6 +248,15 @@ Für diese Funktion ist eine Verbindung zum Internet erforderlich.
 angegebenen Pakete lässt sich festlegen, wann die Installation erfolgen soll:
 während des Setup-Skriptes, des Update-Skriptes ...oder gar nicht. (*default: setup*)
 
+**`clear_package_cache`** - Hiermit kann festgelegt werden, ob nach Abschluss
+der Installation bzw. des Updates der Paketcache gelöscht werden soll um
+Plattenplatz freizugeben. (Empfohlen.)
+
+**`register_as_system_python`** - Legt fest, ob Anaconda als System-Python
+registriert werden soll.  
+Das erlaubt anderen Programmen wie z.B. VSCode oder PyCharm automatisch Anaconda
+als primären Python-Interpreter zu erkennen. (Empfohlen.)
+
 **`upgrade_release`** - Das Update-Skript bietet die Möglichkeit
 für die Anaconda-Distribution inline ein Release-Upgrade vorzunehmen. Das erspart
 unter Umständen die Notwendigkeit einer kompletten Neuinstallation bzw. ermöglicht
@@ -451,7 +460,7 @@ einer vollständigen Installation der neueren Distribution zu beobachten.
 
 ### Fehler, Requests for enhancement,...
 
-Siehe hierzu: [Issues](https://git.o4i.org/jens.boettge/anaconda/issues) 
+Siehe hierzu: [Issues](https://git.o4i.org/jens.boettge/anaconda/issues)
 
 -----
-Jens Böttge <<boettge@mpi-halle.mpg.de>>, 2022-05-12 13:49:25 +0200
+Jens Böttge <<boettge@mpi-halle.mpg.de>>, 2023-03-22 20:50:26 +0100

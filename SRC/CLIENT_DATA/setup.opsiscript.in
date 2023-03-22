@@ -2,7 +2,7 @@
 ; setup.opsiscript ANACONDA
 ; Installer-Typ: NSIS
 ;
-; Jens Boettge <boettge@mpi-halle.mpg.de>  2022-05-12 13:27:07 +0200
+; Jens Boettge <boettge@mpi-halle.mpg.de>  2023-03-22 15:24:37 +0100
 ;======================================================================
 
 ;======================================================================
@@ -146,8 +146,14 @@ else
 		Message "Skipping update after setup by property"
 		noUpdateScript
 	endif
+
+    if ($pr_ClearPackageCache$ = "true")
+        Message "Clearing package cache"
+        Files_DeletePackageCache
+    endif
+
 {{/ifdef_legacy}}
-	
+
 	;=== measure installation time
 	set $TimeDiff$ = getDiffTimeSec
 	if $pr_localCopy$ = "True"
@@ -224,6 +230,11 @@ copy "$InstallerSrc$" "$TempDir$"
 [Files_DeleteLocalInstaller]
 ;======================================================================
 delete -f "$TempDir$\$InstallerFile$"
+
+;======================================================================
+[Files_DeletePackageCache]
+;======================================================================
+delete -sf "$PackageCacheDir$"
 
 ;======================================================================
 [Winbatch_install]

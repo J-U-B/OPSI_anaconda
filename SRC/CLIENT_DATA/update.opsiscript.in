@@ -1,7 +1,7 @@
 ;======================================================================
 ; update.opsiscript ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2022-10-19 17:12:44 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2023-03-22 15:29:47 +0100
 ;======================================================================
 
 ;======================================================================
@@ -137,7 +137,14 @@ endif
 	comment "Conda clean returned exit code " + $ExitCode$
 	set $TimeDiff$ = getDiffTimeSec
 	comment  "Elapsed time after cleanup: " + $TimeDiff$ + " seconds"
-	
+
+    if ($ActionRequest$ = "update") and ($pr_ClearPackageCache$ = "true")
+        Message "Clearing package cache"
+        Files_DeletePackageCache
+        set $TimeDiff$ = getDiffTimeSec
+	    comment  "Elapsed time after clearing package cache: " + $TimeDiff$ + " seconds"
+    endif
+
 	;=== get current anaconda version (AFTER update)
 	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_get_anaconda_version')
 	set $ExitCode$ = getLastExitCode
@@ -185,7 +192,7 @@ endif
 ; Stage 4 - removal of this package from repository pending
 ;
 ;-----------------------------------------
-; This is stage 2
+; This is stage 3
 ;-----------------------------------------
 if  ("{{legacy_level}}" = "1")
 	logWarning "*******************************************************************************************"
@@ -266,3 +273,7 @@ exit %ERRORLEVEL%
 icacls "$InstallDir$\*" /inheritance:e /T /C /L /Q
 exit %ERRORLEVEL%
 
+;======================================================================
+[Files_DeletePackageCache]
+;======================================================================
+delete -sf "$PackageCacheDir$"

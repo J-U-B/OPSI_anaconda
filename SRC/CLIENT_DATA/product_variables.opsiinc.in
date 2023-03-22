@@ -1,7 +1,7 @@
 ;=====================================================================
 ; product specific variables ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2022-10-21 20:08:55 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2023-03-22 15:19:15 +0100
 ;=====================================================================
 
 include_insert "%ScriptPath%\variables.opsiinc"
@@ -157,11 +157,11 @@ endif
 
 if ($sw_arch$ = "64")
 	; 64 bit software
-	set $InstallBase$ = "%ProgramFiles64Dir%"
+	; set $InstallBase$ = "%ProgramFiles64Dir%"
 	set $sArch$ = "_64"
 else
 	; 32 bit software
-	set $InstallBase$ = EnvVar("ProgramFiles(x86)")
+	; set $InstallBase$ = EnvVar("ProgramFiles(x86)")
 	set $sArch$ = ""
 endif
 
@@ -190,6 +190,8 @@ Set $pr_DesktopLink_Spyder$ 		= GetProductProperty("link_desktop_Spyder","False"
 Set $pr_DesktopLink_Jupyter$ 		= GetProductProperty("link_desktop_Jupyter_Notebook","False")
 Set $pr_DesktopLink_AnacondaPrompt$	= GetProductProperty("link_desktop_Anaconda_Prompt","False")
 
+Set $pr_RegisterSystemPython$       = GetProductProperty("register_as_system_python", "True")
+Set $pr_ClearPackageCache$          = GetProductProperty("clear_package_cache", "True")
 Set $pr_SkipUpdate$ 				= GetProductProperty("update_skip","False")
 Set $pr_SkipFixRights$ 				= GetProductProperty("update_rights_skip","False")
 Set $pr_DryUpdate$ 					= GetProductProperty("update_dry_run","False")
@@ -200,6 +202,13 @@ Set $pr_MinimumSpace$				= Trim(GetProductProperty("required_mimimum_space","def
 Set $pr_AddPack_InstallMode$		= GetProductProperty("additional_packages_install_mode","none")
 Set $TempList$						= emptyList($TempList$)
 Set $pr_AddPackList$				= GetProductPropertyList("additional_packages",$TempList$)
+
+; make variable(s) compatible for use:
+if ($pr_RegisterSystemPython$ = "True")
+	set $pr_RegisterSystemPython$   = "1"
+else
+	set $pr_RegisterSystemPython$   = "0"
+endif
 
 ;-----------------------------------------------------------
 ;*** properties: post install/uninstall
@@ -257,10 +266,11 @@ if (not (FileExists($InstallerSrc$))) AND ("{{legacy_level}}" INT< "3")
 endif
 
 
-
+Set $installBase$           = "%CommonAppdataDir%"
 Set $InstallDir$            = $InstallBase$ + "\" + stringReplace($StrippedProductName$," ", "") + "\"
 ;Set $InstallDir$           = $InstallBase$ + "\" + $ProductName$ + "\"
 Set $InstDir$               = $InstallBase$ + "\" + stringReplace($StrippedProductName$," ", "")
+Set $PackageCacheDir$       = $InstDir$ + "\pkgs"
 
 ;default value for required space (in MB):
 Set $MinimumSpaceDefault$   = "9000"
@@ -300,9 +310,9 @@ Set $ProductVersionFilter$       = "*"
 
 ;-------------------------------------------------------
 ; Install/uninstall options
-; https://conda.io/docs/user-guide/install/windows.html
+; https://docs.anaconda.com/anaconda/install/silent-mode/
 ;-------------------------------------------------------
-Set $Inst_Opts$        	= "/InstallationType=AllUsers  /S  /D=" + $InstallDir$
+Set $Inst_Opts$        	= "/InstallationType=AllUsers  /AddToPath=0 /RegisterPython=" + $pr_RegisterSystemPython$ + " /S  /D=" + $InstallDir$
 Set $Uninst_Opts$      	= "/S"
 
 ;-------------------------------------------------------
