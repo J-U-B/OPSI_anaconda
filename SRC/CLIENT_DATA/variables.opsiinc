@@ -4,8 +4,9 @@
 ; This file contains all possible variables, excluding the opsi-system
 ; variables, for the opsi-winst scripts in use.
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2023-03-22 15:17:36 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2023-03-30 10:29:22 +0200
 ;=====================================================================
+encoding=utf8
 
 DefStringList $EXE$
 DefStringList $MAP$
@@ -111,7 +112,9 @@ DefVar $Ver_post$
 DefVar $pr_DesktopLink_Navigator$
 DefVar $pr_DesktopLink_Spyder$
 DefVar $pr_DesktopLink_Jupyter$
+DefVar $pr_DesktopLink_AnacondaPwsh$
 DefVar $pr_DesktopLink_AnacondaPrompt$
+DefVar $pr_DesktopLink_QtConsole$
 DefVar $pr_DryUpdate$
 DefVar $pr_localCopy$
 DefVar $pr_ReleaseUpgrade$

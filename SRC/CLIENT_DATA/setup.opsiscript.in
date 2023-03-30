@@ -2,12 +2,13 @@
 ; setup.opsiscript ANACONDA
 ; Installer-Typ: NSIS
 ;
-; Jens Boettge <boettge@mpi-halle.mpg.de>  2023-03-22 15:24:37 +0100
+; Jens Boettge <boettge@mpi-halle.mpg.de>  2023-03-30 10:46:59 +0200
 ;======================================================================
 
 ;======================================================================
 [Initial]
 ;======================================================================
+encoding=utf8
 setLogLevel=5
 ; Log Errors in Logfile and abort:
 ExitOnError=true
@@ -49,7 +50,7 @@ if ( not ($pr_MinimumSpace$ = "default"))
 			logError "A negative value for required space or no space needed? Sure? - Using default value"
 		endif
 	else
-		logError "Given value for [required_mimimum_space] is not an interger! Check the property setting. - Using default value."
+		logError "Given value for [required_mimimum_space] is not an integer! Check the property setting. - Using default value."
 		Set $MinimumSpace$  = $MinimumSpaceDefault$
 	endif
 endif
@@ -118,6 +119,12 @@ else
 	if ($pr_DesktopLink_AnacondaPrompt$ = "true")
 		LinkFolder_CreateDesktopLink_AnacondaPrompt
 	endif
+	if ($pr_DesktopLink_AnacondaPwsh$ = "true")
+		LinkFolder_CreateDesktopLink_AnacondaPowerShell
+	endif
+    if ($pr_DesktopLink_QtConsole$ = "true")
+		LinkFolder_CreateDesktopLink_QtConsole
+	endif
 	if ($pr_DesktopLink_Jupyter$ = "true")
 		LinkFolder_CreateDesktopLink_Jupyter
 	endif
@@ -149,7 +156,12 @@ else
 
     if ($pr_ClearPackageCache$ = "true")
         Message "Clearing package cache"
+        ; reduce log level for a while
+        if (getLogLevel INT> "5")
+            setLogLevel = 5
+        endif
         Files_DeletePackageCache
+        setLogLevel = $LogLevelDefault$
     endif
 
 {{/ifdef_legacy}}
@@ -253,8 +265,36 @@ set_link
        working_dir: %HOMEPATH%
        icon_file: $InstDir$\Menu\Iconleak-Atrous-Console.ico
        icon_index:
-end_link 
- 
+end_link
+
+;=====================================================================
+[LinkFolder_CreateDesktopLink_AnacondaPowerShell]
+;=====================================================================
+set_basefolder common_desktopdirectory
+set_subfolder ""
+set_link
+       name: $ProductName$ PowerShell
+       target: "%windir%\System32\WindowsPowerShell\v1.0\powershell.exe"
+       parameters: -ExecutionPolicy ByPass -NoExit -Command "& '$InstDir$\shell\condabin\conda-hook.ps1' ; conda activate '$InstDir$' "
+       working_dir: %HOMEPATH%
+       icon_file: $InstDir$\Menu\Iconleak-Atrous-Console.ico
+       icon_index:
+end_link
+
+;=====================================================================
+[LinkFolder_CreateDesktopLink_QtConsole]
+;=====================================================================
+set_basefolder common_desktopdirectory
+set_subfolder ""
+set_link
+       name: Jupyter QtConsole
+       target: $InstDir$\Scripts\jupyter-qtconsole.exe
+       parameters:
+       working_dir: %HOMEPATH%
+       icon_file: $InstDir$\Menu\Iconleak-Atrous-Console.ico
+       icon_index:
+end_link
+
 ;=====================================================================
 [LinkFolder_CreateDesktopLink_Jupyter]
 ;=====================================================================
@@ -267,8 +307,8 @@ set_link
        working_dir: %HOMEPATH%
        icon_file: $InstDir$\Menu\jupyter.ico
        icon_index:
-end_link 
- 
+end_link
+
 ;=====================================================================
 [LinkFolder_CreateDesktopLink_Spyder]
 ;=====================================================================
@@ -281,8 +321,8 @@ set_link
        working_dir: %HOMEPATH%
        icon_file: $InstDir$\Menu\spyder.ico
        icon_index:
-end_link 
- 
+end_link
+
 ;=====================================================================
 [LinkFolder_CreateDesktopLink_Navigator]
 ;=====================================================================

@@ -1,8 +1,9 @@
 ;======================================================================
 ; Install additional Conda packages
-; 
+;
 ; J. Boettge <boettge@mpi-halle.mpg.de>  2019-02-06 17:21:30 +0100
 ;======================================================================
+encoding=utf8
 
 ;======================================================================
 [Sub_Add_Packages]
@@ -32,7 +33,7 @@ else
 		comment "Conda install returned exit code " + $ExitCode$
 	endif
 endif
-
+encoding=utf8
 
 ;=====================================================================
 [ShellInAnIcon_conda_install]

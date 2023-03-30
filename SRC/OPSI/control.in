@@ -1,6 +1,6 @@
 {{! ========================================================================== }}
 {{!  Anaconda CONTROL                                                          }}
-{{!  J. Boettge <boettge@mpi-halle.mpg.de> 2023-03-22 15:14:45 +0100           }}
+{{!  J. Boettge <boettge@mpi-halle.mpg.de> 2023-03-30 10:23:31 +0200           }}
 {{! ========================================================================== }}
 [Package]
 version: {{O_PKG_VER}}
@@ -106,7 +106,19 @@ default: False
 [ProductProperty]
 type: bool
 name: link_desktop_Anaconda_Prompt
-description: Generate or delete Desktop link for Anaconda Prompt
+description: Generate or delete Desktop link for Anaconda Prompt (cmd)
+default: False
+
+[ProductProperty]
+type: bool
+name: link_desktop_Anaconda_PowerShell
+description: Generate or delete Desktop link for Anaconda PowerShell Prompt
+default: False
+
+[ProductProperty]
+type: bool
+name: link_desktop_Jupyter_QtConsole
+description: Generate or delete Desktop link for Jupyter QtConsole
 default: False
 
 [ProductProperty]
@@ -148,7 +160,7 @@ default: False
 [ProductProperty]
 type: bool
 name: update_rights_skip
-description: Skip repair of access rights during update to save time. (Not reccommended.)
+description: Skip repair of access rights during update to save time. (Not recommended.)
 default: False
 
 [ProductProperty]

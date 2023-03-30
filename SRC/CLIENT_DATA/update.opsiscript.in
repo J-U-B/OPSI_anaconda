@@ -1,12 +1,13 @@
 ;======================================================================
 ; update.opsiscript ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2023-03-22 15:29:47 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2023-03-29 22:53:13 +0200
 ;======================================================================
 
 ;======================================================================
 [Initial]
 ;======================================================================
+encoding=utf8
 setLogLevel=5
 ; Log Errors in Logfile and abort:
 ExitOnError=true
@@ -47,7 +48,7 @@ endif
 
 	;=== let's go
 	marktime
-	
+
 	if (($pr_AddPack_InstallMode$ = "update") AND ($Has_AddPackages$ = "true"))
 		Sub_Add_Packages
 		set $TimeDiff$ = getDiffTimeSec
@@ -63,7 +64,7 @@ endif
 	if ($pr_DryUpdate$ = "true")
 		set $CondaOpts$ = $CondaOpts$ + " --dry-run"
 	endif
-	
+
 	;=== get current anaconda version (BEFORE update)
 	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_get_anaconda_version')
 	set $ExitCode$ = getLastExitCode
@@ -80,8 +81,8 @@ endif
 	else
 		LogWarning "Can't detect Anaconda version in shell!"
 		set $Ver_pre$          = "Anaconda: [???], Python: [???]"
-	endif	
-	
+	endif
+
 	;=== run upgrade?
 	if ($pr_ReleaseUpgrade$ = "True")
 		ShowBitmap $Img_Upgrade$ $ProductName$
@@ -92,8 +93,8 @@ endif
 		set $ExitCode$ = getLastExitCode
 		comment "Upgrade returned exit code " + $ExitCode$
 		set $TimeDiff$ = getDiffTimeSec
-		comment  "Elapsed upgrade time: " + $TimeDiff$ + " seconds"	
-		
+		comment  "Elapsed upgrade time: " + $TimeDiff$ + " seconds"
+
 		;=== get current anaconda version (AFTER UPGRADE)
 		set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_get_anaconda_version')
 		set $ExitCode$ = getLastExitCode
@@ -112,16 +113,16 @@ endif
 			set $Ver_post$         = "Anaconda: [???], Python: [???]"
 		endif
 		comment "Version BEFORE UPGRADE: " + $Ver_pre$
-		comment "Version AFTER UPGRADE : " + $Ver_post$		
+		comment "Version AFTER UPGRADE : " + $Ver_post$
 		set $Ver_pre$ = $Ver_post$
 	endif
-	
 
 	;=== run update
 	ShowBitmap $Img_Update$ $ProductName$
 	Message $ProductName$ + " " + $Version$+ " (" + $sw_arch$ + " bit) - performing update"
 	setLogLevel = 7
-	set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_conda_update')
+	; set $ResultList$ = getOutStreamFromSection('ShellInAnIcon_conda_update')
+    set $ResultList$ = getOutStreamFromSection('ExecWith_PS_conda-update powershell.exe winst /sysnative')
 	setlogLevel = $LogLevelDefault$
 	set $ExitCode$ = getLastExitCode
 	comment "Update returned exit code " + $ExitCode$
@@ -140,7 +141,12 @@ endif
 
     if ($ActionRequest$ = "update") and ($pr_ClearPackageCache$ = "true")
         Message "Clearing package cache"
+        ; reduce log level for a while
+        if (getLogLevel INT> "5")
+            setLogLevel = 5
+        endif
         Files_DeletePackageCache
+        setLogLevel = $LogLevelDefault$
         set $TimeDiff$ = getDiffTimeSec
 	    comment  "Elapsed time after clearing package cache: " + $TimeDiff$ + " seconds"
     endif
@@ -256,6 +262,33 @@ exit %ERRORLEVEL%
 exit %ERRORLEVEL%
 
 ;=====================================================================
+[ExecWith_PS_conda-update]
+;=====================================================================
+trap { write-output $_ ; exit 1 }
+$HOOK=Get-Content "$InstallDir$\shell\condabin\conda-hook.ps1" -raw
+$ScriptBlock = [System.Management.Automation.ScriptBlock]::Create($HOOK)
+& $ScriptBlock
+conda activate "$InstallDir$"
+
+$J = $(conda update --all -q -d --json | ConvertFrom-Json);
+$P = $($J.actions.fetch | select name);
+$L = $($J.actions.link | select name);
+$R = $($J.actions.unlink | select name);
+$S=""; foreach ($x in $P){$S += ($x.name + " ")}; $S = $S.trim()
+write-output ("[I]  Packages with upadates   : {0}" -f $P.count)
+write-output ("[I]  Packages with no upadates: {0}" -f $R.count)
+if ($P.count -gt 0) {
+    write-output  ("="*40); write-output "Packages to update"; write-output ("="*40)
+    $($P |ft -HideTableHeaders | Out-String).Trim()
+    write-output ("="*40)
+    $C = Start-Process conda -Wait -NoNewWindow -ArgumentList "install -q -y $CondaOpts$ $S" -PassThru
+} else {
+    write-output "No updates available!"
+    exit 0
+}
+exit $C.ExitCode
+
+;=====================================================================
 [ShellInAnIcon_conda_clean]
 ;=====================================================================
 "$ActivateBat$" "$InstallDir$." && $CondaCleanCmd$ $CondaOpts$
@@ -264,7 +297,7 @@ exit %ERRORLEVEL%
 ;=====================================================================
 [ShellInAnIcon_get_anaconda_version]
 ;=====================================================================
-"$ActivateBat$" "$InstallDir$." && conda list --export anaconda | find "anaconda="
+"$ActivateBat$" "$InstallDir$." && conda list --export anaconda | find "anaconda-client="
 exit %ERRORLEVEL%
 
 ;=====================================================================

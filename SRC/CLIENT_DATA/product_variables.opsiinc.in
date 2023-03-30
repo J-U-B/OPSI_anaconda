@@ -1,8 +1,9 @@
 ;=====================================================================
 ; product specific variables ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2023-03-22 15:19:15 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2023-03-30 10:29:44 +0200
 ;=====================================================================
+encoding=utf8
 
 include_insert "%ScriptPath%\variables.opsiinc"
 
@@ -189,6 +190,8 @@ Set $pr_DesktopLink_Navigator$ 		= GetProductProperty("link_desktop_Anaconda_Nav
 Set $pr_DesktopLink_Spyder$ 		= GetProductProperty("link_desktop_Spyder","False")
 Set $pr_DesktopLink_Jupyter$ 		= GetProductProperty("link_desktop_Jupyter_Notebook","False")
 Set $pr_DesktopLink_AnacondaPrompt$	= GetProductProperty("link_desktop_Anaconda_Prompt","False")
+Set $pr_DesktopLink_AnacondaPwsh$	= GetProductProperty("link_desktop_Anaconda_PowerShell","False")
+Set $pr_DesktopLink_QtConsole$		= GetProductProperty("link_desktop_Jupyter_QtConsole","False")
 
 Set $pr_RegisterSystemPython$       = GetProductProperty("register_as_system_python", "True")
 Set $pr_ClearPackageCache$          = GetProductProperty("clear_package_cache", "True")
@@ -322,4 +325,4 @@ Set $ActivateBat$		= $InstallDir$ + "Scripts\activate.bat"
 Set $CondaUpgradeCmd$	= "conda install -y -q anaconda python conda"
 Set $CondaUpdateCmd$	= "conda update -y -q --all"
 Set $CondaCleanCmd$		= "conda clean -y --all"
-Set $CondaInstallCmd$	= "conda install -y"
+Set $CondaInstallCmd$	= "conda install -y -q"

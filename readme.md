@@ -292,11 +292,12 @@ der Reparatur von Zugriffsrechten während des Updates um Zeit zu sparen. - Nich
 
 
 
-
-**`link_desktop_Anaconda_Navigator`**,  
+**`link_desktop_Anaconda_Navigator`**,
 **`link_desktop_Spyder`**,  
-**`link_desktop_Jupyter_Notebook`**,  
-**`link_desktop_Anaconda_Prompt`** - optional kann für die angegebenen
+**`link_desktop_Jupyter_Notebook`**,
+**`link_desktop_Anaconda_Prompt`**,  
+**`link_desktop_Anaconda_PowerShell`**,
+**`link_desktop_Jupyter_QtConsole`** - optional kann für die angegebenen
 Programme jeweils eine Verknüpfung auf dem Desktop angelegt werden. (*default: false*)
 
 
@@ -463,4 +464,4 @@ einer vollständigen Installation der neueren Distribution zu beobachten.
 Siehe hierzu: [Issues](https://git.o4i.org/jens.boettge/anaconda/issues)
 
 -----
-Jens Böttge <<boettge@mpi-halle.mpg.de>>, 2023-03-22 20:50:26 +0100
+Jens Böttge <<boettge@mpi-halle.mpg.de>>, 2023-03-30 10:52:25 +0200
