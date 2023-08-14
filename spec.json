@@ -1,7 +1,7 @@
 {
 	"_": "=== OPSI package variables ===",
-	"O_PKG_VER"            : "17",
-	"O_SOFTWARE_VER"       : "2023.03",
+	"O_PKG_VER"            : "18",
+	"O_SOFTWARE_VER"       : "2023.07.2",
 	"O_SOFTWARE"           : "Anaconda",
 	"O_RELEASE_DATE"       : "{{M_TODAY}}",
 	"O_INST_LOG"           : "/tmp/{{M_ORGPREFIX}}anaconda__opsi_package_install.log",

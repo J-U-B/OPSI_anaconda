@@ -3,11 +3,12 @@
 # Download files from vendor
 # Product: ANACONDA
 #
-# Version 1.4
-# Jens Boettge <boettge@mpi-halle.mpg.de>  2022-05-12 11:44:48 +0200
+# Version 1.5
+# Jens Boettge <boettge@mpi-halle.mpg.de>  2023-08-14 06:13:50 +0200
 #=======================================================================
 # link examples:
 # https://www.anaconda.com/download/#windows
+# 	https://repo.anaconda.com/archive/Anaconda3-2023.07-2-Windows-x86_64.exe
 # 	https://repo.anaconda.com/archive/Anaconda3-2022.05-Windows-x86_64.exe
 # 	https://repo.continuum.io/archive/Anaconda2-5.1.0-Windows-x86_64.exe
 #	https://repo.anaconda.com/archive/Anaconda3-2022.05-Windows-x86.exe
@@ -82,9 +83,10 @@ fi
 
 PROD="{{O_SOFTWARE}}"
 VERSION={{O_SOFTWARE_VER}}
-[[ -n "$PRODUCT_VERSION" ]] && VERSION=${PRODUCT_VERSION}
+[[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] && VERSION=${VERSION%.*}-${VERSION##*.}
+#[[ -n "$PRODUCT_VERSION" ]] && VERSION=${PRODUCT_VERSION}
 [[ -z "$VERSION" ]] && ERR=220
-[[ "$VERSION" =~ "O_SOFTWARE_VER" ]] && ERR=221
+#[[ "$VERSION" =~ "O_SOFTWARE_VER" ]] && ERR=221
 if [ "$ERR" -gt 0 ]; then
 	echo "Error: cannot get software version"
 	exit $ERR

@@ -1,19 +1,25 @@
+anaconda 2023.07.2-18:
+	* product update ==> 2023.07-2 (only 64 bit release available!)
+	* adjust notation of version number for installer (2023.07.2 --> 2023.07-2)
+	* adjusted description in control file
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2023-08-14 06:35:45 +0200
+
 anaconda 2023.03-17:
-    * new property: link_desktop_Anaconda_PowerShell
-    * new property: link_desktop_Jupyter_QtConsole
-    * workaround for broken conda updater (ExecWith_PS_conda-update)
-    * reduced logging for clearing package cache
-    * added encoding=utf8
-    * update readme
+	* new property: link_desktop_Anaconda_PowerShell
+	* new property: link_desktop_Jupyter_QtConsole
+	* workaround for broken conda updater (ExecWith_PS_conda-update)
+	* reduced logging for clearing package cache
+	* added encoding=utf8
+	* update readme
 	-- J. Boettge <boettge@mpi-halle.mpg.de>  2023-03-30 10:52:39 +0200
 
 anaconda 2023.03-16:
-    * product update ==> 2023.03 (only 64 bit release available!)
-    * added property: register_as_system_python
-    * added property: clear_package_cache
-    * changed $installBase$ from "C:\Program Files" to "C:\ProgramData" (recommended to avoid blanks in path)
-    * updated helpers.opsifunc -> v1.9.1
-    * update readme
+	* product update ==> 2023.03 (only 64 bit release available!)
+	* added property: register_as_system_python
+	* added property: clear_package_cache
+	* changed $installBase$ from "C:\Program Files" to "C:\ProgramData" (recommended to avoid blanks in path)
+	* updated helpers.opsifunc -> v1.9.1
+	* update readme
 	-- J. Boettge <boettge@mpi-halle.mpg.de>  2023-03-22 20:50:07 +0100
 
 anaconda 2022.10-15:

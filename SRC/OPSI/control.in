@@ -13,11 +13,11 @@ id: {{TESTPREFIX}}{{ORGPREFIX}}anaconda{{PY_VER}}
 name: Anaconda{{PY_VER}} - Individual Edition
 description: The Most Popular Python Data Science Platform
  ___
- Maintainer: {{O_MAINTAINER}}
- Organization: {{ORGNAME}}
- Release date: {{O_RELEASE_DATE}}
+ Maintainer: {{O_MAINTAINER}}  
+ Organization: {{ORGNAME}}  
+ Release date: {{O_RELEASE_DATE}}  
  ___
- Homepage: {{O_SOFTWARE_WEBSITE}}
+ Homepage: {{O_SOFTWARE_WEBSITE}}  
  Changelog: {{O_SOFTWARE_CHANGES}}
 {{^ifdef_legacy}}
 advice:
