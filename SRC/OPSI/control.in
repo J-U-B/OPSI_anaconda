@@ -1,6 +1,6 @@
 {{! ========================================================================== }}
 {{!  Anaconda CONTROL                                                          }}
-{{!  J. Boettge <boettge@mpi-halle.mpg.de> 2023-03-30 10:23:31 +0200           }}
+{{!  J. Boettge <boettge@mpi-halle.mpg.de> 2023-08-23 15:11:01 +0200           }}
 {{! ========================================================================== }}
 [Package]
 version: {{O_PKG_VER}}
@@ -168,6 +168,19 @@ type: bool
 name: upgrade_release
 description: Perform an inline release upgrade before update via conda (without previous uninstall)
 default: False
+
+[ProductProperty]
+type: unicode
+name: on_missing_uninstall_key
+multivalue: False
+editable: False
+description: Behaviour on missing uninstall key in registry but existing install directory
+  - defer = try it on the next run
+  - fail = exit with error
+  - ignore = try to proceed (not recommended)
+  - rough delete = delete directory before proceeding installation
+values: ["defer", "fail", "ignore", "rough delete"]
+default: ["fail"]
 
 [ProductProperty]
 type: unicode

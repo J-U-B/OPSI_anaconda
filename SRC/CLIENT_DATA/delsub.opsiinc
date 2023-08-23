@@ -1,7 +1,7 @@
 ;=====================================================================
 ; delsub.opsiinc ANACONDA
 ;
-; Jens Boettge <boettge@mpi-halle.mpg.de>  2023-03-30 10:34:06 +0200
+; Jens Boettge <boettge@mpi-halle.mpg.de>  2023-08-23 15:18:02 +0200
 ;=====================================================================
 encoding=utf8
 
@@ -19,22 +19,21 @@ else
 	isFatalError "File not found: checkinstance.opsiinc"
 endif
 
-
 ;=== get list of UninstIDs from registry:
-if FileExists("%ScriptPath%\uninst_section_search.opsiinc")
+if FileExists("%ScriptPath%/lib/lib_registry_functions.opsiinc")
+	importlib "lib/lib_registry_functions.opsiinc"
 	;=== search in registry for available uninstall information
-	include_append "%ScriptPath%\uninst_section_search.opsiinc"
-	Sub_search_registry_uninstall_keys
+	; Anaconda 3 is only available for 64 bit:
+	Set $ResultList$ = PSSearchRegistryUninstallKeysByAttribute("DisplayName", $SearchPattern$,  "64")
 else
-	;=== fallback
-	Set $ResultList$ = CreateStringList($Uninst_ID_std$ + "|x32")
+	logError "Can't load library lib_registry_functions.opsiinc"
+	Set $ResultList$ = emptyList($ResultList$)
 endif
 
 if not ( count ($ResultList$) = "0" )
-	
 	;=== process uninstall for all found uninstall sections:
 	for %id% in $ResultList$ do sub_Uninstall_ID
-	
+
 	;=== custom post uninstall
 	if not ($CustomPostUninstall$ = "none")
 		if FileExists("%ScriptPath%\custom\" + $CustomPostUninstall$)
@@ -46,8 +45,8 @@ if not ( count ($ResultList$) = "0" )
 		else
 			logError "Can't find custom post uninstall script: %ScriptPath%\custom\" + $CustomPostUninstall$
 		endif
-	endif	
-	
+	endif
+
 	;=== update productOnClient information on depot server
 	Message "Updating status information on depot"
 	if not ($ProductFilterForbidden$ = "")
@@ -58,42 +57,58 @@ if not ( count ($ResultList$) = "0" )
 	;=== measure time
 	set $TimeDiff$ = getDiffTimeSec
 	Message  "Removal time: " + $TimeDiff$ + " seconds"	
-	
+
 else
 	comment "Empty result list while searching for " + $ProductName$ + " in registry - does not seem to be installed"
-endif
 
+	;=== Workaround for missing uninstall key in registry
+	set $Uninst_RegDir$ = $InstallDir$
+	if fileExists($Uninst_RegDir$)
+		logWarning "No uninstall key found in registry, but there is an install directory at: " + $Uninst_RegDir$
+		Switch $pr_onMissingUninstallKey$
+			Case "defer"
+				if (FileExists($Img_Defer$))
+					ShowBitmap $Img_Defer$	 $ProductName$
+				endif
+				Message "Deferring action"
+				set $result$ = currentProductSetReport("deferred")
+				isSuspended
+			EndCase
+			Case "rough delete"
+				logWarning "Deleting existing install directory (by property)!"
+				Files_del_InstallDir
+				if fileExists($Uninst_RegDir$)
+					logError "Install dir still exists!"
+				endif
+			EndCase
+			Case "ignore"
+				logWarning "Ignoring missing uninstall key in registry (by property); this may result in an error!"
+			EndCase
+			DefaultCase
+				logError "Bailing out because of missing uninstall key in registry but existing install dir (by property)."
+				isFatalError "missing uninstall key"
+			EndCase
+		EndSwitch
+	endif
+endif
 
 
 ;=======================================
 [sub_Uninstall_ID]
 ;=======================================
-set $Uninst_ID$    	= takeString(0, splitString("%id%", "|"))
-set $Uninst_Arch$  	= takeString(1, splitString("%id%", "|"))
 
-set $RegKey$		="[HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\" + $Uninst_ID$ + "]"
+set $RegKey$			= takeString(0, splitString("%id%", "|"))
+set $Uninst_Arch$		= takeString(1, splitString("%id%", "|"))
+set $DisplayName$		= takeString(2, splitString("%id%", "|"))
+set $Uninst_ID$			= takeString(-1, splitString($RegKey$, "\"))
+set $RegKey$			= "[" + $RegKey$ + "]"
 
-Switch $Uninst_Arch$
-	Case "x32"
-			set $DisplayName$    	= GetRegistryStringValue32($RegKey$ + " DisplayName")
-			set $Inst_Loc$ 			= GetRegistryStringValue32($RegKey$ + " InstallLocation")
-			set $Inst_Ver$ 			= GetRegistryStringValue32($RegKey$ + " DisplayVersion")
-			set $UninstallString$  	= GetRegistryStringValue32($RegKey$ + " UninstallString")
-	EndCase
-	Case "x64"
-			set $DisplayName$    	= GetRegistryStringValue64($RegKey$ + " DisplayName")
-			set $Inst_Loc$ 			= GetRegistryStringValue64($RegKey$ + " InstallLocation")
-			set $Inst_Ver$ 			= GetRegistryStringValue64($RegKey$ + " DisplayVersion")
-			set $UninstallString$   = GetRegistryStringValue64($RegKey$ + " UninstallString")
-	EndCase
-	DefaultCase
-			Comment "Invalid architecture for " + $Uninst_ID$ + " given: " + $Uninst_Arch$
-	EndCase
-EndSwitch
+; set $DisplayName$		= GetRegistryStringValueSysNative($RegKey$ + " DisplayName")
+set $Inst_Loc$			= GetRegistryStringValueSysNative($RegKey$ + " InstallLocation")
+set $Inst_Ver$			= GetRegistryStringValueSysNative($RegKey$ + " DisplayVersion")
+set $UninstallString$	= GetRegistryStringValueSysNative($RegKey$ + " UninstallString")
 
-
-
-if ($UninstallString$ = "") 
+if ($UninstallString$ = "")
 	LogError "Missing UninstallString for [%id%] -- skipping"
 else
 	; comment "Start uninstall sub section for " + $Inst_Ver$ + " (" + $Uninst_Arch$ + ")"
@@ -154,12 +169,12 @@ if not($FatalError$ = "")
 endif
 if ($ExitCode$ = "0") and not ($Uninst_RegDir$ = "")
 	;=== does the installation directory still exist?
-		if (FileExists($Inst_Loc$))
-			logWarning "Install directory still exists: [" + $Inst_Loc$ + "]"
-			;=== try final cleanup
-			Files_del_InstallDir
-		endif
-endif	
+	if (FileExists($Inst_Loc$))
+		logWarning "Install directory still exists: [" + $Inst_Loc$ + "]"
+		;=== try final cleanup
+		Files_del_InstallDir
+	endif
+endif
 
 
 ;======================================================================

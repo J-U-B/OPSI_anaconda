@@ -1,3 +1,12 @@
+anaconda 2023.07.2-19:
+	* use of library function PSSearchRegistryUninstallKeysByAttribute
+	* removed uninst_section_search.opsiinc
+	* handling missing uninstall key but existing install dir
+	* new property on_missing_uninstall_key
+	* adjusted Makefile
+	* update readme
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2023-08-23 15:01:05 +0200
+
 anaconda 2023.07.2-18:
 	* product update ==> 2023.07-2 (only 64 bit release available!)
 	* adjust notation of version number for installer (2023.07.2 --> 2023.07-2)

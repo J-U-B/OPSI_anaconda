@@ -4,7 +4,7 @@
 ; This file contains all possible variables, excluding the opsi-system
 ; variables, for the opsi-winst scripts in use.
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2023-08-14 06:35:43 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2023-08-23 14:20:54 +0200
 ;=====================================================================
 encoding=utf8
 
@@ -126,6 +126,7 @@ DefVar $pr_MinimumSpace$
 DefVar $pr_AddPack_InstallMode$
 DefVar $pr_RegisterSystemPython$
 DefVar $pr_ClearPackageCache$
+DefVar $pr_onMissingUninstallKey$
 DefStringList $pr_AddPackList$
 
 ; Variables for checkinstance:

@@ -252,6 +252,14 @@ während des Setup-Skriptes, des Update-Skriptes ...oder gar nicht. (*default: s
 der Installation bzw. des Updates der Paketcache gelöscht werden soll um
 Plattenplatz freizugeben. (Empfohlen.)
 
+**`on_missing_uninstall_key`** - Verhalten bei fehlendem Uninstall-Key in der
+Registry, aber existierendem Installationsverzeichnis.
+
+- *defer*: Versuche es beim nächsten Durchlauf erneut
+- *fail*: Abbruch mit Fehler (*default*)
+- *ignore*: Versuche fortzufahren; kann zu einem Fehler bei der Installation führen
+- *rough delete*: Löschen des Verzeichnisses ohne weitere Rückfrage
+
 **`register_as_system_python`** - Legt fest, ob Anaconda als System-Python
 registriert werden soll.  
 Das erlaubt anderen Programmen wie z.B. VSCode oder PyCharm automatisch Anaconda
@@ -464,4 +472,4 @@ einer vollständigen Installation der neueren Distribution zu beobachten.
 Siehe hierzu: [Issues](https://git.o4i.org/jens.boettge/anaconda/issues)
 
 -----
-Jens Böttge <<boettge@mpi-halle.mpg.de>>, 2023-03-30 10:52:25 +0200
+Jens Böttge <<boettge@mpi-halle.mpg.de>>, 2023-08-23 15:12:04 +0200
