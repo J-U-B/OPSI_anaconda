@@ -2,11 +2,11 @@
 ; setup.opsiscript ANACONDA
 ; Installer-Typ: NSIS
 ;
-; Jens Boettge <boettge@mpi-halle.mpg.de>  2023-03-30 10:46:59 +0200
+; Jens Boettge <boettge@mpi-halle.mpg.de>  2024-02-20 18:02:25 +0100
 ;======================================================================
 
 ;======================================================================
-[Initial]
+[Actions]
 ;======================================================================
 encoding=utf8
 setLogLevel=5
@@ -19,9 +19,7 @@ TraceMode=off
 ; Let started programs run in front of the winst window
 StayOnTop=false 
 
-;======================================================================
-[Actions]
-;======================================================================
+
 include_insert "%ScriptPath%\product_variables.opsiinc"
 
 if FileExists("%ScriptPath%\add_packages.opsiinc")

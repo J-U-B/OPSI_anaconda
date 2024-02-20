@@ -175,10 +175,10 @@ name: on_missing_uninstall_key
 multivalue: False
 editable: False
 description: Behaviour on missing uninstall key in registry but existing install directory
-  - defer = try it on the next run
-  - fail = exit with error
-  - ignore = try to proceed (not recommended)
-  - rough delete = delete directory before proceeding installation
+  – defer = try it on the next run
+  – fail = exit with error
+  – ignore = try to proceed (not recommended)
+  – rough delete = delete directory before proceeding installation
 values: ["defer", "fail", "ignore", "rough delete"]
 default: ["fail"]
 

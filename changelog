@@ -1,3 +1,17 @@
+anaconda 2023.09.0-20:
+	* product update ==> anaconda3 2023.09.0
+	* removed deprecated INITIAL section from setup, uninstall and update
+	* adjusted Makefile:
+		* handle compression: new option for makefile, adjustment for OPSI 4.3
+		* added target install
+		* removed var_check from other targets
+		* updated help & var_check
+		* automatic download on first build (no need to call target pkgdownload manually)
+		* handle fixed Python version from SPEC file
+	* update readme
+	* fixed Python version in (legacy) spec for Anaconda 2
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2024-02-20 18:05:08 +0100
+
 anaconda 2023.07.2-19:
 	* use of library function PSSearchRegistryUninstallKeysByAttribute
 	* removed uninst_section_search.opsiinc

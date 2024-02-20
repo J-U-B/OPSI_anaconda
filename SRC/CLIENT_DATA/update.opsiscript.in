@@ -1,11 +1,11 @@
 ;======================================================================
 ; update.opsiscript ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2023-03-29 22:53:13 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2024-02-20 18:03:38 +0100
 ;======================================================================
 
 ;======================================================================
-[Initial]
+[Actions]
 ;======================================================================
 encoding=utf8
 setLogLevel=5
@@ -18,9 +18,6 @@ TraceMode=off
 ; Let started programs run in front of the winst window
 StayOnTop=false 
 
-;======================================================================
-[Actions]
-;======================================================================
 include_insert "%ScriptPath%\product_variables.opsiinc"
 
 if (not ($State$ = "installed")) AND ($ActionRequest$ = "update")

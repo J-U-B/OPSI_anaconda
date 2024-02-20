@@ -1,6 +1,6 @@
 {  
 	"_": "=== OPSI package variables ===",
-	"O_PKG_VER"            : "11",
+	"O_PKG_VER"            : "20",
 	"O_SOFTWARE_VER"       : "2019.10",
 	"O_SOFTWARE"           : "Anaconda",
 	"O_RELEASE_DATE"       : "{{M_TODAY}}",
@@ -16,7 +16,7 @@
 	"ORGPREFIX"            : "{{M_ORGPREFIX}}",
 	"ORGNAME"              : "{{M_ORGNAME}}",
 
-	"PY_VER"               : "{{M_PY_VER}}",
+	"PY_VER"               : "2",
 	"DOWNLOADER"           : "{{M_DOWNLOADER}}",
 
 	"_":"=== conditions ===",

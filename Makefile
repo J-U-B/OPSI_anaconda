@@ -1,18 +1,18 @@
 ############################################################
 # OPSI package Makefile (ANACONDA)
-# Version: 2.11.0
+# Version: 3.0.0
 # Jens Boettge <boettge@mpi-halle.mpg.de>
-# 2023-08-23 14:57:48 +0200
+# 2024-02-20 17:13:21 +0100
 ############################################################
 
-.PHONY: header clean mpimsp mpimsp_test o4i o4i_test dfn dfn_test all_test all_prod all help download pdf var_check dummy_build
+.PHONY: header clean mpimsp mpimsp_test o4i o4i_test all_test all_prod all help download pdf install var_check dummy_build
 .DEFAULT_GOAL := help
 
 ### defaults:
 DEFAULT_SPEC = spec.json
 DEFAULT_ALLINC = false
 DEFAULT_KEEPFILES = false
-DEFAULT_ARCHIVEFORMAT = cpio
+
 ### to keep the changelog inside the control set CHANGELOG_TGT to an empty string
 ### otherwise the given filename will be used:
 CHANGELOG_TGT = changelog.txt
@@ -48,8 +48,28 @@ ifeq ($(OPSI_BUILDER),)
 		$(error Error: opsi-make(package|productfile) not found!)
 	endif
 endif
-$(info * OPSI_BUILDER = $(OPSI_BUILDER))
+OPSI_VERSION = $(shell $(OPSI_BUILDER) -V | cut -f 1 -d " ")
+$(info * OPSI_BUILDER = $(OPSI_BUILDER) $(OPSI_VERSION))
+O_MAJOR = $(shell echo $(OPSI_VERSION) | cut -f1 -d.)
+O_MINOR = $(shell echo $(OPSI_VERSION) | cut -f2 -d.)
+O_REVNR = $(shell echo $(OPSI_VERSION) | cut -f3 -d.)
+O_VERCL = $(shell echo $$(($(O_MAJOR) * 100 + $(O_MINOR))))
+# $(info * VERCL = $(O_VERCL))
 
+### more defaults, depending on OPSI version:
+ifeq ($(shell test "$(O_VERCL)" -ge "403"; echo $$?),0)
+    $(info * OPSI >=4.3)
+	DEFAULT_ARCHIVEFORMAT = tar
+	ARCHIVE_TYPES :="[tar]"
+	DEFAULT_COMPRESSION = gz
+	COMPRESSION_TYPES :="[gz] [zstd] [bz2]"
+else
+    $(info * OPSI <4.3)
+	DEFAULT_ARCHIVEFORMAT = cpio
+	ARCHIVE_TYPES :="[cpio] [tar]"
+	DEFAULT_COMPRESSION = gzip
+	COMPRESSION_TYPES :="[gzip] [zstd]"
+endif
 
 ### spec file:
 SPEC ?= $(DEFAULT_SPEC)
@@ -60,33 +80,39 @@ else
 endif
 
 
-### Which Python flavour 2, 3 or both (...or what's cominf next)
-PYVER ?= $(DEFAULT_PYVER)
+### Which Python flavour 2, 3 or both (...or what's coming next)
+PY_VER ?= $(DEFAULT_PYVER)
 PYTHON_VERSIONS:="[2] [3] [2,3] [3,2] [both]"
-PKGX := $(firstword $(PYVER))
+PKGX := $(firstword $(PY_VER))
 PKGY := $(shell echo $(PKGX) | tr A-Z a-z)
 PKGZ := $(findstring [$(PKGY)],$(PYTHON_VERSIONS))
 ifeq (,$(PKGZ))
-   $(error [ERROR] Invalid value for PYVER (valid values are "2", "3", "2,3", "both"))
+   $(error [ERROR] Invalid value for PY_VER (valid values are "2", "3", "2,3", "both"))
 else
 	ifeq (both,$(PKGY))
 		PY_VER := 2,3
 	else
 		PY_VER := $(PKGY)
 	endif
-    $(info [INFO] Building packages for Anaconda $(PYVER))
+endif
+SPEC_PY := $(shell grep '"PY_VER"' $(SPEC)           	| sed -e 's/^.*\s*:\s*\"\(.*\)\".*$$/\1/' )
+#$(info [INFO] Python version in SPEC file: $(SPEC_PY))
+PKGZ := $(findstring [$(SPEC_PY)],"[2] [3]")
+ifneq (,$(PKGZ))
+	PY_VER := $(SPEC_PY)
+    $(info [INFO] Python version fixed in SPEC file to: $(PY_VER))
 endif
 PVS=$(shell echo $(PY_VER) | sed 's/,/ /')
-#PY_VER := $(PYVER)
-#PVS = $(PYVER)
+$(info [INFO] Building packages for Anaconda $(PY_VER))
 
 SW_VER := $(shell grep '"O_SOFTWARE_VER"' $(SPEC)     	| sed -e 's/^.*\s*:\s*\"\(.*\)\".*$$/\1/' )
 SW_BUILD := $(shell grep '"O_PKG_VER"' $(SPEC)        	| sed -e 's/^.*\s*:\s*\"\(.*\)\".*$$/\1/' )
 SW_NAME := $(shell grep '"O_SOFTWARE"' $(SPEC)        	| sed -e 's/^.*\s*:\s*\"\(.*\)\".*$$/\1/' )
 SW_ONLY64 := $(shell grep '"ifdef_64bit_only"' $(SPEC)	| sed -re 's/^\s*.*\s*:\s*\"?([a-Z]+)\"?,?.*$$/\1/' | tr A-Z a-z)
+PKG_BUILD := $(shell grep '"O_PKG_VER"' $(SPEC)       | sed -e 's/^.*\s*:\s*\"\(.*\)\".*$$/\1/' )
 
 ifndef BUILD_PY_VER
- BUILD_PY_VER := $(PYVER)
+ BUILD_PY_VER := $(PY_VER)
 endif
 
 ifeq ($(BUILD_PY_VER),$(filter $(BUILD_PY_VER),2 3))
@@ -96,7 +122,7 @@ ifeq ($(BUILD_PY_VER),$(filter $(BUILD_PY_VER),2 3))
 	else
 		override FILES_MASK = Anaconda$(BUILD_PY_VER)-$(SW_VER)-*.exe
 		override FILES_EXPECTED := 2
-	endif	
+	endif
 else
 	ifeq ($(SW_ONLY64),true)
 		override FILES_MASK = Anaconda?-$(SW_VER)-*_64.exe
@@ -175,8 +201,8 @@ else
 	override KEEPFILES := $(shell echo $(KFX) | tr -d '[]')
 endif
 
+### Used archive format for OPSI package
 ARCHIVE_FORMAT ?= $(DEFAULT_ARCHIVEFORMAT)
-ARCHIVE_TYPES :="[cpio] [tar]"
 FFX := $(firstword $(ARCHIVE_FORMAT))
 FFY := $(shell echo $(FFX) | tr A-Z a-z)
 
@@ -186,6 +212,18 @@ else
 	BUILD_FORMAT = $(FFY)
 endif
 
+### Used compression for OPSI package
+COMPRESSION ?= $(DEFAULT_COMPRESSION)
+AFX := $(firstword $(COMPRESSION))
+AFY := $(shell echo $(AFX) | tr A-Z a-z)
+
+ifeq (,$(findstring [$(AFY)],$(COMPRESSION_TYPES)))
+	BUILD_COMPRESSION := $(DEFAULT_COMPRESSION)
+else
+	BUILD_COMPRESSION := $(AFY)
+endif
+
+### Download-Tool
 DOWNLOADER ?= $(DEFAULT_DOWNLOADER)
 DOWNLOADER_VALID :="[curl] [wget]"
 override DFX := $(firstword $(DOWNLOADER))
@@ -196,6 +234,15 @@ ifeq (,$(findstring [$(DFY)],$(DOWNLOADER_VALID)))
 else
 	override DOWNLOADER = $(DFY)
 endif
+
+### expected package name
+SW_ID = `echo $(SW_NAME)$(PY_VER) | tr A-Z a-z`
+ifeq ($(CUSTOMNAME),"")
+	PKGNAME := ${TESTPREFIX}$(ORGPREFIX)$(SW_ID)_${SW_VER}-$(PKG_BUILD)$(CUSTOMNAME)
+else
+	PKGNAME := ${TESTPREFIX}$(ORGPREFIX)$(SW_ID)_${SW_VER}-$(PKG_BUILD)~$(CUSTOMNAME)
+endif
+PKG_FILE := "$(PACKAGE_DIR)/$(PKGNAME).opsi"
 
 ### legacy level:
 LEGACY_LEVEL ?= 0
@@ -211,15 +258,15 @@ var_check:
 	@echo "* Package Build         : [$(SW_BUILD)]"
 	@echo "* SPEC file             : [$(SPEC)]"
 	@echo "* Batteries included    : [default: $(ALLINC)] --> [$(ALLINCLUSIVE)]"
-#	@echo "* Python version(s)     : [default: $(PYVER)] --> [$(PKGX)] --> [$(PKGY)] --> [$(PKGZ)] --> [$(PY_VER)]"
 	@echo "* Python version(s)     : [default: $(PYVER)] --> [$(PY_VER)]"
-	@echo "  * BUILD_PY_VER = $(BUILD_PY_VER)"
-	@echo "  * PVS          = $(PVS)"
+	@#echo "  * BUILD_PY_VER = $(BUILD_PY_VER)"
+	@#echo "  * PVS          = $(PVS)"
 	@echo "* 64 bit only?          : [$(SW_ONLY64)]"
 	@echo "* Custom Name           : [$(CUSTOMNAME)]"
-	@#echo "* OPSI Archive Types    : [$(ARCHIVE_TYPES)]"
-	@echo "* OPSI Archive Format   : [default: $(ARCHIVE_FORMAT)] --> $(BUILD_FORMAT)"
-	@echo "* Downloader            : [default: $(DEFAULT_DOWNLOADER)] --> $(DOWNLOADER)"
+	@echo "* OPSI Archive Types    : [$(ARCHIVE_TYPES)]"
+	@echo "* OPSI Archive Format   : [$(ARCHIVE_FORMAT)] --> $(BUILD_FORMAT)"
+	@echo "* OPSI Compression Types: [$(COMPRESSION_TYPES)]"
+	@echo "* OPSI Compression      : [$(COMPRESSION)] --> $(BUILD_COMPRESSION)"
 	@echo "* Templates OPSI        : [$(FILES_OPSI_IN)]"
 	@echo "* Templates CLIENT_DATA : [$(FILES_IN)]"
 	@echo "* Files Mask            : [$(FILES_MASK)]"
@@ -229,7 +276,7 @@ var_check:
 	@echo "* Changelog target      : [$(CHANGELOG_TGT)]"
 	@echo "=================================================================="
 	@echo "* Installer files in $(DL_DIR):"
-	@for F in `ls -1 $(DL_DIR)/$(FILES_MASK) | sed -re 's/.*\/(.*)$$/\1/' `; do echo "    $$F"; done 
+	@for F in `ls -1 $(DL_DIR)/$(FILES_MASK) | sed -re 's/.*\/(.*)$$/\1/' `; do echo "    $$F"; done
 	@ $(eval NUM_FILES := $(shell ls -l $(DL_DIR)/$(FILES_MASK) 2>/dev/null | wc -l))
 	@echo "* $(NUM_FILES) files found"
 	@echo "=================================================================="
@@ -241,7 +288,7 @@ dummy_build:
 	@echo "          Files Mask: $(FILES_MASK)"
 	@echo "          Files expected: $(FILES_EXPECTED)"
 
-header: var_check
+header:
 	@echo "=================================================================="
 	@echo "                      Building OPSI package(s)"
 	@echo "=================================================================="
@@ -281,8 +328,8 @@ mpimsp_test: header
 			ORGPREFIX=""     			\
 			STAGE="testing"  			\
 	build; done
-	
-	
+
+
 o4i: header
 	@echo "---------- building O4I package(s) ----------------------------------"
 	@for PV in $(PVS); do make 			\
@@ -323,7 +370,7 @@ o4i_test_noprefix: header
 			ORGPREFIX="o4i_" 			\
 			STAGE="testing"  			\
 	build; done
-	
+
 
 dfn: header
 	@echo "---------- building DFN package(s) ----------------------------------"
@@ -405,15 +452,15 @@ pdf:
 clean_packages: header
 	@echo "---------- cleaning packages, checksums and zsync ----------------"
 	@rm -f $(PACKAGE_DIR)/*.md5 $(PACKAGE_DIR)/*.opsi $(PACKAGE_DIR)/*.zsync
-	
+
 clean: header
 	@echo "---------- cleaning  build directory -----------------------------"
-	@rm -rf $(BUILD_DIR)	
-	
+	@rm -rf $(BUILD_DIR)
+
 realclean: header clean
 	@echo "---------- cleaning  download directory --------------------------"
-	@rm -rf $(DL_DIR)	
-		
+	@rm -rf $(DL_DIR)
+
 help: header
 	@echo "Valid targets: "
 	@echo "	download"
@@ -422,11 +469,11 @@ help: header
 	@echo "	o4i"
 	@echo "	o4i_test"
 	@echo "	o4i_test_0"
-	@echo "	o4i_test_noprefix"	
-	@echo "	dfn"
-	@echo "	dfn_test"
-	@echo "	dfn_test_0"
-	@echo "	dfn_test_noprefix"
+	@echo "	o4i_test_noprefix"
+	@echo "	dfn                   (deprecated)"
+	@echo "	dfn_test              (deprecated)"
+	@echo "	dfn_test_0            (deprecated)"
+	@echo "	dfn_test_noprefix     (deprecated)"
 	@echo "	all_prod"
 	@echo "	all_test"
 	@echo "	fix_rights"
@@ -446,7 +493,13 @@ help: header
 	@echo "	KEEPFILES=[true|false]          (default: $(DEFAULT_KEEPFILES))"
 	@echo "			Keep really all previous files from files/?"
 	@echo "			If false only files matching this package version are kept."
-	@echo "	ARCHIVE_FORMAT=[cpio|tar]       (default: $(DEFAULT_ARCHIVEFORMAT))"
+	@if [ $(O_VERCL) -ge 403 ]; then \
+	 echo "	ARCHIVE_FORMAT=[cpio|tar]       (default: $(DEFAULT_ARCHIVEFORMAT))"; \
+	 echo "	COMPRESSION=[gz|zstd|bz2]       (default: $(DEFAULT_COMPRESSION))"; \
+	 else \
+	 echo "	ARCHIVE_FORMAT=[tar]            (default: $(DEFAULT_ARCHIVEFORMAT))"; \
+	 echo "	COMPRESSION=[gzip|zstd]         (default: $(DEFAULT_COMPRESSION))"; \
+	fi
 	@echo "	DOWNLOADER=[curl|wget]          (default: $(DEFAULT_DOWNLOADER))"
 	@echo "			Prefer to use the given download program for retieving the software"
 	@echo "			(Try the other one if the preferred tool could not be found.)"
@@ -464,8 +517,8 @@ build_md5:
 	if [ -f "$(BUILD_DIR)/CLIENT_DATA/$(MD5SUM_FILE)" ]; then \
 		rm -f $(BUILD_DIR)/CLIENT_DATA/$(MD5SUM_FILE); \
 	fi
-	grep -i "$(SW_NAME)$(BUILD_PY_VER)-$(SW_VER)-" $(DL_DIR)/$(MD5SUM_FILE)>> $(BUILD_DIR)/CLIENT_DATA/$(MD5SUM_FILE) 
-		
+	grep -i "$(SW_NAME)$(BUILD_PY_VER)-$(SW_VER)-" $(DL_DIR)/$(MD5SUM_FILE)>> $(BUILD_DIR)/CLIENT_DATA/$(MD5SUM_FILE)
+
 copy_from_src:	build_dirs build_md5
 	@echo "* Copying files"
 	@cp -upL $(SRC_DIR)/CLIENT_DATA/LICENSE  $(BUILD_DIR)/CLIENT_DATA/
@@ -501,7 +554,7 @@ copy_from_src:	build_dirs build_md5
 		cp -up $(SRC_DIR)/CLIENT_DATA/images/*.png  $(BUILD_DIR)/CLIENT_DATA/images/; \
 	fi
 	@if [ -f  "$(SRC_DIR)/OPSI/control" ];  then cp -up $(SRC_DIR)/OPSI/control   $(BUILD_DIR)/OPSI/; fi
-	@if [ -f  "$(SRC_DIR)/OPSI/preinst" ];  then cp -up $(SRC_DIR)/OPSI/preinst   $(BUILD_DIR)/OPSI/; fi 
+	@if [ -f  "$(SRC_DIR)/OPSI/preinst" ];  then cp -up $(SRC_DIR)/OPSI/preinst   $(BUILD_DIR)/OPSI/; fi
 	@if [ -f  "$(SRC_DIR)/OPSI/postinst" ]; then cp -up $(SRC_DIR)/OPSI/postinst  $(BUILD_DIR)/OPSI/; fi
 
 build_json:
@@ -531,7 +584,9 @@ build_json:
 
 pkgdownload: build_json
 	@echo "**Debug** [ALLINC=$(ALLINCLUSIVE)]  [ONLY_DOWNLOAD=$(ONLY_DOWNLOAD)]"
-	@if [ "$(ALLINCLUSIVE)" = "true" -o  $(ONLY_DOWNLOAD) = "true" ]; then \
+	@$(eval NUM_FOUND := $(shell ls -l $(DL_DIR)/$(FILES_MASK) 2>/dev/null | wc -l))
+	@echo "[DBG] $(SW_NAME) installer packages found: $(NUM_FOUND), expected: $(FILES_EXPECTED)"
+	@if [ "$(ALLINCLUSIVE)" = "true" -o  $(ONLY_DOWNLOAD) = "true" -o $(NUM_FOUND) -ne $(FILES_EXPECTED) ]; then \
 		rm -f $(DOWNLOAD_SH) ;\
 		$(MUSTACHE) $(BUILD_JSON) $(DOWNLOAD_SH_IN) > $(DOWNLOAD_SH) ;\
 		chmod +x $(DOWNLOAD_SH) ;\
@@ -539,10 +594,10 @@ pkgdownload: build_json
 		DEST_DIR=$(DL_DIR) $(DOWNLOAD_SH) ;\
 	fi
 
-	
+
 build: pkgdownload pdf clean copy_from_src
 	@make build_json
-	
+
 	for F in $(FILES_OPSI_IN); do \
 		echo "* Creating OPSI/$$F"; \
 		rm -f $(BUILD_DIR)/OPSI/$$F; \
@@ -583,9 +638,16 @@ build: pkgdownload pdf clean copy_from_src
 		for D in OPSI CLIENT_DATA SERVER_DATA; do \
 			if [ -d "$$D" ] ; then mv $$D $$D.$(CUSTOMNAME); fi; \
 		done && \
-		cd "$(CURDIR)/$(PACKAGE_DIR)" && $(OPSI_BUILDER) -F $(BUILD_FORMAT) -k -m $(CURDIR)/$(BUILD_DIR) -c $(CUSTOMNAME); \
+		cd "$(CURDIR)/$(PACKAGE_DIR)" && $(OPSI_BUILDER) -F $(BUILD_FORMAT) --compression $(BUILD_COMPRESSION)  -k -m $(CURDIR)/$(BUILD_DIR) -c $(CUSTOMNAME); \
 	fi; \
 	cd $(CURDIR)
+	@echo "======================================================================"
+	@if [ -f "$(PKG_FILE)" ]; then \
+		echo "Package built: $(PKG_FILE)"; \
+	else \
+		echo "FAILED to build: $(PKG_FILE)"; \
+	fi
+	@echo "======================================================================"
 
 
 all_test:  header download mpimsp_test o4i_test_0 dfn_test dfn_test_0
@@ -593,3 +655,16 @@ all_test:  header download mpimsp_test o4i_test_0 dfn_test dfn_test_0
 all_prod : header download mpimsp o4i dfn
 
 all : header download mpimsp o4i dfn
+
+
+install:
+	@$(eval PACKAGES_FOUND := $(shell ls -tr1 $(PACKAGE_DIR)/*.opsi | grep -E "$(SW_ID)_$(SW_VER)-$(PKG_BUILD)(~dl){0,1}.opsi$$" ))
+	@$(eval PKG_NUM := $(shell echo $(PACKAGES_FOUND) | wc -w))
+	@echo "Number of installable packages found: $(PKG_NUM)"
+	@if [ $(PKG_NUM) -gt 0 ]; then \
+		for F in $(PACKAGES_FOUND); do \
+			echo -n "* Installing: $$F" ;\
+			opsi-package-manager -q -p package -i $$F ;\
+			echo "\t[$$?]" ;\
+		done ;\
+	fi

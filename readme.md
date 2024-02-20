@@ -125,15 +125,30 @@ Das Paket kann mit *"batteries included"* erstellt werden. In dem Fall erfolgt
 der Download der Software beim Erstellen des OPSI-Paketes und nicht erst bei
 dessen Installation:
 
-> *`ALLINC=[true|false]`*
+> *`ALLINC=(true|false)`*
 
 Standard ist hier die Erstellung des leichtgewichtigen Paketes (```ALLINC=false```).
 
 OPSI erlaubt des Pakete im Format `cpio` und `tar` zu erstellen.  
 Als Standard ist `cpio` festgelegt.  
-Das Makefile erlaubt die Wahl des Formates über die Umgebungsvariable bzw. den Parameter:
+**_Achtung:_** Ab OPSI 4.3 findet nur noch das `tar`-Format Awendung.  
+Das Makefile erlaubt die Wahl des Formates ueber die Umgebungsvariable bzw. den Parameter:
 
 > *`ARCHIVE_FORMAT=(cpio|tar)`*
+
+Optional kann auch das verwendete Kompressionsformat festgelegt werden.  
+Ab OPSI-Version 4.3 sind das `gz`, `zstd` und `bz2`; zuvor gab es `gzip` und `zstd`.
+Default bei OPSI 4.3 ist `zstd`, bis dahin galt `gz` bzw. `gzip`.  
+Als Standard für dieses Paket ist `gz`/`gzip` festgelegt.  
+Das Makefile erlaubt die Wahl der Kompressionsformates ueber eine Umgebungsvariable bzw.
+den Parameter in Abhaengigkeit von der OPSI-Version:
+
+> *`COMPRESSION=(gzip|zstd)`*  
+> *`COMPRESSION=(gz|zstd|bz2)`*
+
+**_Achtung:_** Obwohl fuer OPSI 4.3 "`zstd`" als Standard-Kompression zum Einsatz kommt,
+wird hier weiterhin "`gz`" verwendet, da die mit "`zstd`" erstellten Pakete unter OPSI 4.2
+derzeit nicht installiert werden koennen.
 
 
 <div id="spec_json"></div>
@@ -472,4 +487,4 @@ einer vollständigen Installation der neueren Distribution zu beobachten.
 Siehe hierzu: [Issues](https://git.o4i.org/jens.boettge/anaconda/issues)
 
 -----
-Jens Böttge <<boettge@mpi-halle.mpg.de>>, 2023-08-23 15:12:04 +0200
+Jens Böttge <<boettge@mpi-halle.mpg.de>>, 2024-02-20 15:26:16 +0100
