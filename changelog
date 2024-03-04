@@ -1,3 +1,7 @@
+anaconda 2024.02.1-20:
+	* product update ==> anaconda3 2024.02.1
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2024-03-04 08:18:28 +0100
+
 anaconda 2023.09.0-20:
 	* product update ==> anaconda3 2023.09.0
 	* removed deprecated INITIAL section from setup, uninstall and update

@@ -1,14 +1,14 @@
 {
 	"_": "=== OPSI package variables ===",
 	"O_PKG_VER"            : "20",
-	"O_SOFTWARE_VER"       : "2023.09.0",
+	"O_SOFTWARE_VER"       : "2024.02.1",
 	"O_SOFTWARE"           : "Anaconda",
 	"O_RELEASE_DATE"       : "{{M_TODAY}}",
 	"O_INST_LOG"           : "/tmp/{{M_ORGPREFIX}}anaconda__opsi_package_install.log",
 	"O_MAINTAINER"         : "Jens Boettge <boettge@mpi-halle.mpg.de>",
 
 	"O_SOFTWARE_WEBSITE"   : "https://www.anaconda.com/products/individual",
-	"O_SOFTWARE_CHANGES"   : "https://www.anaconda.com/blog/topic/news",
+	"O_SOFTWARE_CHANGES"   : "https://www.anaconda.com/blog/?_topic=news",
 	"O_SPECIAL_ADVICE"     : "",
 
 	"STAGE"                : "{{M_STAGE}}",
