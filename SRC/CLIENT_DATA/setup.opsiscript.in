@@ -2,7 +2,7 @@
 ; setup.opsiscript ANACONDA
 ; Installer-Typ: NSIS
 ;
-; Jens Boettge <boettge@mpi-halle.mpg.de>  2024-02-20 18:02:25 +0100
+; Jens Boettge <boettge@mpi-halle.mpg.de>  2024-11-13 17:25:31 +0100
 ;======================================================================
 
 ;======================================================================
@@ -22,6 +22,14 @@ StayOnTop=false
 
 include_insert "%ScriptPath%\product_variables.opsiinc"
 
+if FileExists("%ScriptPath%\conda_config.opsiinc")
+	include_append "%ScriptPath%\conda_config.opsiinc"
+	set $Has_CondaConfig$ = "true"
+else
+	logError "File not found: conda_config.opsiinc"
+	set $Has_CondaConfig$ = "false"
+endif
+
 if FileExists("%ScriptPath%\add_packages.opsiinc")
 	include_append "%ScriptPath%\add_packages.opsiinc"
 	set $Has_AddPackages$ = "true"
@@ -29,7 +37,6 @@ else
 	logError "File not found: add_packages.opsiinc"
 	set $Has_AddPackages$ = "false"
 endif
-
 
 ;=== Check free space
 
@@ -103,6 +110,13 @@ else
 
 	if not($FatalError$ = "")
 		isFatalError "Installer returns fatal error!"
+	endif
+	
+	; configure conda
+	if ($Has_CondaConfig$ = "true")
+		Sub_Conda_Config
+		; restore install image
+		ShowBitmap $Img_Install$ $ProductName$
 	endif
 	
 	if (($pr_AddPack_InstallMode$ = "setup") AND ($Has_AddPackages$ = "true"))

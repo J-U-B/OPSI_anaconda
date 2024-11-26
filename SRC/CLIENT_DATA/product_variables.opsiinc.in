@@ -11,7 +11,7 @@ Set $MAP$               = getProductMap
 Set $FullProductId$     = getValue("id", $MAP$)
 Set $ProductName$       = getValue("name", $MAP$)
 Set $Version$           = getValue("ProductVersion", $MAP$)
-Set $ActionRequest$     = getValue("actionreuest", $MAP$)
+Set $ActionRequest$     = getValue("actionrequest", $MAP$)
 Set $State$             = getValue("installationstate", $MAP$)
 Set $SystemType$        = GetSystemType
 Set $OS$                = GetOS
@@ -186,25 +186,30 @@ set $sw_lang$ = "default"
 ;-----------------------------------------------------------
 ;*** property: create desktop/startmenu/quickstart link?
 ;-----------------------------------------------------------
-Set $pr_DesktopLink_Navigator$ 		= GetProductProperty("link_desktop_Anaconda_Navigator","False")
+Set $pr_DesktopLink_Navigator$		= GetProductProperty("link_desktop_Anaconda_Navigator","False")
 Set $pr_DesktopLink_Spyder$ 		= GetProductProperty("link_desktop_Spyder","False")
 Set $pr_DesktopLink_Jupyter$ 		= GetProductProperty("link_desktop_Jupyter_Notebook","False")
 Set $pr_DesktopLink_AnacondaPrompt$	= GetProductProperty("link_desktop_Anaconda_Prompt","False")
 Set $pr_DesktopLink_AnacondaPwsh$	= GetProductProperty("link_desktop_Anaconda_PowerShell","False")
 Set $pr_DesktopLink_QtConsole$		= GetProductProperty("link_desktop_Jupyter_QtConsole","False")
 
-Set $pr_RegisterSystemPython$       = GetProductProperty("register_as_system_python", "True")
-Set $pr_ClearPackageCache$          = GetProductProperty("clear_package_cache", "True")
+Set $pr_RegisterSystemPython$		= GetProductProperty("register_as_system_python", "True")
+Set $pr_ClearPackageCache$			= GetProductProperty("clear_package_cache", "True")
 Set $pr_SkipUpdate$ 				= GetProductProperty("update_skip","False")
-Set $pr_SkipFixRights$ 				= GetProductProperty("update_rights_skip","False")
-Set $pr_DryUpdate$ 					= GetProductProperty("update_dry_run","False")
-Set $pr_VerboseUpdate$ 				= GetProductProperty("update_verbose","False")
+Set $pr_SkipFixRights$				= GetProductProperty("update_rights_skip","False")
+Set $pr_DryUpdate$					= GetProductProperty("update_dry_run","False")
+Set $pr_VerboseUpdate$				= GetProductProperty("update_verbose","False")
 Set $pr_ReleaseUpgrade$				= GetProductProperty("upgrade_release","False")
 Set $pr_MinimumSpace$				= Trim(GetProductProperty("required_mimimum_space","default"))
 Set $pr_onMissingUninstallKey$		= GetProductProperty("on_missing_uninstall_key","fail")
 
-Set $pr_AddPack_InstallMode$		= GetProductProperty("additional_packages_install_mode","none")
 Set $TempList$						= emptyList($TempList$)
+
+Set $pr_channelsRemoveDefault$		= GetProductProperty("channels:_remove_default","True")
+Set $pr_channelsAddCondaForge$		= GetProductProperty("channels:_add_conda-forge","True")
+Set $pr_AddChannels$				= GetProductPropertyList("channels_to_add",$TempList$)
+
+Set $pr_AddPack_InstallMode$		= GetProductProperty("additional_packages_install_mode","none")
 Set $pr_AddPackList$				= GetProductPropertyList("additional_packages",$TempList$)
 
 ; make variable(s) compatible for use:
@@ -285,7 +290,9 @@ Set $installBase$           = "%CommonAppdataDir%"
 Set $InstallDir$            = $InstallBase$ + "\" + stringReplace($StrippedProductName$," ", "") + "\"
 ;Set $InstallDir$           = $InstallBase$ + "\" + $ProductName$ + "\"
 Set $InstDir$               = $InstallBase$ + "\" + stringReplace($StrippedProductName$," ", "")
+Set $condarcFile$           = $InstallDir$ + ".condarc"
 Set $PackageCacheDir$       = $InstDir$ + "\pkgs"
+Set $condaHook$             = $InstallDir$ + "shell\condabin\conda-hook.ps1"
 
 ;default value for required space (in MB):
 Set $MinimumSpaceDefault$   = "9000"

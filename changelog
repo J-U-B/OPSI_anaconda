@@ -1,3 +1,13 @@
+anaconda 2024.10.1-21:
+	* product update ==> anaconda3 2024.10.1
+	* new properties:
+		* channels:_remove_default
+		* channels:_add_conda-forge
+		* channels_to_add
+	* update reademe
+	* new icon for readme (removed Anaconda 2)
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2024-11-26 12:43:07 +0100
+
 anaconda 2024.02.1-20:
 	* product update ==> anaconda3 2024.02.1
 	-- J. Boettge <boettge@mpi-halle.mpg.de>  2024-03-04 08:18:28 +0100

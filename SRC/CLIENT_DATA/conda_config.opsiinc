@@ -1,0 +1,60 @@
+;======================================================================
+; Configure Conda
+;
+; J. Boettge <boettge@mpi-halle.mpg.de>  2024-11-26 13:29:54 +0100
+;======================================================================
+encoding=utf8
+
+;======================================================================
+[Sub_Conda_Config]
+;======================================================================
+; check existence of hook:
+if not (fileExists($condaHook$))
+	logError "conda_hook.ps1 not found!"
+else
+	ShowBitmap $Img_Config$ $ProductName$
+	Message "Configuring conda..."
+	; run conda config
+	set $condarc$  = createStringList("channels:")
+	set $cmd$ = '& "' + $condaHook$ + '"; conda activate "' + $InstDir$ + '"; conda config --system --show channels'
+	if ($pr_channelsAddCondaForge$ = "true")
+		Comment "Adding channel: conda-forge"
+		set $cmd$ = $cmd$ + '; conda config --system --add channels conda-forge'
+		set $condarc$ = addToList($condarc$, "  - conda-forge")
+	endif
+	if ($pr_channelsRemoveDefault$ = "true")
+		Comment "Removing channel: defaults"
+		set $cmd$ = $cmd$ + '; conda config --system --remove channels defaults'
+		set $condarc$ = addToList($condarc$, "  - nodefaults")
+	endif
+	set $TempList$ = EmptyList($TempList$)
+	for %S% in $pr_AddChannels$ do sub_add_channel
+	set $pr_AddChannels$ = $TempList$
+
+	set $ResultList$ = powershellCall($cmd$)
+	set $result$ = GetLastExitCode
+	if ($result$ INT> "1")
+		LogError "Failed executing 'conda config' to modify channels"
+	endif
+	
+	set $ResultList$ = powershellCall('& "' + $condaHook$ + '"; conda activate "' + $InstDir$ + '"; conda config --system --show channels')
+	for %S% in $ResultList$ do Comment "%S%"
+
+	; write condarc file
+	set $cmd$ = 'write "' + composeString($condarc$, '`r`n') + '"   | out-file -FilePath "' + $condarcFile$+ '" -Encoding UTF8'
+	set $result$ = powerShellCall($cmd$)
+	if not ($result$ = "0")
+		LogError "Failed to write condarc file"
+	endif
+
+endif
+
+;=====================================================================
+[sub_add_channel]
+;=====================================================================
+set $Str$=trim("%S%")
+if not ($Str$ = "")
+	Comment "Removing channel: " + $Str$
+	set $TempList$ = addToList($TempList$, $Str$)
+	set $condarc$ = addToList($condarc$, "  - " + $Str$)
+endif

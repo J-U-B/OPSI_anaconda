@@ -1,7 +1,7 @@
 ;======================================================================
 ; update.opsiscript ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2024-02-20 18:03:38 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2024-11-13 17:30:44 +0100
 ;======================================================================
 
 ;======================================================================
@@ -25,6 +25,14 @@ if (not ($State$ = "installed")) AND ($ActionRequest$ = "update")
 	isFatalError
 endif
 
+if FileExists("%ScriptPath%\conda_config.opsiinc")
+	include_append "%ScriptPath%\conda_config.opsiinc"
+	set $Has_CondaConfig$ = "true"
+else
+	logError "File not found: conda_config.opsiinc"
+	set $Has_CondaConfig$ = "false"
+endif
+
 if FileExists("%ScriptPath%\add_packages.opsiinc")
 	include_append "%ScriptPath%\add_packages.opsiinc"
 	set $Has_AddPackages$ = "true"
@@ -33,18 +41,31 @@ else
 	set $Has_AddPackages$ = "false"
 endif
 
+;***** temporaer *************************************************************************
+Comment "Current action request: " + $ActionRequest$
+if (($ActionRequest$ = "update") AND ($Has_CondaConfig$ = "true"))
+	Sub_Conda_Config
+	set $TimeDiff$ = getDiffTimeSec
+	comment  "Elapsed time after configuring conda: " + $TimeDiff$ + " seconds"
+endif
+;*****************************************************************************************
 
-
-;if ($pr_SkipUpdate$ = "true")
-;	Message "Update skipped by property"
-;else
+if ($pr_SkipUpdate$ = "true")
+	Message "Update skipped by property"
+else
 	if not (FileExists($ActivateBat$))
 		logError "Can't find " + $ActivateBat$
 		isFatalError "activate.bat not found"
-	endif	
+	endif
 
 	;=== let's go
 	marktime
+
+	if (($ActionRequest$ = "update") AND ($Has_CondaConfig$ = "true"))
+		Sub_Conda_Config
+		set $TimeDiff$ = getDiffTimeSec
+		comment  "Elapsed time after configuring conda: " + $TimeDiff$ + " seconds"
+	endif
 
 	if (($pr_AddPack_InstallMode$ = "update") AND ($Has_AddPackages$ = "true"))
 		Sub_Add_Packages
@@ -184,7 +205,7 @@ endif
 	;=== finally measure installation time
 	set $TimeDiff$ = getDiffTimeSec
 	Message  "Total update time: " + $TimeDiff$ + " seconds"
-;endif
+endif
 
 
 {{#ifdef_legacy}}

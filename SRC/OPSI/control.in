@@ -223,6 +223,28 @@ description: Expert setting(!): Minimum space required for installation in megab
 values: ["default", "9000"]
 default: ["default"]
 
+[ProductProperty]
+type: bool
+name: channels:_remove_default
+description: Remove default package channel
+  (See: https://www.anaconda.com/pricing)
+default: True
+
+[ProductProperty]
+type: bool
+name: channels:_add_conda-forge
+description: Add conda-forge as default channel
+default: True
+
+[ProductProperty]
+type: unicode
+name: channels_to_add
+multivalue: True
+editable: True
+description: Define additional package channels
+values: ["", "intel"]
+default: [""]
+
 
 [Changelog]
 {{! The changelog is outsourced to a separate file in the root of this project.  }}

@@ -4,7 +4,7 @@
 ; This file contains all possible variables, excluding the opsi-system
 ; variables, for the opsi-winst scripts in use.
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2023-08-23 14:20:54 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2024-11-13 17:10:59 +0100
 ;=====================================================================
 encoding=utf8
 
@@ -12,6 +12,7 @@ DefStringList $EXE$
 DefStringList $MAP$
 DefStringList $ResultList$
 DefStringList $TempList$
+DefStringList $condarc$
 
 DefVar $ActionRequest$
 DefVar $ActivateBat$
@@ -24,6 +25,9 @@ DefVar $bCheckInstance$
 DefVar $bPSDetail$
 DefVar $CheckBin$
 DefVar $CheckProcess$
+DefVar $cmd$
+DefVar $condarcFile$
+DefVAr $condaHook$
 DefVar $CondaUpdateCmd$
 DefVar $CondaUpgradeCmd$
 DefVar $CondaCleanCmd$
@@ -38,6 +42,7 @@ DefVar $ExitCode$
 DefVar $FatalError$
 DefVar $FullProductId$
 DefVar $Has_AddPackages$
+DefVar $Has_CondaConfig$
 DefVar $Img_Base$
 DefVar $Img_Config$
 DefVar $Img_Defer$
@@ -127,7 +132,10 @@ DefVar $pr_AddPack_InstallMode$
 DefVar $pr_RegisterSystemPython$
 DefVar $pr_ClearPackageCache$
 DefVar $pr_onMissingUninstallKey$
+DefVar $pr_channelsRemoveDefault$
+DefVar $pr_channelsAddCondaForge$
 DefStringList $pr_AddPackList$
+DefStringList $pr_AddChannels$
 
 ; Variables for checkinstance:
 DefVar $Proc_Cnt$

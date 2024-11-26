@@ -1,4 +1,4 @@
-# ![](./SRC/IMAGES/AnacondaLogo_80x80.png "Anaconda")     Anaconda 2/3 #
+# ![](./SRC/IMAGES/Anaconda3Logo_80x80.png "Anaconda")     Anaconda 3 #
 
 ----
 
@@ -30,13 +30,15 @@
 
 <div id="paketinfo"></div>
 
-Diese OPSI-Paket für **Anaconda 2/3** wurde für die Verwendung im *OPSI-4-Institutes*-Repository
+Dieses OPSI-Paket für **Anaconda 3** wurde für die Verwendung im *OPSI-4-Institutes*-Repository
 sowie des *Max-Planck-Instituts für Mikrostrukturphysik* erstellt.  
 Es wird versucht auf die Besonderheiten der jeweiligen Repositories einzugehen;
 entsprechend werden durch ein einfaches *Makefile* aus den Quellen verschiedene
 Pakete erstellt.  
-Grundsätzlich werden <u>separate OPSI-Pakete</u> für **Anaconda2** und **Anaconda3**
-erstellt.
+
+***Anaconda 2*** ist als Python-2-Distribution inzwischen obsolet und sollte nicht mehr
+verwendet werden. Entsprechende Pakete werden daher nicht mehr erstellt. (Grundsätzlich
+ist die Erstellung von Anaconda-2-Paketen jedoch noch möglich.)
 
 <div id="anaconda-info"></div>
 
@@ -263,6 +265,15 @@ Für diese Funktion ist eine Verbindung zum Internet erforderlich.
 angegebenen Pakete lässt sich festlegen, wann die Installation erfolgen soll:
 während des Setup-Skriptes, des Update-Skriptes ...oder gar nicht. (*default: setup*)
 
+**`channels:_remove_default`** - Deaktiviert das Default-Paket-repository von Anaconda.
+(Empfohlen, wegen geänderter Lizenzbedingungen! siehe: https://www.anaconda.com/pricing;
+*default: true*)
+
+**`channels:_add_conda-forge`** - Fügt *conda-forge* als Paket-Repository hinzu.
+(siehe: https://conda-forge.org; *default: true*)
+
+**`channels_to_add`** - Hier können weitere Paketquellen angegeben werden.
+
 **`clear_package_cache`** - Hiermit kann festgelegt werden, ob nach Abschluss
 der Installation bzw. des Updates der Paketcache gelöscht werden soll um
 Plattenplatz freizugeben. (Empfohlen.)
@@ -487,4 +498,4 @@ einer vollständigen Installation der neueren Distribution zu beobachten.
 Siehe hierzu: [Issues](https://git.o4i.org/jens.boettge/anaconda/issues)
 
 -----
-Jens Böttge <<boettge@mpi-halle.mpg.de>>, 2024-02-20 15:26:16 +0100
+Jens Böttge <<boettge@mpi-halle.mpg.de>>, 2024-11-26 12:39:11 +0100

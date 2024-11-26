@@ -482,6 +482,7 @@ help: header
 	@echo "	clean_packages"
 	@echo "	download              - download installation archive(s) from vendor"
 	@echo "	pdf                   - create PDF from readme.md (req. pandoc)"
+	@echo "	install               - install available current packages on depot server"
 	@echo ""
 	@echo "Options:"
 	@echo "	SPEC=<filename>                 (default: $(DEFAULT_SPEC))"
