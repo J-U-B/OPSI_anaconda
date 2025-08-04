@@ -1,3 +1,11 @@
+anaconda 2025.06.1-21:
+	* product update ==> anaconda3 2025.06.1
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2025-08-04 10:02:54 +0200
+
+anaconda 2025.06.0-21:
+	* product update ==> anaconda3 2025.06.0
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2025-06-26 14:51:47 +0200
+
 anaconda 2024.10.1-21:
 	* product update ==> anaconda3 2024.10.1
 	* new properties:
