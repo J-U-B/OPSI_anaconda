@@ -1,7 +1,7 @@
 ;======================================================================
 ; update.opsiscript ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2024-11-13 17:30:44 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2025-10-13 11:35:37 +0200
 ;======================================================================
 
 ;======================================================================
@@ -20,7 +20,8 @@ StayOnTop=false
 
 include_insert "%ScriptPath%\product_variables.opsiinc"
 
-if (not ($State$ = "installed")) AND ($ActionRequest$ = "update")
+; if (not ($State$ = "installed")) AND ($ActionRequest$ = "update")
+if (not (fileExists($ActivateBat$))) AND ($ActionRequest$ = "update")
 	logError "Can't perform update for " + $ProductName$ + " (" + $FullProductId$ + ") - product is not installed."
 	isFatalError
 endif

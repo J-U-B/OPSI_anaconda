@@ -4,15 +4,17 @@
 ; This file contains all possible variables, excluding the opsi-system
 ; variables, for the opsi-winst scripts in use.
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2024-11-13 17:10:59 +0100
+; J. Boettge <boettge@mpi-halle.mpg.de>  2025-10-13 13:28:19 +0200
 ;=====================================================================
 encoding=utf8
 
 DefStringList $EXE$
 DefStringList $MAP$
+DefStringList $ProcList$
 DefStringList $ResultList$
 DefStringList $TempList$
 DefStringList $condarc$
+DefstringList $UninstSrch$
 
 DefVar $ActionRequest$
 DefVar $ActivateBat$
@@ -34,6 +36,7 @@ DefVar $CondaCleanCmd$
 DefVar $CondaInstallCmd$
 DefVar $CondaOpts$
 DefVar $currentLogLevel$
+DefVar $currentUser$
 DefVar $CustomPostInstall$
 DefVar $CustomPostUninstall$
 DefVar $DisplayName$
@@ -95,7 +98,7 @@ DefVar $StrippedProductName$
 DefVar $sw_lang$
 DefVar $sw_arch$
 DefVar $SystemType$
-defVar $TempDir$
+DefVar $TempDir$
 DefVar $Testing$
 DefVar $TimeDiff$
 DefVar $Uninstaller$
@@ -107,6 +110,7 @@ DefVar $Uninst_Opts$
 DefVar $Uninst_Prg$
 DefVar $Uninst_Prg_Hidden$
 DefVar $Uninst_RegDir$
+DefVar $UninstRegex$
 DefVar $Version$
 DefVar $VerStr$
 DefVar $Ver_anaconda$
@@ -144,3 +148,13 @@ DefVar $PSDETAIL$
 DefVar $PSDETAIL_MODE$
 DefVar $Kill_Running$
 DefVar $Kill_Override$
+
+; Some help variables
+DefVar $CNT$
+DefVar $PRC$
+DefVar $USR$
+DefVar $PID$
+DefVar $TM$
+DefVar $WS$
+DefVar $LOOPS$
+DefVar $PYVER$

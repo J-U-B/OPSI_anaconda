@@ -1,7 +1,7 @@
 ;=====================================================================
 ; product specific variables ANACONDA
 ;
-; J. Boettge <boettge@mpi-halle.mpg.de>  2023-08-23 14:22:16 +0200
+; J. Boettge <boettge@mpi-halle.mpg.de>  2025-10-13 13:28:01 +0200
 ;=====================================================================
 encoding=utf8
 
@@ -95,9 +95,21 @@ else
 endif
 
 ;-----------------------------------------------------------
+;*** Current User:
+;-----------------------------------------------------------
+set  $currentUser$ = "%PCName%\%USERNAME%"
+comment "Current User: " + $currentUser$
+
+;-----------------------------------------------------------
 ;*** Images
 ;-----------------------------------------------------------
-Set $Img_Base$ = "anaconda"
+Set $PYVER$="{{PY_VER}}"
+if $PYVER$="3"
+	Set $Img_Base$ = "anaconda3"
+else
+	Set $Img_Base$ = "anaconda"
+endif
+
 if (FileExists("%ScriptPath%\..\lib\icons\%installingProdName%.png"))
 	set $Img_Install$           = "%ScriptPath%\..\lib\icons\%installingProdName%.png"
 	set $Img_Install_Custom$    = "%ScriptPath%\..\lib\icons\%installingProdName%.png"
@@ -316,6 +328,10 @@ Set $Uninst_Prg$            = "Uninstall-"+ $StrippedProductId$ + ".exe"
 Set $Uninst_Prg_Hidden$     = "Un_A.exe"
 Set $Uninstaller$           = $InstallDir$ + $Uninst_Prg$
 ; ...oder UninstallString aus Registry
+; The hidden uninstaller process name has changed from Un_A.exe to Un.exe
+; so we have to look for both:
+Set $UninstSrch$=createStringList("Un_A.exe;", "Un.exe;")
+Set $UninstRegex$ = '^Un(_A){0,1}\.exe'
 
 ;-------------------------------------------------------
 ; filter for opsiServiceCall productOnClient_getObjects:
@@ -336,6 +352,9 @@ Set $ProductVersionFilter$       = "*"
 ;-------------------------------------------------------
 Set $Inst_Opts$        	= "/InstallationType=AllUsers  /AddToPath=0 /RegisterPython=" + $pr_RegisterSystemPython$ + " /S  /D=" + $InstallDir$
 Set $Uninst_Opts$      	= "/S"
+; Values for uninstall loop:
+Set $WS$ = "+2"
+Set $LOOPS$ = "300"
 
 ;-------------------------------------------------------
 ; Various commands

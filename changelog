@@ -1,3 +1,9 @@
+anaconda 2025.06.1-22:
+	* adjusted uninstaller: obey 'Un_A.exe' und recent 'Un.exe'
+	* fix for installation status detection on update
+	* update product icon set (new o4i logo)
+	-- J. Boettge <boettge@mpi-halle.mpg.de>  2025-10-13 13:29:37 +0200
+
 anaconda 2025.06.1-21:
 	* product update ==> anaconda3 2025.06.1
 	-- J. Boettge <boettge@mpi-halle.mpg.de>  2025-08-04 10:02:54 +0200

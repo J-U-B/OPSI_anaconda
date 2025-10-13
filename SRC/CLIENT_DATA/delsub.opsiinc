@@ -1,7 +1,7 @@
 ;=====================================================================
 ; delsub.opsiinc ANACONDA
 ;
-; Jens Boettge <boettge@mpi-halle.mpg.de>  2023-08-23 15:18:02 +0200
+; Jens Boettge <boettge@mpi-halle.mpg.de>  2025-10-13 10:16:18 +0200
 ;=====================================================================
 encoding=utf8
 
@@ -160,13 +160,32 @@ set $TempList$ = emptyList($TempList$)
 for %p% in $EXE$ do set $TempList$ = addToList($TempList$, stringReplace($Uninst_RegDir$+"\%p%", "\\", "\"))
 for %p% in $TempList$ do sub_checkinstance
 
-;=== run uninstaller
+; some cleanup
 LinkFolder_RemoveDesktopLink
-Winbatch_Uninstall /WaitForProcessEnding $Uninst_Prg_Hidden$
-sub_check_exitcode_nsis
-if not($FatalError$ = "")
-	isFatalError "Uninstaller returns fatal error!"
+
+;=== run uninstaller
+set $exitCode$=processCall($UninstallString$ +" "+ $Uninst_Opts$) /LetThemGo
+comment "ExitCode on start: " + $exitCode$
+; sub_check_exitcode_nsis
+if $exitCode$ = "-1"
+	isFatalError "Failed to start uninstaller: " + $UninstallString$
 endif
+
+set $currentLogLevel$ = getLogLevel
+setLogLevel = 5
+set $TM$ = "0"
+for %s% = "1" to $LOOPS$ do sub_check_uninstaller
+setLogLevel = $currentLogLevel$
+if ($WS$ = "0")
+	comment "Uninstaller finished after " + $TM$ + " secs."
+else
+	logError "Uninstaller still running after timeout (" + $TM$ + " secs.)!"
+	comment "Killing uninstaller"
+	if $USR$=$currentUser$
+		killtask $PRC$
+	endif
+endif
+
 if ($ExitCode$ = "0") and not ($Uninst_RegDir$ = "")
 	;=== does the installation directory still exist?
 	if (FileExists($Inst_Loc$))
@@ -178,10 +197,27 @@ endif
 
 
 ;======================================================================
-[Winbatch_Uninstall]
+[sub_check_uninstaller]
 ;======================================================================
-; "$Uninstaller$" $Uninst_Opts$
-$UninstallString$  $Uninst_Opts$
+if not ($WS$ = "0")
+	comment "Loop %s%/" + $LOOPS$ + " ("+ $WS$ + " sec)"
+	sleepSeconds $WS$
+	set $TM$ = calculate($TM$ + $WS$ )
+	set $ProcList$=getProcessList
+	;set $ResultList$=getSubListByContaining($UninstSrch$, $ProcList$)
+	set $ResultList$=getSubListByContainingRegEx($UninstRegex$, $ProcList$)
+	set $CNT$=count($ResultList$)
+	if not ($CNT$ = "0")
+		; assume, the first (and hopefully only) entry in list is the right one:
+		set $TempList$ = splitString(takeString(0,$ResultList$),';')
+		set $PRC$ = takestring(0, $TempList$)
+		set $PID$ = takestring(1, $TempList$)
+		set $USR$ = takestring(2, $TempList$)
+	else
+		;set $ExitCode$=getLastExitCode
+		set $WS$ = "0"
+	endif
+endif
 
 
 ;======================================================================
